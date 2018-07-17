@@ -24,6 +24,41 @@ const store = () =>
           commit("SET_USER", req.session.authUser);
         }
       },
+      register({ commit }, { username, teamName, locationId, password, passwordConf }) {
+        return fetch("/api/register", {
+          // Send the client cookies to the server
+          credentials: "same-origin",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            username,
+            teamName,
+            locationId,
+            password,
+            passwordConf
+          })
+        })
+          .then((res) => {
+            if (res.status === 401) {
+              throw new Error("Bad credentials");
+            } else {
+              return res.json();
+            }
+          })
+          .then((authUser) => {
+            commit("SET_USER", authUser);
+            if (authUser.accountType === "player") {
+              this.$router.replace("/dashboard");
+            } else {
+              this.$router.replace("/admin");
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      },
       login({ commit }, { username, password }) {
         return fetch("/api/login", {
           // Send the client cookies to the server
@@ -46,7 +81,11 @@ const store = () =>
           })
           .then((authUser) => {
             commit("SET_USER", authUser);
-            this.$router.replace("/secret");
+            if (authUser.accountType === "player") {
+              this.$router.replace("/dashboard");
+            } else {
+              this.$router.replace("/admin");
+            }
           })
           .catch((err) => {
             console.error(err);

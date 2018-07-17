@@ -1,53 +1,48 @@
 <template>
-  <section class="section">
-    <div class="columns is-mobile">
-      <div v-for="(feature, i) of features" :key="i" class="column">
-        <div class="card">
-          <header class="card-header">
-            <p class="card-header-title has-text-grey">
-              {{ feature.title }}
-            </p>
-          </header>
-          <div class="card-content">
-            <div class="content has-text-centered">
-              <b-icon :icon="feature.icon" size="is-large" type="is-primary" />
-            </div>
-          </div>
-          <footer class="card-footer">
-            <div class="card-footer-item" v-html="feature.content"></div>
-          </footer>
-        </div>
-      </div>
+  <div class="box has-text-centered" id="login-form">
+    <h1 class="title is-3">MAGIC CTF</h1>
+    <div class="field">
+      <p class="control has-icons-left">
+        <input class="input" type="text" placeholder="Username" required="" autofocus="autofocus" v-model="username" />
+        <span class="icon is-small is-left">
+          <i class="fa fa-user"></i>
+        </span>
+      </p>
     </div>
-  </section>
+    <div class="field">
+      <p class="control has-icons-left">
+        <input class="input" type="password" placeholder="Password" required="" v-model="password" />
+        <span class="icon is-small is-left">
+          <i class="fa fa-lock"></i>
+        </span>
+      </p>
+    </div>
+    <div class="field is-grouped is-grouped-centered">
+      <p class="control">
+        <button class="button is-success is-rounded" @click="login()">Login</button>
+      </p>
+    </div>
+    <p class="has-text-blue"></p>Need an account?
+    <nuxt-link class="has-text-grey" style="border-bottom: 1px solid currentColor;" tag="a" to="/register">Register</nuxt-link>
+  </div>
 </template>
 
 <script>
-  import BLogo from '@/components/Logo'
-
   export default {
-    name: 'HomePage',
-    components: {
-      BLogo
-    },
+    // TODO: auth error handling with notification repsonses
+    layout: "auth",
     data() {
       return {
-        features: [{
-            icon: 'cellphone-link',
-            title: 'Responsive',
-            content: `<span><b class="has-text-grey">Every</b> component is responsive</span>`
-          },
-          {
-            icon: 'alert-decagram',
-            title: 'Modern',
-            content: `<span>Built with <a href="https://vuejs.org/">Vue.js</a> and <a href="http://bulma.io/">Bulma</a></span>`
-          },
-          {
-            icon: 'arrange-bring-to-front',
-            title: 'Lightweight',
-            content: `<span>No other internal dependency</span>`
-          }
-        ]
+        username: "cwindsor",
+        password: "123"
+      }
+    },
+    methods: {
+      login() {
+        this.$store.dispatch("login", {
+          username: this.username,
+          password: this.password
+        })
       }
     }
   }

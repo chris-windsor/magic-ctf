@@ -1,48 +1,51 @@
-const pkg = require('./package')
+const pkg = require("./package");
 
 module.exports = {
-  mode: 'universal',
+  mode: "universal",
 
   /*
   ** Headers of the page
   */
   head: {
-    title: pkg.name,
+    title: "MAGIC CTF",
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: pkg.description }
+      { charset: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { hid: "description", name: "description", content: pkg.description }
     ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    link: [ { rel: "icon", type: "image/x-icon", href: "/favicon.ico" } ]
   },
 
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#FFFFFF' },
+  loading: {
+    color: "#5a79e8"
+  },
 
   /*
   ** Global CSS
   */
   css: [
+    {
+      src: "@fortawesome/fontawesome-free/css/all.min.css",
+      lang: "css"
+    }
   ],
 
   /*
   ** Plugins to load before mounting the App
   */
-  plugins: [
-  ],
+  plugins: [],
 
   /*
   ** Nuxt.js modules
   */
   modules: [
     // Doc: https://github.com/nuxt-community/axios-module#usage
-    '@nuxtjs/axios',
+    "@nuxtjs/axios",
     // Doc: https://buefy.github.io/#/documentation
-    'nuxt-buefy'
+    "nuxt-buefy"
   ],
   /*
   ** Axios module configuration
@@ -58,8 +61,6 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
-    extend(config, ctx) {
-      
-    }
+    extend(config, ctx) {}
   }
-}
+};
