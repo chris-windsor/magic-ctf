@@ -13,7 +13,6 @@ const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 
-const host = process.env.HOST || "127.0.0.1";
 const port = process.env.PORT || 3000;
 
 app.set("port", port);
