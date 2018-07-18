@@ -5,13 +5,13 @@
         <div class="navbar-item">
           <h1 class="title is-3">MAGIC CTF</h1>
         </div>
-        <div class="navbar-burger" data-target="navMenu">
+        <div class="navbar-burger" @click="showNav = !showNav" :class="{ 'is-active': showNav }">
           <span></span>
           <span></span>
           <span></span>
         </div>
       </div>
-      <div class="navbar-menu" id="navMenu">
+      <div class="navbar-menu" :class="{ 'is-active': showNav }">
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="field is-grouped is-grouped-centered">
@@ -43,6 +43,11 @@
 
 <script>
   export default {
+    data() {
+      return {
+        showNav: false
+      }
+    },
     methods: {
       logout() {
         this.$store.dispatch("logout")

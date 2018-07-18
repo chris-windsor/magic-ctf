@@ -1,0 +1,53 @@
+{
+  "puzzle1": {
+    "answer": "abc",
+    "value": 100,
+    "hints": [{
+      "cost": 10,
+      "content": "this is a basic hint"
+    }]
+  },
+  "puzzle2": {
+    "answer": "def",
+    "value": 150,
+    "hints": [{
+        "cost": 20,
+        "content": "yet another hint"
+      },
+      {
+        "cost": 40,
+        "content": "a very good yet expensive hint"
+      }
+    ]
+  },
+  "puzzle3": {
+    "answer": "ghi",
+    "value": 175,
+    "hints": [{
+        "cost": 30,
+        "content": "some hint"
+      },
+      {
+        "cost": 55,
+        "content": "a detailed hint"
+      }
+    ]
+  },
+  "puzzle4": {
+    "answer": "jkl",
+    "value": 225,
+    "hints": [{
+        "cost": 45,
+        "content": "a simple hint for a hard challenge"
+      },
+      {
+        "cost": 75,
+        "content": "a good hint for a hard challenge"
+      },
+      {
+        "cost": 110,
+        "content": "practically the answer for this challenge"
+      }
+    ]
+  }
+}

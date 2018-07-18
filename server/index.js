@@ -1,5 +1,4 @@
 const { Nuxt, Builder } = require("nuxt");
-const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -7,6 +6,7 @@ const session = require("express-session");
 const ios = require("socket.io-express-session");
 const MongoStore = require("connect-mongo")(session);
 const chalk = require("chalk");
+const process = require("process");
 
 const app = express();
 
@@ -87,7 +87,13 @@ async function start() {
   // Give nuxt middleware to express
   app.use(nuxt.render);
 
+  require("../utils/admin-commands").init(io);
+
   // Listen the server
   server.listen(port, () => console.log(chalk.green.bold(`Web server successfully started on port ${port}...`)));
 }
 start();
+
+process.on("SIGINT", () => {
+  process.exit();
+});

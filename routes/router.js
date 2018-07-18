@@ -27,6 +27,7 @@ router.post("/api/register", function(req, res) {
           error
         });
       } else {
+        req.session.userId = user._id;
         req.session.authUser = {
           username: user.username,
           teamName: user.teamName,
@@ -56,6 +57,7 @@ router.post("/api/login", function(req, res) {
           error: "Incorrect username or password"
         });
       } else {
+        req.session.userId = user._id;
         req.session.authUser = {
           username: user.username,
           teamName: user.teamName,

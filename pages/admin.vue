@@ -14,7 +14,8 @@
         <br/>
         <ul class="menu-list">
           <li class="has-text-centered">
-            <button class="button is-medium is-rounded is-loading" id="toggle-status-btn"></button>
+            <button class="button is-medium is-rounded" :class="{'is-loading': gameStateBtnLoading, 'is-success': !gameStateBtnLoading && !gameIsActive,  'is-danger': !gameStateBtnLoading && gameIsActive}"
+              @click="toggleGameState()">{{gameStateBtnLabel}}</button>
           </li>
         </ul>
       </aside>
@@ -64,15 +65,10 @@
 </template>
 
 <script>
+  import socket from '~/plugins/socket.io.js'
+
   export default {
     layout: "profile",
-    computed: {
-      username() {
-        if (this.$store.state.authUser !== null) {
-          return this.$store.state.authUser.username
-        }
-      }
-    },
     fetch({
       store,
       redirect
@@ -80,10 +76,61 @@
       if (!store.state.authUser) {
         return redirect('/')
       } else {
-        if (store.state.authUser.accountType === "player") {
+        if (store.state.authUser.accountType ===
+          "player") {
           return redirect('/dashboard');
         }
       }
+    },
+    data() {
+      return {
+        gameStateBtnLoading: true,
+        gameIsActive: false
+      }
+    },
+    computed: {
+      gameStateBtnLabel() {
+        return !this.gameStateBtnLoading && !this.gameIsActive ? "Start CTF" : "Stop CTF";
+      }
+    },
+    methods: {
+      toggleGameState() {
+        if (this.gameIsActive) {
+          this.$dialog.confirm({
+            message: 'Are you sure you want to stop the game?',
+            type: 'is-danger',
+            title: 'Please confirm',
+            confirmText: 'Yes, continue',
+            onConfirm: () => {
+              this.gameIsActive = false;
+              socket.emit("adminCommand", {
+                command: "stop"
+              });
+              this.$toast.open({
+                message: 'Stopping game...',
+                type: 'is-info',
+                duration: 1500
+              });
+            }
+          })
+        } else {
+          this.gameIsActive = true;
+          socket.emit("adminCommand", {
+            command: "start"
+          });
+        }
+      }
+    },
+    mounted() {
+      socket.on("updateGameStatus", (status) => {
+        if (status.isActive === false) {
+          this.gameStateBtnLoading = false;
+          this.gameIsActive = false;
+        } else {
+          this.gameStateBtnLoading = false;
+          this.gameIsActive = true;
+        }
+      });
     }
   }
 

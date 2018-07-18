@@ -20,7 +20,7 @@
         <p class="menu-label"></p>
         <ul class="menu-list">
           <li>
-            <a class="button is-rounded is-warning is-outlined" href="#">
+            <a class="button is-rounded is-warning is-outlined" @click="requestHelp()">
               <span class="icon">
                 <i class="fa fa-chalkboard-teacher"></i>
               </span>
@@ -55,15 +55,10 @@
 </template>
 
 <script>
+  import socket from '~/plugins/socket.io.js'
+
   export default {
     layout: "profile",
-    computed: {
-      userData() {
-        if (this.$store.state.authUser !== null) {
-          return this.$store.state.authUser;
-        }
-      }
-    },
     fetch({
       store,
       redirect
@@ -71,12 +66,42 @@
       if (!store.state.authUser) {
         return redirect('/')
       } else {
-        if (store.state.authUser.accountType === "admin") {
+        if (store.state.authUser.accountType ===
+          "admin") {
           return redirect('/admin');
         }
-        // passed all checks for player...
-        document.title = `MAGIC CTF | ${store.state.authUser.teamName}`;
       }
+    },
+    computed: {
+      userData() {
+        if (this.$store.state.authUser !== null) {
+          this.team = this.$store.state.authUser.teamName;
+          return this.$store.state.authUser;
+        }
+      }
+    },
+    methods: {
+      requestHelp() {
+        this.$dialog.confirm({
+          message: 'Are you sure you want to request help?',
+          type: 'is-success',
+          title: 'Please confirm',
+          confirmText: 'Yes, please',
+          onConfirm: () => {
+            // TODO: send request for help
+            this.$toast.open({
+              message: 'Requesting help...',
+              type: 'is-info',
+              duration: 1500
+            });
+          }
+        })
+      }
+    },
+    mounted() {
+      socket.on("connect", () => {
+        console.log("connected to socket server")
+      });
     }
   }
 
