@@ -4,8 +4,11 @@ const ctf = require("./ctf");
 const init = (io) => {
   io.on("connection", (socket) => {
     socket.join("ctf");
+    let puzzles;
+    if (ctf.isGameRunning()) puzzles = ctf.getPuzzlesForPlayer();
     socket.emit("updateGameStatus", {
-      isActive: ctf.isGameRunning()
+      isActive: ctf.isGameRunning(),
+      puzzles
       // TODO: send back time left, etc...
     });
     socket.on("adminCommand", (command) => {

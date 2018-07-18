@@ -48,7 +48,10 @@
         </nav>
       </div>
       <div class="box content">
-        <div class="notification is-info">Challenges will show when competition has begun</div>
+        <div class="notification is-info" v-if="puzzles.length === 0">Challenges will show when competition is in progress</div>
+        <div v-else>
+          <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]"></puzzle>
+        </div>
       </div>
     </div>
   </div>
@@ -56,6 +59,7 @@
 
 <script>
   import socket from '~/plugins/socket.io.js'
+  import puzzle from '~/components/puzzle'
 
   export default {
     layout: "profile",
@@ -70,6 +74,11 @@
           "admin") {
           return redirect('/admin');
         }
+      }
+    },
+    data() {
+      return {
+        puzzles: []
       }
     },
     computed: {
@@ -105,12 +114,21 @@
     },
     mounted() {
       socket.connect();
-      socket.on("connect", () => {
-        console.log("connected to socket server")
+      socket.on("updateGameStatus", (gameData) => {
+        if (gameData.puzzles) this.puzzles = gameData.puzzles;
+      });
+      socket.on("gameStateChange", () => {
+        this.$router.go({
+          path: '/dashboard',
+          force: true
+        })
       });
     },
     beforeDestroy() {
       socket.disconnect();
+    },
+    components: {
+      puzzle
     }
   }
 

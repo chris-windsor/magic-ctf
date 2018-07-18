@@ -10,14 +10,18 @@ const isGameRunning = () => {
 
 const puzzles = require("./puzzles.json");
 
-const getPuzzles = () => {
+const getPuzzlesForPlayer = () => {
   let puzzleNames = Object.keys(puzzles);
   let puzzleData = [];
   puzzleNames.forEach((entry) => {
+    let hints = [];
+    puzzles[entry].hints.forEach((hint) => {
+      hints.push(hint.cost);
+    });
     puzzleData.push({
       title: entry,
       value: puzzles[entry].value,
-      hints: puzzles[entry].hints
+      hints
     });
   });
   return puzzleData;
@@ -34,7 +38,7 @@ const getLocations = () => locations.locations;
 module.exports = {
   changeGameState,
   isGameRunning,
-  getPuzzles,
+  getPuzzlesForPlayer,
   getRawPuzzleData,
   getLocations
 };
