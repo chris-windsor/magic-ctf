@@ -87,7 +87,7 @@ async function start() {
   // Give nuxt middleware to express
   app.use(nuxt.render);
 
-  require("../utils/admin-commands").init(io);
+  require("../utils/socketHandler").init(io);
 
   // Listen the server
   server.listen(port, () => console.log(chalk.green.bold(`Web server successfully started on port ${port}...`)));

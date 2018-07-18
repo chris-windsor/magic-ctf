@@ -122,6 +122,7 @@
       }
     },
     mounted() {
+      socket.connect();
       socket.on("updateGameStatus", (status) => {
         if (status.isActive === false) {
           this.gameStateBtnLoading = false;
@@ -131,6 +132,9 @@
           this.gameIsActive = true;
         }
       });
+    },
+    beforeDestroy() {
+      socket.disconnect();
     }
   }
 

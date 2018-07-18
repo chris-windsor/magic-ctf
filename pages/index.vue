@@ -33,7 +33,7 @@
     layout: "auth",
     data() {
       return {
-        username: "cwindsor",
+        username: "admin",
         password: "123"
       }
     },

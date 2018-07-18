@@ -77,6 +77,11 @@
         if (this.$store.state.authUser !== null) {
           this.team = this.$store.state.authUser.teamName;
           return this.$store.state.authUser;
+        } else {
+          return {
+            teamName: "",
+            username: ""
+          }
         }
       }
     },
@@ -99,9 +104,13 @@
       }
     },
     mounted() {
+      socket.connect();
       socket.on("connect", () => {
         console.log("connected to socket server")
       });
+    },
+    beforeDestroy() {
+      socket.disconnect();
     }
   }
 
