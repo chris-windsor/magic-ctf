@@ -2,15 +2,18 @@
   "puzzle1": {
     "answer": "abc",
     "value": 100,
-    "hints": [{
-      "cost": 10,
-      "content": "this is a basic hint"
-    }]
+    "hints": [
+      {
+        "cost": 10,
+        "content": "this is a basic hint"
+      }
+    ]
   },
   "puzzle2": {
     "answer": "def",
     "value": 150,
-    "hints": [{
+    "hints": [
+      {
         "cost": 20,
         "content": "yet another hint"
       },
@@ -23,7 +26,8 @@
   "puzzle3": {
     "answer": "ghi",
     "value": 175,
-    "hints": [{
+    "hints": [
+      {
         "cost": 30,
         "content": "some hint"
       },
@@ -36,7 +40,8 @@
   "puzzle4": {
     "answer": "jkl",
     "value": 225,
-    "hints": [{
+    "hints": [
+      {
         "cost": 45,
         "content": "a simple hint for a hard challenge"
       },

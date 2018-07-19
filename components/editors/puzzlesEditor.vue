@@ -2,8 +2,9 @@
   <div>
     <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" :id="index" @delete="deletePuzzle" @addNewHint="addNewHint"
       @deleteHint="deleteHint"></puzzle>
-    <div class="has-text-centered">
+    <div class="buttons is-centered">
       <button class="button is-success is-rounded is-medium" @click="addNewPuzzle()">Add new puzzle</button>
+      <button class="button is-info is-rounded is-medium" @click="savePuzzleData()">Save puzzles</button>
     </div>
   </div>
 </template>
@@ -47,6 +48,23 @@
       },
       deleteHint(puzId, hintId) {
         this.puzzles[puzId].hints.splice(hintId, 1);
+      },
+      savePuzzleData() {
+        this.$axios.post("/api/admin/settings/puzzles", {
+          puzzleData: this.puzzles
+        }).then(res => {
+          this.$toast.open({
+            message: 'Successfully saved updated puzzles...',
+            type: 'is-success',
+            duration: 1500
+          });
+        }).catch(err => {
+          this.$toast.open({
+            message: 'There was an error while saving the puzzles...',
+            type: 'is-danger',
+            duration: 1500
+          });
+        });
       }
     },
     mounted() {

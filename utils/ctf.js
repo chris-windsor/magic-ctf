@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 let gameIsRunning = false;
 
 const changeGameState = (newState) => {
@@ -41,6 +43,20 @@ const getPuzzlesForAdmin = () => {
   return puzzleData;
 };
 
+const updatePuzzles = (puzzleData) => {
+  let puzzles = {};
+  puzzleData.forEach((entry) => {
+    puzzles[entry.title] = {
+      answer: entry.answer,
+      value: entry.value,
+      hints: entry.hints
+    };
+  });
+  fs.writeFile(__dirname + "/puzzles.json", JSON.stringify(puzzles, null, 2), (err) => {
+    if (err) throw err;
+  });
+};
+
 const locations = require("./locations.json");
 
 const getLocations = () => locations.locations;
@@ -50,5 +66,6 @@ module.exports = {
   isGameRunning,
   getPuzzlesForPlayer,
   getPuzzlesForAdmin,
+  updatePuzzles,
   getLocations
 };
