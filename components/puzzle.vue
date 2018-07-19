@@ -5,9 +5,9 @@
       <h1 class="subtitle is-5">{{puzzleData.value}}</h1>
       <div class="field is-grouped">
         <div class="control has-icons-left has-icons-right is-expanded">
-          <input type="text" class="input is-info is-active" v-model="answer">
+          <input type="text" class="input is-info is-active" placeholder="Flag" v-model="answer">
           <span class="icon is-left">
-            <i class="fa fa-question"></i>
+            <i class="fa fa-flag"></i>
           </span>
         </div>
         <p class="control">

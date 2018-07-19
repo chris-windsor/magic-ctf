@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
+const ctf = require("../utils/ctf");
 
 // POST `/api/register` to register and login in the user and then add them to the `req.session.authUser`
 router.post("/api/register", function(req, res) {
@@ -83,6 +84,31 @@ router.post("/api/logout", function(req, res) {
   delete req.session.authUser;
   res.json({
     ok: true
+  });
+});
+
+// GET `/api/admin/settings/puzzles` to retrieve puzzle data
+router.get("/api/admin/settings/puzzles", function(req, res) {
+  User.findById(req.session.userId).exec(function(error, user) {
+    if (error) {
+      return error;
+    } else {
+      if (user === null) {
+        res.status(401).json({
+          error: "You must be an authenticated to make that request"
+        });
+      } else {
+        if (user.accountType === "admin") {
+          return res.json({
+            puzzles: ctf.getPuzzlesForAdmin()
+          });
+        } else {
+          res.status(403).json({
+            error: "You must be an admin to make that request"
+          });
+        }
+      }
+    }
   });
 });
 

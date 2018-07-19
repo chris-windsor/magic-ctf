@@ -27,8 +27,18 @@ const getPuzzlesForPlayer = () => {
   return puzzleData;
 };
 
-const getRawPuzzleData = () => {
-  return puzzles;
+const getPuzzlesForAdmin = () => {
+  let puzzleNames = Object.keys(puzzles);
+  let puzzleData = [];
+  puzzleNames.forEach((entry) => {
+    puzzleData.push({
+      title: entry,
+      answer: puzzles[entry].answer,
+      value: puzzles[entry].value,
+      hints: puzzles[entry].hints
+    });
+  });
+  return puzzleData;
 };
 
 const locations = require("./locations.json");
@@ -39,6 +49,6 @@ module.exports = {
   changeGameState,
   isGameRunning,
   getPuzzlesForPlayer,
-  getRawPuzzleData,
+  getPuzzlesForAdmin,
   getLocations
 };

@@ -24,7 +24,7 @@
       <div class="box content">
         <div class="tabs is-centered is-boxed is-medium">
           <ul>
-            <li class="control-panel-tab" data-cpid="puzzles">
+            <li class="control-panel-tab" :class="{'is-active': selectedSettings === 'puzzles'}" @click="changeSettingsTab('puzzles')">
               <a>
                 <span class="icon is-small">
                   <i class="fas fa-file-alt" aria-hidden="true"></i>
@@ -32,7 +32,7 @@
                 <span>Puzzles</span>
               </a>
             </li>
-            <li class="control-panel-tab" data-cpid="mechanics">
+            <li class="control-panel-tab" :class="{'is-active': selectedSettings === 'mechanics'}" @click="changeSettingsTab('mechanics')">
               <a>
                 <span class="icon is-small">
                   <i class="fas fa-sliders-h" aria-hidden="true"></i>
@@ -40,7 +40,7 @@
                 <span>Mechanics</span>
               </a>
             </li>
-            <li class="control-panel-tab" data-cpid="locations">
+            <li class="control-panel-tab" :class="{'is-active': selectedSettings === 'locations'}" @click="changeSettingsTab('locations')">
               <a>
                 <span class="icon is-small">
                   <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
@@ -48,7 +48,7 @@
                 <span>Locations</span>
               </a>
             </li>
-            <li class="control-panel-tab" data-cpid="data">
+            <li class="control-panel-tab" :class="{'is-active': selectedSettings === 'data'}" @click="changeSettingsTab('data')">
               <a>
                 <span class="icon is-small">
                   <i class="far fa-chart-bar" aria-hidden="true"></i>
@@ -58,14 +58,23 @@
             </li>
           </ul>
         </div>
-        <div class="notification is-info" id="control-panel-info">Select a tab above to edit game settings.</div>
+        <div class="notification is-info" v-if="selectedSettings === ''">Select a tab above to edit game settings.</div>
+        <div v-else>
+          <keep-alive>
+            <component :is="editorCompName"></component>
+          </keep-alive>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import socket from '~/plugins/socket.io.js'
+  import socket from '~/plugins/socket.io.js';
+  import puzzlesEditor from "~/components/editors/puzzlesEditor"
+  import mechanicsEditor from "~/components/editors/mechanicsEditor"
+  import locationsEditor from "~/components/editors/locationsEditor"
+  import dataViewer from "~/components/editors/dataViewer"
 
   export default {
     layout: "profile",
@@ -84,6 +93,8 @@
     },
     data() {
       return {
+        selectedSettings: "",
+        editorCompName: "",
         gameStateBtnLoading: true,
         gameIsActive: false
       }
@@ -94,6 +105,19 @@
       }
     },
     methods: {
+      changeSettingsTab(tabName) {
+        this.selectedSettings = tabName;
+        switch (tabName) {
+          case "puzzles":
+          case "mechanics":
+          case "locations":
+            this.editorCompName = tabName + "Editor"
+            break;
+          case "data ":
+            this.editorCompName = tabName + "Viewer"
+            break;
+        }
+      },
       toggleGameState() {
         if (this.gameIsActive) {
           this.$dialog.confirm({
@@ -135,6 +159,12 @@
     },
     beforeDestroy() {
       socket.disconnect();
+    },
+    components: {
+      puzzlesEditor,
+      mechanicsEditor,
+      locationsEditor,
+      dataViewer
     }
   }
 
