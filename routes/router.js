@@ -3,10 +3,15 @@ const router = express.Router();
 const User = require("../models/user");
 const ctf = require("../utils/ctf");
 
+// GET `/register/locations` to returnn available locations to register at
+router.get("/register/locations", function(req, res) {
+  return res.json(ctf.getLocations());
+});
+
 // POST `/api/register` to register and login in the user and then add them to the `req.session.authUser`
 router.post("/api/register", function(req, res) {
   if (req.body.password !== req.body.passwordConf) {
-    res.status(400).json({
+    return res.status(401).json({
       error: "Passwords do not match"
     });
   }

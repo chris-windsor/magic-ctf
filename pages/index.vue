@@ -1,6 +1,7 @@
 <template>
   <div class="box has-text-centered" id="login-form">
     <h1 class="title is-3">MAGIC CTF</h1>
+    <div class="notification is-danger" v-if="loginError !== ''">{{loginError}}</div>
     <div class="field">
       <p class="control has-icons-left">
         <input class="input" type="text" placeholder="Username" required="" autofocus="autofocus" v-model="username" />
@@ -29,12 +30,31 @@
 
 <script>
   export default {
-    // TODO: auth error handling with notification repsonses
     layout: "auth",
+    fetch({
+      store,
+      redirect
+    }) {
+      if (store.state.authUser) {
+        if (store.state.authUser.accountType === "admin") {
+          return redirect('/admin');
+        }
+        return redirect('/dashboard');
+      }
+    },
     data() {
       return {
         username: "admin",
         password: "123"
+      }
+    },
+    computed: {
+      loginError() {
+        if (this.$store.state.loginError !== "") {
+          return this.$store.state.loginError;
+        } else {
+          return "";
+        }
       }
     },
     methods: {
@@ -42,7 +62,7 @@
         this.$store.dispatch("login", {
           username: this.username,
           password: this.password
-        })
+        });
       }
     }
   }

@@ -1,6 +1,7 @@
 <template>
   <div class="box has-text-centered" id="login-form">
     <h1 class="title is-3">MAGIC CTF</h1>
+    <div class="notification is-danger" v-if="registerError !== ''">{{registerError}}</div>
     <div class="field">
       <p class="control has-icons-left">
         <input class="input" type="text" placeholder="Username" required="" autofocus="autofocus" v-model="userdata.username" />
@@ -22,7 +23,7 @@
         <div class="select is-fullwidth">
           <select required="" v-model="userdata.locationId">
             <option disabled="disabled" selected="selected" value="-1">Location</option>
-            <option v-for="(loc, index) in possibleLocations" :key="index" :value="index">{{loc}}</option>
+            <option v-for="(loc, index) in locations" :key="index" :value="index">{{loc}}</option>
           </select>
         </div>
         <span class="icon is-left">
@@ -69,14 +70,29 @@
           password: "",
           passwordConf: ""
         },
-        // TODO: load data from server through socket
-        possibleLocations: ["maryland 1", "maryland 2", "maryland 3", "north carolina 1", "idaho 1"]
+        locations: []
+      }
+    },
+    computed: {
+      registerError() {
+        if (this.$store.state.registerError !== "") {
+          return this.$store.state.registerError;
+        } else {
+          return "";
+        }
       }
     },
     methods: {
       register() {
-        this.$store.dispatch("register", this.userdata)
+        this.$store.dispatch("register", this.userdata);
       }
+    },
+    mounted() {
+      this.$axios.get("/register/locations").then(res => {
+        this.locations = res.data;
+      }).catch(err => {
+        console.error(err);
+      });
     }
   }
 

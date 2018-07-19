@@ -9,12 +9,20 @@ require("whatwg-fetch");
 const store = () =>
   new Vuex.Store({
     state: {
-      authUser: null
+      authUser: null,
+      loginError: "",
+      registerError: ""
     },
 
     mutations: {
       SET_USER: function(state, user) {
         state.authUser = user;
+      },
+      SET_LOGIN_ERROR: function(state, err) {
+        state.loginError = err;
+      },
+      SET_REGISTER_ERROR: function(state, err) {
+        state.registerError = err;
       }
     },
 
@@ -42,12 +50,15 @@ const store = () =>
         })
           .then((res) => {
             if (res.status === 401) {
-              throw new Error("Bad credentials");
+              throw new Error("Passwords do not match");
+            } else if (res.status === 400) {
+              throw new Error("All fields required");
             } else {
               return res.json();
             }
           })
           .then((authUser) => {
+            commit("SET_REGISTER_ERROR", "");
             commit("SET_USER", authUser);
             if (authUser.accountType === "player") {
               this.$router.replace("/dashboard");
@@ -56,7 +67,7 @@ const store = () =>
             }
           })
           .catch((err) => {
-            console.error(err);
+            commit("SET_REGISTER_ERROR", err.toString());
           });
       },
       login({ commit }, { username, password }) {
@@ -74,12 +85,13 @@ const store = () =>
         })
           .then((res) => {
             if (res.status === 401) {
-              throw new Error("Bad credentials");
+              throw new Error("Username or password is incorrect");
             } else {
               return res.json();
             }
           })
           .then((authUser) => {
+            commit("SET_LOGIN_ERROR", "");
             commit("SET_USER", authUser);
             if (authUser.accountType === "player") {
               this.$router.replace("/dashboard");
@@ -88,7 +100,7 @@ const store = () =>
             }
           })
           .catch((err) => {
-            console.error(err);
+            commit("SET_LOGIN_ERROR", err.toString());
           });
       },
       logout({ commit }) {

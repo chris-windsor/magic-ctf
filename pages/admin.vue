@@ -83,7 +83,7 @@
       redirect
     }) {
       if (!store.state.authUser) {
-        return redirect('/')
+        return redirect('/');
       } else {
         if (store.state.authUser.accountType ===
           "player") {

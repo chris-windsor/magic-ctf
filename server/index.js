@@ -28,8 +28,11 @@ const connectionOptions = {
 
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://localhost:27017/magic-ctf", connectionOptions, (err, success) => {
-  if (err) console.log(chalk.red.bold("Encountered error while connecting to database..."));
-  else console.log(chalk.green.bold(`Successfully connected to database... `));
+  if (err) {
+    console.log(chalk.red.bold("Encountered error while connecting to database..."));
+    console.log(chalk.red.bold("Shutting down server..."));
+    process.exit();
+  } else console.log(chalk.green.bold(`Successfully connected to database... `));
 });
 
 const db = mongoose.connection;
