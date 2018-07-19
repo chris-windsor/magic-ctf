@@ -61,11 +61,21 @@ const locations = require("./locations.json");
 
 const getLocations = () => locations.locations;
 
+const updateLocations = (locationData) => {
+  let locs = {
+    locations: locationData
+  };
+  fs.writeFile(__dirname + "/locations.json", JSON.stringify(locs, null, 2), (err) => {
+    if (err) throw err;
+  });
+};
+
 module.exports = {
   changeGameState,
   isGameRunning,
   getPuzzlesForPlayer,
   getPuzzlesForAdmin,
   updatePuzzles,
-  getLocations
+  getLocations,
+  updateLocations
 };

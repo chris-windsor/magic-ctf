@@ -21,7 +21,7 @@
           </div>
           <div class="field">
             <div class="control has-icons-left is-expanded">
-              <input type="number" class="input is-info" placeholder="Puzzle reward" v-model="puzzleData.value">
+              <input type="number" class="input is-info" placeholder="Puzzle reward" v-model.number="puzzleData.value">
               <span class="icon is-left">
                 <i class="fa fa-money-bill-alt"></i>
               </span>
@@ -68,14 +68,6 @@
 <style>
   #add-new-hint-container {
     margin-top: 0.5rem;
-  }
-
-  #puzzle-divider {
-    border: 0;
-    height: 1px;
-    background: #333;
-    background-image: linear-gradient(to right, #ccc, #333, #ccc);
-
   }
 
 </style>

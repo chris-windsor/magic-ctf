@@ -8,7 +8,7 @@
         </span>
       </div>
       <div class="control has-icons-left is-expanded">
-        <input type="text" class="input is-info" placeholder="Hint cost" v-model="hintData.cost">
+        <input type="number" class="input is-info" placeholder="Hint cost" v-model.number="hintData.cost">
         <span class="icon is-left">
           <i class="fa fa-money-bill-alt"></i>
         </span>

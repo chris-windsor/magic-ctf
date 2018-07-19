@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require("../models/user");
 const ctf = require("../utils/ctf");
 
-// GET `/register/locations` to returnn available locations to register at
+// GET `/register/locations` to return available locations to register at
 router.get("/register/locations", function(req, res) {
   return res.json(ctf.getLocations());
 });
@@ -130,6 +130,32 @@ router.post("/api/admin/settings/puzzles", function(req, res) {
       } else {
         if (user.accountType === "admin") {
           ctf.updatePuzzles(req.body.puzzleData);
+          res.json({
+            ok: true
+          });
+        } else {
+          res.status(403).json({
+            error: "You must be an admin to make that request"
+          });
+        }
+      }
+    }
+  });
+});
+
+// POST `/api/admin/settings/locations` to save new location data
+router.post("/api/admin/settings/locations", function(req, res) {
+  User.findById(req.session.userId).exec(function(error, user) {
+    if (error) {
+      return error;
+    } else {
+      if (user === null) {
+        res.status(401).json({
+          error: "You must be an authenticated to make that request"
+        });
+      } else {
+        if (user.accountType === "admin") {
+          ctf.updateLocations(req.body.locationData);
           res.json({
             ok: true
           });

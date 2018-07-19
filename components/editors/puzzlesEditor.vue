@@ -54,7 +54,7 @@
           puzzleData: this.puzzles
         }).then(res => {
           this.$toast.open({
-            message: 'Successfully saved updated puzzles...',
+            message: 'Successfully saved the updated puzzles...',
             type: 'is-success',
             duration: 1500
           });
