@@ -3,8 +3,8 @@ const router = express.Router();
 const User = require("../models/user");
 const ctf = require("../utils/ctf");
 
-// GET `/register/locations` to return available locations to register at
-router.get("/register/locations", function(req, res) {
+// GET `/api/register/locations` to return available locations to register at
+router.get("/api/register/locations", function(req, res) {
   return res.json(ctf.getLocations());
 });
 

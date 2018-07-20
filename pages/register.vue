@@ -88,7 +88,7 @@
       }
     },
     mounted() {
-      this.$axios.get("/register/locations").then(res => {
+      this.$axios.get("/api/register/locations").then(res => {
         this.locations = res.data.sort();
       }).catch(err => {
         console.error(err);
