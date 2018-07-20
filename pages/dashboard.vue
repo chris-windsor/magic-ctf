@@ -47,7 +47,7 @@
       <div class="box content">
         <div class="notification is-info" v-if="puzzles.length === 0">Challenges will show when competition is in progress</div>
         <div v-else>
-          <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]"></puzzle>
+          <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" @requestHint="requestHint"></puzzle>
         </div>
       </div>
     </div>
@@ -75,7 +75,8 @@
     },
     data() {
       return {
-        puzzles: []
+        puzzles: [],
+        selectedHintCost: 0
       }
     },
     computed: {
@@ -92,6 +93,23 @@
       }
     },
     methods: {
+      requestHint(puzzleName, hintCost) {
+        this.selectedHintCost = hintCost;
+        this.$dialog.confirm({
+          message: `Upon request of this hint, your team will lose ${this.selectedHintCost} points.`,
+          type: 'is-success',
+          title: 'Please confirm',
+          confirmText: 'Okay, continue',
+          onConfirm: () => {
+            // TODO: make request by team for the selected hint 
+            this.$toast.open({
+              message: 'Requesting hint...',
+              type: 'is-info',
+              duration: 1500
+            });
+          }
+        });
+      },
       requestHelp() {
         this.$dialog.confirm({
           message: 'Are you sure you want to request help?',
@@ -106,7 +124,7 @@
               duration: 1500
             });
           }
-        })
+        });
       }
     },
     mounted() {

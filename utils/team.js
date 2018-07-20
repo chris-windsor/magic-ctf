@@ -1,7 +1,9 @@
+const ctf = require("./ctf");
+
 class Team {
   constructor(name) {
     this.name = name;
-    this.players = [];
+    this.players = {};
     this.score = 0;
   }
 
@@ -18,7 +20,7 @@ class Team {
   }
 
   addPlayer(username) {
-    this.players.push(username);
+    this.players[username] = {};
   }
 }
 

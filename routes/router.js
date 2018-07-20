@@ -39,12 +39,19 @@ router.post("/api/register", function(req, res) {
           teamName: user.teamName,
           accountType: user.accountType
         };
+        const userTeam = user.teamName;
+        if (!Team.teamList[userTeam]) {
+          let newTeam = new Team.Team(userTeam);
+          newTeam.addPlayer(user.username);
+          Team.teamList[userTeam] = newTeam;
+        } else {
+          Team.teamList[userTeam].addPlayer(user.username);
+        }
         return res.json({
           username: user.username,
           teamName: user.teamName,
           accountType: user.accountType
         });
-        // TODO: handle team management
       }
     });
   } else {

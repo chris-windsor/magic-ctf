@@ -1,5 +1,5 @@
 <template>
-  <button class="button is-rounded is-danger">-{{cost}} points</button>
+  <button class="button is-rounded is-danger" @click="$emit('request', cost)">-{{cost}} points</button>
 </template>
 
 <script>

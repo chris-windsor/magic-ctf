@@ -19,7 +19,7 @@
       <h1 class="title is-5" v-if="puzzleData.hints.length > 1">Hints:</h1>
       <h1 class="title is-5" v-else>Hint:</h1>
       <div class="buttons">
-        <hint v-for="(hint, index) in puzzleData.hints" :key="index" :cost="puzzleData.hints[index]"></hint>
+        <hint v-for="(hint, index) in puzzleData.hints" :key="index" :cost="puzzleData.hints[index]" @request="requestHint"></hint>
       </div>
     </div>
   </div>
@@ -29,12 +29,17 @@
   import hint from "~/components/hint"
 
   export default {
+    props: ["puzzleData"],
     data() {
       return {
         answer: ""
       }
     },
-    props: ["puzzleData"],
+    methods: {
+      requestHint(cost) {
+        this.$emit('requestHint', this.puzzleData.title, cost);
+      }
+    },
     components: {
       hint
     }
