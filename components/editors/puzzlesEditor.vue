@@ -1,9 +1,8 @@
 <template>
   <div>
-    <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" :id="index" @delete="deletePuzzle" @addNewHint="addNewHint"
-      @deleteHint="deleteHint"></puzzle>
+    <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" :id="index" :isLast="index !== puzzles.length-1"
+      @addNew="addNewPuzzle" @delete="deletePuzzle" @addNewHint="addNewHint" @deleteHint="deleteHint"></puzzle>
     <div class="buttons is-centered">
-      <button class="button is-success is-rounded is-medium" @click="addNewPuzzle()">Add new puzzle</button>
       <button class="button is-info is-rounded is-medium" @click="savePuzzleData()">Save puzzles</button>
     </div>
   </div>
@@ -26,8 +25,8 @@
           console.error(err);
         });
       },
-      addNewPuzzle() {
-        this.puzzles.push({
+      addNewPuzzle(id) {
+        this.puzzles.splice(id + 1, 0, {
           title: "",
           answer: "",
           value: "",

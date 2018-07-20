@@ -1,5 +1,6 @@
 <template>
   <div>
+    <p class="has-text-success has-text-weight-bold">NOTE: locations will automatically be sorted alphabetically for the register page</p>
     <location v-for="(location, index) in locations" :key="index" :location="locations[index]" :id="index" @updateLocation="updateLocation"
       @delete="deleteLocation"></location>
     <div class="buttons is-centered">
@@ -21,7 +22,7 @@
     methods: {
       loadData() {
         this.$axios.get('/register/locations').then(res => {
-          this.locations = res.data;
+          this.locations = res.data.sort();
         }).catch(err => {
           console.error(err);
         });

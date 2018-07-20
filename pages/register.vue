@@ -89,7 +89,7 @@
     },
     mounted() {
       this.$axios.get("/register/locations").then(res => {
-        this.locations = res.data;
+        this.locations = res.data.sort();
       }).catch(err => {
         console.error(err);
       });

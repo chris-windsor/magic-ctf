@@ -27,8 +27,9 @@
               </span>
             </div>
           </div>
-          <button class="button is-danger is-small" @click="$emit('delete', id)">Delete puzzle</button>
+          <button class="button is-danger is-rounded is-small" @click="$emit('delete', id)">Delete puzzle</button>
         </div>
+        <button class="button is-success is-rounded" @click="$emit('addNew', id)">Add new puzzle below</button>
       </div>
       <div class="column is-8">
         <h1 class="title is-5" v-if="puzzleData.hints.length > 1">Hints:</h1>
@@ -41,7 +42,7 @@
         </div>
       </div>
     </div>
-    <hr>
+    <hr v-if="isLast === true">
   </div>
 </template>
 
@@ -49,7 +50,7 @@
   import hint from "~/components/editors/hint"
 
   export default {
-    props: ["puzzleData", "id"],
+    props: ["puzzleData", "id", "isLast"],
     methods: {
       addNewHint() {
         this.$emit('addNewHint', this.id);

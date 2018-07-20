@@ -14,7 +14,7 @@
         </span>
       </div>
     </div>
-    <button class="button is-danger is-small" @click="$emit('delete', id)">Delete hint</button>
+    <button class="button is-danger is-rounded is-small" @click="$emit('delete', id)">Delete hint</button>
   </div>
 </template>
 

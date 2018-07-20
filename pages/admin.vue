@@ -113,7 +113,7 @@
           case "locations":
             this.editorCompName = tabName + "Editor"
             break;
-          case "data ":
+          case "data":
             this.editorCompName = tabName + "Viewer"
             break;
         }
