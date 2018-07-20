@@ -1,5 +1,6 @@
 <template>
   <div>
+    <b-loading :active.sync="isLoading"></b-loading>
     <p class="has-text-success has-text-weight-bold">NOTE: locations will automatically be sorted alphabetically for the register page</p>
     <location v-for="(location, index) in locations" :key="index" :location="locations[index]" :id="index" @updateLocation="updateLocation"
       @delete="deleteLocation"></location>
@@ -16,6 +17,7 @@
   export default {
     data() {
       return {
+        isLoading: true,
         locations: []
       }
     },
@@ -23,6 +25,7 @@
       loadData() {
         this.$axios.get('/register/locations').then(res => {
           this.locations = res.data.sort();
+          this.isLoading = false;
         }).catch(err => {
           console.error(err);
         });

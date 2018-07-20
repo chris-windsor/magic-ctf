@@ -1,5 +1,6 @@
 <template>
   <div class="columns">
+    <b-loading :active.sync="isLoading"></b-loading>
     <div class="column is-3">
       <h1 class="title is-5">Game length:</h1>
       <div class="field is-grouped">
@@ -29,6 +30,7 @@
   export default {
     data() {
       return {
+        isLoading: true,
         hours: [1, 2, 3, 4],
         minutes: [0, 15, 30, 45],
         selectedHour: "",
@@ -59,6 +61,7 @@
       let length = this.$parent.gameLength.split(":");
       this.selectedHour = `${length[0]}`;
       this.selectedMinute = `${length[1]}`;
+      this.isLoading = false;
     }
   }
 

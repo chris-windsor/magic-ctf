@@ -1,5 +1,6 @@
 <template>
   <div>
+    <b-loading :active.sync="isLoading"></b-loading>
     <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" :id="index" :isLast="index !== puzzles.length-1"
       @addNew="addNewPuzzle" @delete="deletePuzzle" @addNewHint="addNewHint" @deleteHint="deleteHint"></puzzle>
     <div class="buttons is-centered">
@@ -14,6 +15,7 @@
   export default {
     data() {
       return {
+        isLoading: true,
         puzzles: []
       }
     },
@@ -21,6 +23,7 @@
       loadData() {
         this.$axios.get('/api/admin/settings/puzzles').then(res => {
           this.puzzles = res.data.puzzles;
+          this.isLoading = false;
         }).catch(err => {
           console.error(err);
         });
