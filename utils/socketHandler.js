@@ -8,7 +8,8 @@ const init = (io) => {
     if (ctf.isGameRunning()) puzzles = ctf.getPuzzlesForPlayer();
     socket.emit("updateGameStatus", {
       isActive: ctf.isGameRunning(),
-      puzzles
+      puzzles,
+      gameLength: ctf.gameLength
       // TODO: send back time left, etc...
     });
     socket.on("adminCommand", (command) => {

@@ -1,6 +1,8 @@
 const fs = require("fs");
 
 let gameIsRunning = false;
+let gameLength = "3hr:0min";
+let endTime;
 
 const changeGameState = (newState) => {
   gameIsRunning = newState;
@@ -9,6 +11,12 @@ const changeGameState = (newState) => {
 const isGameRunning = () => {
   return gameIsRunning;
 };
+
+const setEndTime = (date) => {
+  endTime = date;
+};
+
+const getEndTime = () => endTime;
 
 const puzzles = require("./puzzles.json");
 
@@ -73,6 +81,9 @@ const updateLocations = (locationData) => {
 module.exports = {
   changeGameState,
   isGameRunning,
+  gameLength,
+  setEndTime,
+  getEndTime,
   getPuzzlesForPlayer,
   getPuzzlesForAdmin,
   updatePuzzles,

@@ -11,9 +11,6 @@
             <a>User: {{userData.username}}</a>
           </li>
           <li>
-            <a>Elapsed Time: 0:00</a>
-          </li>
-          <li>
             <a>Time Left: 3:00</a>
           </li>
         </ul>

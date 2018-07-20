@@ -169,4 +169,30 @@ router.post("/api/admin/settings/locations", function(req, res) {
   });
 });
 
+// POST `/api/admin/settings/gamelength` to update game length
+router.post("/api/admin/settings/gamelength", function(req, res) {
+  User.findById(req.session.userId).exec(function(error, user) {
+    if (error) {
+      return error;
+    } else {
+      if (user === null) {
+        res.status(401).json({
+          error: "You must be an authenticated to make that request"
+        });
+      } else {
+        if (user.accountType === "admin") {
+          ctf.gameLength = `${req.body.hr}:${req.body.min}`;
+          res.json({
+            ok: true
+          });
+        } else {
+          res.status(403).json({
+            error: "You must be an admin to make that request"
+          });
+        }
+      }
+    }
+  });
+});
+
 module.exports = router;

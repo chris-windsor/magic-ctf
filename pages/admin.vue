@@ -5,9 +5,6 @@
         <p class="menu-label">Info:</p>
         <ul class="menu-list" id="sidebar-info">
           <li>
-            <a>Elapsed Time: 0:00</a>
-          </li>
-          <li>
             <a>Time Left: 3:00</a>
           </li>
         </ul>
@@ -96,7 +93,8 @@
         selectedSettings: "",
         editorCompName: "",
         gameStateBtnLoading: true,
-        gameIsActive: false
+        gameIsActive: false,
+        gameLength: ""
       }
     },
     computed: {
@@ -148,6 +146,7 @@
     mounted() {
       socket.connect();
       socket.on("updateGameStatus", (status) => {
+        this.gameLength = status.gameLength;
         if (status.isActive === false) {
           this.gameStateBtnLoading = false;
           this.gameIsActive = false;
