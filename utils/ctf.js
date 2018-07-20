@@ -20,13 +20,24 @@ const getEndTime = () => endTime;
 
 const puzzles = require("./puzzles.json");
 
+const getHint = (request) => {
+  let hint = puzzles[request.puzzleName].hints[request.hintId];
+  return {
+    hintContent: hint.content,
+    hintCost: hint.cost
+  };
+};
+
 const getPuzzlesForPlayer = () => {
   let puzzleNames = Object.keys(puzzles);
   let puzzleData = [];
   puzzleNames.forEach((entry) => {
     let hints = [];
     puzzles[entry].hints.forEach((hint) => {
-      hints.push(hint.cost);
+      hints.push({
+        cost: hint.cost,
+        content: ""
+      });
     });
     puzzleData.push({
       title: entry,
@@ -84,6 +95,7 @@ module.exports = {
   gameLength,
   setEndTime,
   getEndTime,
+  getHint,
   getPuzzlesForPlayer,
   getPuzzlesForAdmin,
   updatePuzzles,

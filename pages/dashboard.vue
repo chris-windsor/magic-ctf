@@ -47,7 +47,7 @@
       <div class="box content">
         <div class="notification is-info" v-if="puzzles.length === 0">Challenges will show when competition is in progress</div>
         <div v-else>
-          <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" @requestHint="requestHint"></puzzle>
+          <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" :id="index" @requestHint="requestHint"></puzzle>
         </div>
       </div>
     </div>
@@ -93,7 +93,7 @@
       }
     },
     methods: {
-      requestHint(puzzleName, hintCost) {
+      requestHint(puzzleId, puzzleName, hintId, hintCost) {
         this.selectedHintCost = hintCost;
         this.$dialog.confirm({
           message: `Upon request of this hint, your team will lose ${this.selectedHintCost} points.`,
@@ -101,7 +101,11 @@
           title: 'Please confirm',
           confirmText: 'Okay, continue',
           onConfirm: () => {
-            // TODO: make request by team for the selected hint 
+            socket.emit("requestHint", {
+              puzzleId,
+              puzzleName,
+              hintId
+            });
             this.$toast.open({
               message: 'Requesting hint...',
               type: 'is-info',
@@ -129,8 +133,14 @@
     },
     mounted() {
       socket.connect();
+      socket.on("connect", () => {
+        socket.emit("requestPuzzles");
+      });
+      socket.on("updateTeamPuzzles", (puzzleData) => {
+        this.puzzles = puzzleData;
+      });
       socket.on("updateGameStatus", (gameData) => {
-        if (gameData.puzzles) this.puzzles = gameData.puzzles;
+        // TODO: process game timer
       });
       socket.on("gameStateChange", () => {
         this.$router.go({

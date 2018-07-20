@@ -5,6 +5,15 @@ class Team {
     this.name = name;
     this.players = {};
     this.score = 0;
+    this.puzzles = ctf.getPuzzlesForPlayer();
+  }
+
+  getPuzzles() {
+    return this.puzzles;
+  }
+
+  addHint(puzzleId, hintId, hintContent) {
+    this.puzzles[puzzleId].hints[hintId].content = hintContent;
   }
 
   addScore(points) {

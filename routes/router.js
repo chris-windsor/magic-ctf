@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const ctf = require("../utils/ctf");
+const Team = require("../utils/team");
 
 // GET `/api/register/locations` to return available locations to register at
 router.get("/api/register/locations", function(req, res) {
@@ -76,12 +77,19 @@ router.post("/api/login", function(req, res) {
           teamName: user.teamName,
           accountType: user.accountType
         };
+        const userTeam = user.teamName;
+        if (!Team.teamList[userTeam]) {
+          let newTeam = new Team.Team(userTeam);
+          newTeam.addPlayer(user.username);
+          Team.teamList[userTeam] = newTeam;
+        } else {
+          Team.teamList[userTeam].addPlayer(user.username);
+        }
         return res.json({
           username: user.username,
           teamName: user.teamName,
           accountType: user.accountType
         });
-        // TODO: handle team management
       }
     });
   } else {
