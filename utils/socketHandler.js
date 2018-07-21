@@ -4,7 +4,24 @@ const Team = require("../utils/team");
 
 const init = (io) => {
   io.on("connection", (socket) => {
-    socket.join("ctf");
+    User.findById(socket.handshake.session.userId).exec(function(error, user) {
+      if (error) {
+        return error;
+      } else {
+        if (user === null) {
+          // not logged
+          // this shouldnt be possible theoretically so we arent going to worry about it for now
+        } else {
+          if (user.accountType === "player") {
+            let teamRoom = "team-" + user.teamName;
+            socket.join([ "ctf", teamRoom ]);
+          } else {
+            // admin just needs to join ctf room
+            socket.join("ctf");
+          }
+        }
+      }
+    });
     socket.emit("updateGameStatus", {
       isActive: ctf.isGameRunning(),
       gameLength: ctf.gameLength
@@ -51,13 +68,14 @@ const init = (io) => {
                   if (answer.correct === true) {
                     Team.teamList[user.teamName].addCorrectPuzzle(submittedAnswer.puzzleId);
                     Team.teamList[user.teamName].addScore(answer.reward);
+                    teamPuzzleData = Team.teamList[user.teamName].getPuzzles();
+                    let teamRoom = "team-" + user.teamName;
+                    io.to(teamRoom).emit("updateTeamPuzzles", teamPuzzleData);
                   } else {
                     socket.emit("incorrectAnswer", submittedAnswer.puzzleName);
                   }
-                  teamPuzzleData = Team.teamList[user.teamName].getPuzzles();
                 }
               }
-              socket.emit("updateTeamPuzzles", teamPuzzleData);
             } else {
               // no perms
               // this also doesn't need to be handled
@@ -83,9 +101,10 @@ const init = (io) => {
                   Team.teamList[user.teamName].addHint(requestedHint.puzzleId, requestedHint.hintId, hint.hintContent);
                   Team.teamList[user.teamName].subtractScore(hint.hintCost);
                   teamPuzzleData = Team.teamList[user.teamName].getPuzzles();
+                  let teamRoom = "team-" + user.teamName;
+                  io.to(teamRoom).emit("updateTeamPuzzles", teamPuzzleData);
                 }
               }
-              socket.emit("updateTeamPuzzles", teamPuzzleData);
             } else {
               // no perms
               // this also doesn't need to be handled

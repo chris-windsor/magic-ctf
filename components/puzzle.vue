@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <div class="container has-text-centered" v-if="puzzleData.isSolved">
+    <div class="has-text-centered" v-if="puzzleData.isSolved">
       <h1 class="title is-3">{{puzzleData.title}}</h1>
       <h1 class="subtitle is-5 has-text-success">Successfully solved</h1>
     </div>
