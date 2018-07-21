@@ -32,7 +32,10 @@ const store = () =>
           commit("SET_USER", req.session.authUser);
         }
       },
-      register({ commit }, { username, teamName, locationId, password, passwordConf }) {
+      register(
+        { commit },
+        { username, teamName, locationId, password, passwordConf }
+      ) {
         return fetch("/api/register", {
           // Send the client cookies to the server
           credentials: "same-origin",
@@ -48,7 +51,7 @@ const store = () =>
             passwordConf
           })
         })
-          .then((res) => {
+          .then(res => {
             if (res.status === 401) {
               throw new Error("Passwords do not match");
             } else if (res.status === 400) {
@@ -57,7 +60,7 @@ const store = () =>
               return res.json();
             }
           })
-          .then((authUser) => {
+          .then(authUser => {
             commit("SET_REGISTER_ERROR", "");
             commit("SET_USER", authUser);
             if (authUser.accountType === "player") {
@@ -66,7 +69,7 @@ const store = () =>
               this.$router.replace("/admin");
             }
           })
-          .catch((err) => {
+          .catch(err => {
             commit("SET_REGISTER_ERROR", err.toString());
           });
       },
@@ -83,14 +86,14 @@ const store = () =>
             password
           })
         })
-          .then((res) => {
+          .then(res => {
             if (res.status === 401) {
               throw new Error("Username or password is incorrect");
             } else {
               return res.json();
             }
           })
-          .then((authUser) => {
+          .then(authUser => {
             commit("SET_LOGIN_ERROR", "");
             commit("SET_USER", authUser);
             if (authUser.accountType === "player") {
@@ -99,7 +102,7 @@ const store = () =>
               this.$router.replace("/admin");
             }
           })
-          .catch((err) => {
+          .catch(err => {
             commit("SET_LOGIN_ERROR", err.toString());
           });
       },

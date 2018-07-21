@@ -70,7 +70,7 @@
           passwordConf: ""
         },
         locations: []
-      }
+      };
     },
     computed: {
       registerError() {
@@ -87,12 +87,14 @@
       }
     },
     mounted() {
-      this.$axios.get("/api/register/locations").then(res => {
-        this.locations = res.data.sort();
-      }).catch(err => {
-        console.error(err);
-      });
+      this.$axios
+        .get("/api/register/locations")
+        .then(res => {
+          this.locations = res.data.sort();
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
-  }
-
+  };
 </script>

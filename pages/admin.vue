@@ -11,8 +11,7 @@
         <br/>
         <ul class="menu-list">
           <li class="has-text-centered">
-            <button class="button is-medium is-rounded" :class="{'is-loading': gameStateBtnLoading, 'is-success': !gameStateBtnLoading && !gameIsActive,  'is-danger': !gameStateBtnLoading && gameIsActive}"
-              @click="toggleGameState()">{{gameStateBtnLabel}}</button>
+            <button class="button is-medium is-rounded" :class="{'is-loading': gameStateBtnLoading, 'is-success': !gameStateBtnLoading && !gameIsActive,  'is-danger': !gameStateBtnLoading && gameIsActive}" @click="toggleGameState()">{{gameStateBtnLabel}}</button>
           </li>
         </ul>
       </aside>
@@ -67,24 +66,20 @@
 </template>
 
 <script>
-  import socket from '~/plugins/socket.io.js';
-  import puzzlesEditor from "~/components/editors/puzzlesEditor"
-  import mechanicsEditor from "~/components/editors/mechanicsEditor"
-  import locationsEditor from "~/components/editors/locationsEditor"
-  import dataViewer from "~/components/editors/dataViewer"
+  import socket from "~/plugins/socket.io.js";
+  import puzzlesEditor from "~/components/editors/puzzlesEditor";
+  import mechanicsEditor from "~/components/editors/mechanicsEditor";
+  import locationsEditor from "~/components/editors/locationsEditor";
+  import dataViewer from "~/components/editors/dataViewer";
 
   export default {
     layout: "profile",
-    fetch({
-      store,
-      redirect
-    }) {
+    fetch({ store, redirect }) {
       if (!store.state.authUser) {
-        return redirect('/');
+        return redirect("/");
       } else {
-        if (store.state.authUser.accountType ===
-          "player") {
-          return redirect('/dashboard');
+        if (store.state.authUser.accountType === "player") {
+          return redirect("/dashboard");
         }
       }
     },
@@ -95,11 +90,13 @@
         gameStateBtnLoading: true,
         gameIsActive: false,
         gameLength: ""
-      }
+      };
     },
     computed: {
       gameStateBtnLabel() {
-        return !this.gameStateBtnLoading && !this.gameIsActive ? "Start CTF" : "Stop CTF";
+        return !this.gameStateBtnLoading && !this.gameIsActive
+          ? "Start CTF"
+          : "Stop CTF";
       }
     },
     methods: {
@@ -109,32 +106,32 @@
           case "puzzles":
           case "mechanics":
           case "locations":
-            this.editorCompName = tabName + "Editor"
+            this.editorCompName = tabName + "Editor";
             break;
           case "data":
-            this.editorCompName = tabName + "Viewer"
+            this.editorCompName = tabName + "Viewer";
             break;
         }
       },
       toggleGameState() {
         if (this.gameIsActive) {
           this.$dialog.confirm({
-            message: 'Are you sure you want to stop the game?',
-            type: 'is-danger',
-            title: 'Please confirm',
-            confirmText: 'Yes, continue',
+            message: "Are you sure you want to stop the game?",
+            type: "is-danger",
+            title: "Please confirm",
+            confirmText: "Yes, continue",
             onConfirm: () => {
               this.gameIsActive = false;
               socket.emit("adminCommand", {
                 command: "stop"
               });
               this.$toast.open({
-                message: 'Stopping game...',
-                type: 'is-info',
+                message: "Stopping game...",
+                type: "is-info",
                 duration: 1500
               });
             }
-          })
+          });
         } else {
           this.gameIsActive = true;
           socket.emit("adminCommand", {
@@ -145,7 +142,7 @@
     },
     mounted() {
       socket.connect();
-      socket.on("updateGameStatus", (status) => {
+      socket.on("updateGameStatus", status => {
         this.gameLength = status.gameLength;
         if (status.isActive === false) {
           this.gameStateBtnLoading = false;
@@ -165,6 +162,5 @@
       locationsEditor,
       dataViewer
     }
-  }
-
+  };
 </script>

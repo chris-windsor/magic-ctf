@@ -4,7 +4,7 @@ let gameIsRunning = false;
 let gameLength = "3hr:0min";
 let endTime;
 
-const changeGameState = (newState) => {
+const changeGameState = newState => {
   gameIsRunning = newState;
 };
 
@@ -12,7 +12,7 @@ const isGameRunning = () => {
   return gameIsRunning;
 };
 
-const setEndTime = (date) => {
+const setEndTime = date => {
   endTime = date;
 };
 
@@ -20,7 +20,7 @@ const getEndTime = () => endTime;
 
 const puzzles = require("./puzzles.json");
 
-const getHint = (request) => {
+const getHint = request => {
   let hint = puzzles[request.puzzleName].hints[request.hintId];
   return {
     hintContent: hint.content,
@@ -28,7 +28,7 @@ const getHint = (request) => {
   };
 };
 
-const checkAnswer = (request) => {
+const checkAnswer = request => {
   if (puzzles[request.puzzleName].answer === request.answer) {
     return {
       correct: true,
@@ -43,9 +43,9 @@ const checkAnswer = (request) => {
 const getPuzzlesForPlayer = () => {
   let puzzleNames = Object.keys(puzzles);
   let puzzleData = [];
-  puzzleNames.forEach((entry) => {
+  puzzleNames.forEach(entry => {
     let hints = [];
-    puzzles[entry].hints.forEach((hint) => {
+    puzzles[entry].hints.forEach(hint => {
       hints.push({
         cost: hint.cost,
         content: ""
@@ -64,7 +64,7 @@ const getPuzzlesForPlayer = () => {
 const getPuzzlesForAdmin = () => {
   let puzzleNames = Object.keys(puzzles);
   let puzzleData = [];
-  puzzleNames.forEach((entry) => {
+  puzzleNames.forEach(entry => {
     puzzleData.push({
       title: entry,
       answer: puzzles[entry].answer,
@@ -75,31 +75,39 @@ const getPuzzlesForAdmin = () => {
   return puzzleData;
 };
 
-const updatePuzzles = (puzzleData) => {
+const updatePuzzles = puzzleData => {
   let puzzles = {};
-  puzzleData.forEach((entry) => {
+  puzzleData.forEach(entry => {
     puzzles[entry.title] = {
       answer: entry.answer,
       value: entry.value,
       hints: entry.hints
     };
   });
-  fs.writeFile(__dirname + "/puzzles.json", JSON.stringify(puzzles, null, 2), (err) => {
-    if (err) throw err;
-  });
+  fs.writeFile(
+    __dirname + "/puzzles.json",
+    JSON.stringify(puzzles, null, 2),
+    err => {
+      if (err) throw err;
+    }
+  );
 };
 
 const locations = require("./locations.json");
 
 const getLocations = () => locations.locations;
 
-const updateLocations = (locationData) => {
+const updateLocations = locationData => {
   let locs = {
     locations: locationData
   };
-  fs.writeFile(__dirname + "/locations.json", JSON.stringify(locs, null, 2), (err) => {
-    if (err) throw err;
-  });
+  fs.writeFile(
+    __dirname + "/locations.json",
+    JSON.stringify(locs, null, 2),
+    err => {
+      if (err) throw err;
+    }
+  );
 };
 
 module.exports = {

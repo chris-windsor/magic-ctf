@@ -47,28 +47,26 @@
 </template>
 
 <script>
-  import hint from "~/components/editors/hint"
+  import hint from "~/components/editors/hint";
 
   export default {
     props: ["puzzleData", "id", "isLast"],
     methods: {
       addNewHint() {
-        this.$emit('addNewHint', this.id);
+        this.$emit("addNewHint", this.id);
       },
       deleteHint(hintId) {
-        this.$emit('deleteHint', this.id, hintId);
+        this.$emit("deleteHint", this.id, hintId);
       }
     },
     components: {
       hint
     }
-  }
-
+  };
 </script>
 
 <style>
   #add-new-hint-container {
     margin-top: 0.5rem;
   }
-
 </style>

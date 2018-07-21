@@ -17,6 +17,5 @@
 <script>
   export default {
     props: ["location", "id"]
-  }
-
+  };
 </script>

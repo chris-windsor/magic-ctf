@@ -47,8 +47,7 @@
       <div class="box content">
         <div class="notification is-info" v-if="puzzles.length === 0">Challenges will show when competition is in progress</div>
         <div v-else>
-          <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" :id="index" @submitAnswer="submitAnswer"
-            @requestHint="requestHint"></puzzle>
+          <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" :id="index" @submitAnswer="submitAnswer" @requestHint="requestHint"></puzzle>
         </div>
       </div>
     </div>
@@ -56,21 +55,17 @@
 </template>
 
 <script>
-  import socket from '~/plugins/socket.io.js'
-  import puzzle from '~/components/puzzle'
+  import socket from "~/plugins/socket.io.js";
+  import puzzle from "~/components/puzzle";
 
   export default {
     layout: "profile",
-    fetch({
-      store,
-      redirect
-    }) {
+    fetch({ store, redirect }) {
       if (!store.state.authUser) {
-        return redirect('/');
+        return redirect("/");
       } else {
-        if (store.state.authUser.accountType ===
-          "admin") {
-          return redirect('/admin');
+        if (store.state.authUser.accountType === "admin") {
+          return redirect("/admin");
         }
       }
     },
@@ -78,7 +73,7 @@
       return {
         puzzles: [],
         selectedHintCost: 0
-      }
+      };
     },
     computed: {
       userData() {
@@ -89,7 +84,7 @@
           return {
             teamName: "",
             username: ""
-          }
+          };
         }
       }
     },
@@ -104,10 +99,12 @@
       requestHint(puzzleId, puzzleName, hintId, hintCost) {
         this.selectedHintCost = hintCost;
         this.$dialog.confirm({
-          message: `Upon request of this hint, your team will lose ${this.selectedHintCost} points.`,
-          type: 'is-success',
-          title: 'Please confirm',
-          confirmText: 'Okay, continue',
+          message: `Upon request of this hint, your team will lose ${
+            this.selectedHintCost
+          } points.`,
+          type: "is-success",
+          title: "Please confirm",
+          confirmText: "Okay, continue",
           onConfirm: () => {
             socket.emit("requestHint", {
               puzzleId,
@@ -115,8 +112,8 @@
               hintId
             });
             this.$toast.open({
-              message: 'Requesting hint...',
-              type: 'is-info',
+              message: "Requesting hint...",
+              type: "is-info",
               duration: 1500
             });
           }
@@ -124,15 +121,15 @@
       },
       requestHelp() {
         this.$dialog.confirm({
-          message: 'Are you sure you want to request help?',
-          type: 'is-success',
-          title: 'Please confirm',
-          confirmText: 'Yes, please',
+          message: "Are you sure you want to request help?",
+          type: "is-success",
+          title: "Please confirm",
+          confirmText: "Yes, please",
           onConfirm: () => {
             // TODO: send request for help
             this.$toast.open({
-              message: 'Requesting help...',
-              type: 'is-info',
+              message: "Requesting help...",
+              type: "is-info",
               duration: 1500
             });
           }
@@ -144,24 +141,24 @@
       socket.on("connect", () => {
         socket.emit("requestPuzzles");
       });
-      socket.on("updateTeamPuzzles", (puzzleData) => {
+      socket.on("updateTeamPuzzles", puzzleData => {
         this.puzzles = puzzleData;
       });
-      socket.on("incorrectAnswer", (puzzleName) => {
+      socket.on("incorrectAnswer", puzzleName => {
         this.$toast.open({
           message: `Sorry. Incorrect answer for puzzle: ${puzzleName}`,
-          type: 'is-danger',
+          type: "is-danger",
           duration: 1500
         });
       });
-      socket.on("updateGameStatus", (gameData) => {
+      socket.on("updateGameStatus", gameData => {
         // TODO: process game timer
       });
       socket.on("gameStateChange", () => {
         this.$router.go({
-          path: '/dashboard',
+          path: "/dashboard",
           force: true
-        })
+        });
       });
     },
     beforeDestroy() {
@@ -170,6 +167,5 @@
     components: {
       puzzle
     }
-  }
-
+  };
 </script>

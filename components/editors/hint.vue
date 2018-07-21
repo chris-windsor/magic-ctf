@@ -21,6 +21,5 @@
 <script>
   export default {
     props: ["hintData", "id"]
-  }
-
+  };
 </script>

@@ -31,22 +31,19 @@
 <script>
   export default {
     layout: "auth",
-    fetch({
-      store,
-      redirect
-    }) {
+    fetch({ store, redirect }) {
       if (store.state.authUser) {
         if (store.state.authUser.accountType === "admin") {
-          return redirect('/admin');
+          return redirect("/admin");
         }
-        return redirect('/dashboard');
+        return redirect("/dashboard");
       }
     },
     data() {
       return {
         username: "admin",
         password: "123"
-      }
+      };
     },
     computed: {
       loginError() {
@@ -65,6 +62,5 @@
         });
       }
     }
-  }
-
+  };
 </script>

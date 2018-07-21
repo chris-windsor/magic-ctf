@@ -2,8 +2,8 @@ const User = require("../models/user");
 const ctf = require("./ctf");
 const Team = require("../utils/team");
 
-const init = (io) => {
-  io.on("connection", (socket) => {
+const init = io => {
+  io.on("connection", socket => {
     User.findById(socket.handshake.session.userId).exec(function(error, user) {
       if (error) {
         return error;
@@ -14,7 +14,7 @@ const init = (io) => {
         } else {
           if (user.accountType === "player") {
             let teamRoom = "team-" + user.teamName;
-            socket.join([ "ctf", teamRoom ]);
+            socket.join(["ctf", teamRoom]);
           } else {
             // admin just needs to join ctf room
             socket.join("ctf");
@@ -27,7 +27,10 @@ const init = (io) => {
       gameLength: ctf.gameLength
     });
     socket.on("requestPuzzles", () => {
-      User.findById(socket.handshake.session.userId).exec(function(error, user) {
+      User.findById(socket.handshake.session.userId).exec(function(
+        error,
+        user
+      ) {
         if (error) {
           return error;
         } else {
@@ -51,8 +54,11 @@ const init = (io) => {
         }
       });
     });
-    socket.on("submitAnswer", (submittedAnswer) => {
-      User.findById(socket.handshake.session.userId).exec(function(error, user) {
+    socket.on("submitAnswer", submittedAnswer => {
+      User.findById(socket.handshake.session.userId).exec(function(
+        error,
+        user
+      ) {
         if (error) {
           return error;
         } else {
@@ -66,7 +72,9 @@ const init = (io) => {
                 if (Team.teamList[user.teamName]) {
                   let answer = ctf.checkAnswer(submittedAnswer);
                   if (answer.correct === true) {
-                    Team.teamList[user.teamName].addCorrectPuzzle(submittedAnswer.puzzleId);
+                    Team.teamList[user.teamName].addCorrectPuzzle(
+                      submittedAnswer.puzzleId
+                    );
                     Team.teamList[user.teamName].addScore(answer.reward);
                     teamPuzzleData = Team.teamList[user.teamName].getPuzzles();
                     let teamRoom = "team-" + user.teamName;
@@ -84,8 +92,11 @@ const init = (io) => {
         }
       });
     });
-    socket.on("requestHint", (requestedHint) => {
-      User.findById(socket.handshake.session.userId).exec(function(error, user) {
+    socket.on("requestHint", requestedHint => {
+      User.findById(socket.handshake.session.userId).exec(function(
+        error,
+        user
+      ) {
         if (error) {
           return error;
         } else {
@@ -98,7 +109,11 @@ const init = (io) => {
               if (ctf.isGameRunning()) {
                 if (Team.teamList[user.teamName]) {
                   let hint = ctf.getHint(requestedHint);
-                  Team.teamList[user.teamName].addHint(requestedHint.puzzleId, requestedHint.hintId, hint.hintContent);
+                  Team.teamList[user.teamName].addHint(
+                    requestedHint.puzzleId,
+                    requestedHint.hintId,
+                    hint.hintContent
+                  );
                   Team.teamList[user.teamName].subtractScore(hint.hintCost);
                   teamPuzzleData = Team.teamList[user.teamName].getPuzzles();
                   let teamRoom = "team-" + user.teamName;
@@ -113,8 +128,11 @@ const init = (io) => {
         }
       });
     });
-    socket.on("adminCommand", (command) => {
-      User.findById(socket.handshake.session.userId).exec(function(error, user) {
+    socket.on("adminCommand", command => {
+      User.findById(socket.handshake.session.userId).exec(function(
+        error,
+        user
+      ) {
         if (error) {
           return error;
         } else {

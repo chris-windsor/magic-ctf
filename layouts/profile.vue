@@ -46,15 +46,14 @@
     data() {
       return {
         showNav: false
-      }
+      };
     },
     methods: {
       logout() {
-        this.$store.dispatch("logout")
+        this.$store.dispatch("logout");
       }
     }
-  }
-
+  };
 </script>
 
 <style>
@@ -91,5 +90,4 @@
   ul.menu-list#sidebar-info li a {
     cursor: default;
   }
-
 </style>

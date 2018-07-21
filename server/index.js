@@ -27,13 +27,20 @@ const connectionOptions = {
 };
 
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://localhost:27017/magic-ctf", connectionOptions, (err, success) => {
-  if (err) {
-    console.log(chalk.red.bold("Encountered error while connecting to database..."));
-    console.log(chalk.red.bold("Shutting down server..."));
-    process.exit();
-  } else console.log(chalk.green.bold(`Successfully connected to database... `));
-});
+mongoose.connect(
+  "mongodb://localhost:27017/magic-ctf",
+  connectionOptions,
+  (err, success) => {
+    if (err) {
+      console.log(
+        chalk.red.bold("Encountered error while connecting to database...")
+      );
+      console.log(chalk.red.bold("Shutting down server..."));
+      process.exit();
+    } else
+      console.log(chalk.green.bold(`Successfully connected to database... `));
+  }
+);
 
 const db = mongoose.connection;
 
@@ -93,7 +100,11 @@ async function start() {
   require("../utils/socketHandler").init(io);
 
   // Listen the server
-  server.listen(port, () => console.log(chalk.green.bold(`Web server successfully started on port ${port}...`)));
+  server.listen(port, () =>
+    console.log(
+      chalk.green.bold(`Web server successfully started on port ${port}...`)
+    )
+  );
 }
 start();
 

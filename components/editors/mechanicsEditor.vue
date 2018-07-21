@@ -35,26 +35,29 @@
         minutes: [0, 15, 30, 45],
         selectedHour: "",
         selectedMinute: ""
-      }
+      };
     },
     methods: {
       updateGameLength() {
-        this.$axios.post("/api/admin/settings/gamelength", {
-          hr: this.selectedHour,
-          min: this.selectedMinute
-        }).then(res => {
-          this.$toast.open({
-            message: 'Successfully updated the game length...',
-            type: 'is-success',
-            duration: 1500
+        this.$axios
+          .post("/api/admin/settings/gamelength", {
+            hr: this.selectedHour,
+            min: this.selectedMinute
+          })
+          .then(res => {
+            this.$toast.open({
+              message: "Successfully updated the game length...",
+              type: "is-success",
+              duration: 1500
+            });
+          })
+          .catch(err => {
+            this.$toast.open({
+              message: "There was an error while updating the game length...",
+              type: "is-danger",
+              duration: 1500
+            });
           });
-        }).catch(err => {
-          this.$toast.open({
-            message: 'There was an error while updating the game length...',
-            type: 'is-danger',
-            duration: 1500
-          });
-        });
       }
     },
     mounted() {
@@ -63,6 +66,5 @@
       this.selectedMinute = `${length[1]}`;
       this.isLoading = false;
     }
-  }
-
+  };
 </script>
