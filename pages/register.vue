@@ -59,7 +59,6 @@
 
 <script>
   export default {
-    // TODO: auth error handling with notification repsonses
     layout: "auth",
     data() {
       return {

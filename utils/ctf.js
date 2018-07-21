@@ -28,6 +28,18 @@ const getHint = (request) => {
   };
 };
 
+const checkAnswer = (request) => {
+  if (puzzles[request.puzzleName].answer === request.answer) {
+    return {
+      correct: true,
+      reward: puzzles[request.puzzleName].value
+    };
+  }
+  return {
+    correct: false
+  };
+};
+
 const getPuzzlesForPlayer = () => {
   let puzzleNames = Object.keys(puzzles);
   let puzzleData = [];
@@ -42,6 +54,7 @@ const getPuzzlesForPlayer = () => {
     puzzleData.push({
       title: entry,
       value: puzzles[entry].value,
+      isSolved: false,
       hints
     });
   });
@@ -96,6 +109,7 @@ module.exports = {
   setEndTime,
   getEndTime,
   getHint,
+  checkAnswer,
   getPuzzlesForPlayer,
   getPuzzlesForAdmin,
   updatePuzzles,

@@ -47,7 +47,8 @@
       <div class="box content">
         <div class="notification is-info" v-if="puzzles.length === 0">Challenges will show when competition is in progress</div>
         <div v-else>
-          <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" :id="index" @requestHint="requestHint"></puzzle>
+          <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" :id="index" @submitAnswer="submitAnswer"
+            @requestHint="requestHint"></puzzle>
         </div>
       </div>
     </div>
@@ -93,6 +94,13 @@
       }
     },
     methods: {
+      submitAnswer(puzzleId, puzzleName, answer) {
+        socket.emit("submitAnswer", {
+          puzzleId,
+          puzzleName,
+          answer
+        });
+      },
       requestHint(puzzleId, puzzleName, hintId, hintCost) {
         this.selectedHintCost = hintCost;
         this.$dialog.confirm({
@@ -138,6 +146,13 @@
       });
       socket.on("updateTeamPuzzles", (puzzleData) => {
         this.puzzles = puzzleData;
+      });
+      socket.on("incorrectAnswer", (puzzleName) => {
+        this.$toast.open({
+          message: `Sorry. Incorrect answer for puzzle: ${puzzleName}`,
+          type: 'is-danger',
+          duration: 1500
+        });
       });
       socket.on("updateGameStatus", (gameData) => {
         // TODO: process game timer

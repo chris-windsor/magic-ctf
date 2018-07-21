@@ -34,6 +34,38 @@ const init = (io) => {
         }
       });
     });
+    socket.on("submitAnswer", (submittedAnswer) => {
+      User.findById(socket.handshake.session.userId).exec(function(error, user) {
+        if (error) {
+          return error;
+        } else {
+          if (user === null) {
+            // not logged
+            // this shouldnt be possible theoretically so we arent going to worry about it for now
+          } else {
+            if (user.accountType === "player") {
+              let teamPuzzleData = [];
+              if (ctf.isGameRunning()) {
+                if (Team.teamList[user.teamName]) {
+                  let answer = ctf.checkAnswer(submittedAnswer);
+                  if (answer.correct === true) {
+                    Team.teamList[user.teamName].addCorrectPuzzle(submittedAnswer.puzzleId);
+                    Team.teamList[user.teamName].addScore(answer.reward);
+                  } else {
+                    socket.emit("incorrectAnswer", submittedAnswer.puzzleName);
+                  }
+                  teamPuzzleData = Team.teamList[user.teamName].getPuzzles();
+                }
+              }
+              socket.emit("updateTeamPuzzles", teamPuzzleData);
+            } else {
+              // no perms
+              // this also doesn't need to be handled
+            }
+          }
+        }
+      });
+    });
     socket.on("requestHint", (requestedHint) => {
       User.findById(socket.handshake.session.userId).exec(function(error, user) {
         if (error) {

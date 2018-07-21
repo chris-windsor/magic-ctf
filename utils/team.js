@@ -16,6 +16,10 @@ class Team {
     this.puzzles[puzzleId].hints[hintId].content = hintContent;
   }
 
+  addCorrectPuzzle(puzzleId) {
+    this.puzzles[puzzleId].isSolved = true;
+  }
+
   addScore(points) {
     this.score += points;
   }
