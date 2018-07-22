@@ -30,7 +30,6 @@
 
 <script>
   export default {
-    layout: "auth",
     fetch({ store, redirect }) {
       if (store.state.authUser) {
         if (store.state.authUser.accountType === "admin") {

@@ -22,6 +22,7 @@ class Team {
 
   addScore(points) {
     this.score += points;
+    ctf.updateTeamScores();
   }
 
   subtractScore(points) {
@@ -30,6 +31,7 @@ class Team {
     } else {
       return false;
     }
+    ctf.updateTeamScores();
   }
 
   addPlayer(username) {

@@ -24,7 +24,8 @@ const init = io => {
     });
     socket.emit("updateGameStatus", {
       isActive: ctf.isGameRunning(),
-      gameLength: ctf.gameLength
+      gameLength: ctf.gameLength,
+      teamScores: ctf.teamScores
     });
     socket.on("requestPuzzles", () => {
       User.findById(socket.handshake.session.userId).exec(function(

@@ -4,6 +4,13 @@ let gameIsRunning = false;
 let gameLength = "3hr:0min";
 let endTime;
 
+let teamScores = {
+  TheBestTeam: 15,
+  Falcons: 20,
+  Hackers: 40,
+  TheWinners: 0
+};
+
 const changeGameState = newState => {
   gameIsRunning = newState;
 };
@@ -17,6 +24,10 @@ const setEndTime = date => {
 };
 
 const getEndTime = () => endTime;
+
+const updateTeamScores = () => {
+  // TODO: get every teams score and store it in the teamScores obj
+};
 
 const puzzles = require("./puzzles.json");
 
@@ -113,9 +124,11 @@ const updateLocations = locationData => {
 module.exports = {
   changeGameState,
   isGameRunning,
+  teamScores,
   gameLength,
   setEndTime,
   getEndTime,
+  updateTeamScores,
   getHint,
   checkAnswer,
   getPuzzlesForPlayer,
