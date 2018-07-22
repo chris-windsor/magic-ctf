@@ -4,9 +4,11 @@ let gameIsRunning = false;
 let gameLength = "3hr:0min";
 let endTime;
 
+let teamList = {};
+
 let teamScores = {
   TheBestTeam: 15,
-  Falcons: 20,
+  Falcons: 0,
   Hackers: 40,
   TheWinners: 0
 };
@@ -26,7 +28,12 @@ const setEndTime = date => {
 const getEndTime = () => endTime;
 
 const updateTeamScores = () => {
-  // TODO: get every teams score and store it in the teamScores obj
+  for (const team in teamList) {
+    if (teamList.hasOwnProperty(team)) {
+      const t = teamList[team];
+      teamScores[team] = t.score;    
+    }
+  }
 };
 
 const puzzles = require("./puzzles.json");
@@ -124,6 +131,7 @@ const updateLocations = locationData => {
 module.exports = {
   changeGameState,
   isGameRunning,
+  teamList,
   teamScores,
   gameLength,
   setEndTime,

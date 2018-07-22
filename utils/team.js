@@ -26,11 +26,7 @@ class Team {
   }
 
   subtractScore(points) {
-    if (this.score - points > 0) {
-      this.score -= points;
-    } else {
-      return false;
-    }
+    this.score -= points;
     ctf.updateTeamScores();
   }
 
@@ -39,9 +35,6 @@ class Team {
   }
 }
 
-let teamList = {};
-
 module.exports = {
-  Team,
-  teamList
+  Team
 };

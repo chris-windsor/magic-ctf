@@ -41,12 +41,12 @@ router.post("/api/register", function(req, res) {
           accountType: user.accountType
         };
         const userTeam = user.teamName;
-        if (!Team.teamList[userTeam]) {
+        if (!ctf.teamList[userTeam]) {
           let newTeam = new Team.Team(userTeam);
           newTeam.addPlayer(user.username);
-          Team.teamList[userTeam] = newTeam;
+          ctf.teamList[userTeam] = newTeam;
         } else {
-          Team.teamList[userTeam].addPlayer(user.username);
+          ctf.teamList[userTeam].addPlayer(user.username);
         }
         return res.json({
           username: user.username,
@@ -78,12 +78,12 @@ router.post("/api/login", function(req, res) {
           accountType: user.accountType
         };
         const userTeam = user.teamName;
-        if (!Team.teamList[userTeam]) {
+        if (!ctf.teamList[userTeam]) {
           let newTeam = new Team.Team(userTeam);
           newTeam.addPlayer(user.username);
-          Team.teamList[userTeam] = newTeam;
+          ctf.teamList[userTeam] = newTeam;
         } else {
-          Team.teamList[userTeam].addPlayer(user.username);
+          ctf.teamList[userTeam].addPlayer(user.username);
         }
         return res.json({
           username: user.username,
