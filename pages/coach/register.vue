@@ -1,5 +1,6 @@
 <template>
   <div class="box has-text-centered" id="login-form">
+    <img src="~/assets/ctficon.png" alt="MAGIC CTF">
     <h1 class="title is-3">MAGIC CTF</h1>
     <div class="notification is-danger" v-if="registerError !== ''">{{registerError}}</div>
     <div class="field">
