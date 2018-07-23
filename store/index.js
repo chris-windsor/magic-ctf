@@ -34,7 +34,7 @@ const store = () =>
       },
       register(
         { commit },
-        { username, teamName, locationId, password, passwordConf }
+        { username, isCoach, teamName, locationId, password, passwordConf }
       ) {
         return fetch("/api/register", {
           // Send the client cookies to the server
@@ -45,6 +45,7 @@ const store = () =>
           },
           body: JSON.stringify({
             username,
+            isCoach,
             teamName,
             locationId,
             password,
@@ -65,6 +66,8 @@ const store = () =>
             commit("SET_USER", authUser);
             if (authUser.accountType === "player") {
               this.$router.replace("/dashboard");
+            } else if (authUser.accountType === "coach") {
+              this.$router.replace("/coach");
             } else {
               this.$router.replace("/admin");
             }
@@ -98,6 +101,8 @@ const store = () =>
             commit("SET_USER", authUser);
             if (authUser.accountType === "player") {
               this.$router.replace("/dashboard");
+            } else if (authUser.accountType === "coach") {
+              this.$router.replace("/coach");
             } else {
               this.$router.replace("/admin");
             }

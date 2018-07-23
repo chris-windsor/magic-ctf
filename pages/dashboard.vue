@@ -68,6 +68,8 @@
       } else {
         if (store.state.authUser.accountType === "admin") {
           return redirect("/admin");
+        } else if (store.state.authUser.accountType === "coach") {
+          return redirect("/coach");
         }
       }
     },

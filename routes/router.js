@@ -17,49 +17,77 @@ router.post("/api/register", function(req, res) {
     });
   }
 
-  const { username, teamName, locationId, password, passwordConf } = req.body;
+  // TODO: check if username is duplicate
 
-  if (username && teamName && locationId && password && passwordConf) {
-    const userData = {
-      username,
-      teamName,
-      locationId,
-      password,
-      passwordConf
-    };
+  const {
+    username,
+    isCoach,
+    teamName,
+    locationId,
+    password,
+    passwordConf
+  } = req.body;
 
-    User.create(userData, (error, user) => {
-      if (error) {
-        res.status(500).json({
-          error
-        });
-      } else {
-        req.session.userId = user._id;
-        req.session.authUser = {
-          username: user.username,
-          teamName: user.teamName,
-          accountType: user.accountType
-        };
-        const userTeam = user.teamName;
-        if (!ctf.teamList[userTeam]) {
-          let newTeam = new Team.Team(userTeam);
-          newTeam.addPlayer(user.username);
-          ctf.teamList[userTeam] = newTeam;
-        } else {
-          ctf.teamList[userTeam].addPlayer(user.username);
-        }
-        return res.json({
-          username: user.username,
-          teamName: user.teamName,
-          accountType: user.accountType
-        });
-      }
-    });
+  if (isCoach) {
+    if (!(username && locationId !== -1 && password && passwordConf)) {
+      res.status(400).json({
+        error: "All fields required"
+      });
+      return;
+    }
   } else {
-    res.status(400).json({
-      error: "All fields required"
-    });
+    if (
+      !(username && teamName && locationId !== -1 && password && passwordConf)
+    ) {
+      res.status(400).json({
+        error: "All fields required"
+      });
+      return;
+    }
   }
+
+  let userData = {
+    username,
+    locationId,
+    password,
+    passwordConf
+  };
+
+  if (isCoach) {
+    userData.accountType = "coach";
+  } else {
+    userData.teamName = teamName;
+  }
+
+  User.create(userData, (error, user) => {
+    if (error) {
+      console.log(userData);
+      console.log("here");
+      res.status(500).json({
+        error
+      });
+    } else {
+      req.session.userId = user._id;
+      req.session.authUser = {
+        username: user.username,
+        teamName: user.teamName,
+        accountType: user.accountType
+      };
+      const userTeam = user.teamName;
+      if (!ctf.teamList[userTeam]) {
+        let newTeam = new Team.Team(userTeam);
+        newTeam.addPlayer(user.username);
+        ctf.teamList[userTeam] = newTeam;
+      } else {
+        ctf.teamList[userTeam].addPlayer(user.username);
+      }
+      return res.json({
+        username: user.username,
+        teamName: user.teamName,
+        accountType: user.accountType
+      });
+    }
+  });
 });
 
 // POST `/api/login` to log in the user and then add them to the `req.session.authUser`

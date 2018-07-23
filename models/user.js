@@ -14,7 +14,6 @@ let UserSchema = new mongoose.Schema({
   },
   teamName: {
     type: String,
-    required: true,
     trim: true
   },
   accountType: {

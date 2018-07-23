@@ -80,6 +80,8 @@
       } else {
         if (store.state.authUser.accountType === "player") {
           return redirect("/dashboard");
+        } else if (store.state.authUser.accountType === "coach") {
+          return redirect("/coach");
         }
       }
     },
@@ -141,6 +143,7 @@
       }
     },
     mounted() {
+      // TODO: prompt admin to change password on first login
       socket.connect();
       socket.on("updateGameStatus", status => {
         this.gameLength = status.gameLength;
