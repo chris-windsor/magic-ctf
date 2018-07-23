@@ -33,13 +33,15 @@
           <div class="level-item has-text-centered">
             <div>
               <p class="heading">Points</p>
-              <p class="title">0</p>
+              <p class="title" v-if="gameIsActive">{{teamScoreAndPosition.score}}</p>
+              <p class="title" v-else>n/a</p>
             </div>
           </div>
           <div class="level-item has-text-centered">
             <div>
               <p class="heading">Position</p>
-              <p class="title">n/a</p>
+              <p class="title" v-if="gameIsActive">{{teamScoreAndPosition.position}}</p>
+              <p class="title" v-else>n/a</p>
             </div>
           </div>
         </nav>
@@ -72,7 +74,9 @@
     data() {
       return {
         puzzles: [],
-        selectedHintCost: 0
+        selectedHintCost: 0,
+        rawTeamScores: {},
+        gameIsActive: false
       };
     },
     computed: {
@@ -86,6 +90,23 @@
             username: ""
           };
         }
+      },
+      teamScoreAndPosition() {
+        let sorted = [];
+        for (let team in this.rawTeamScores) {
+          sorted.push({ teamName: team, teamScore: this.rawTeamScores[team] });
+        }
+        sorted.sort((a, b) => {
+          return b.teamScore - a.teamScore;
+        });
+        let scoreAndPosition = {};
+        sorted.forEach((entry, index) => {
+          if (entry.teamName === this.userData.teamName) {
+            scoreAndPosition.score = entry.teamScore;
+            scoreAndPosition.position = index + 1;
+          }
+        });
+        return scoreAndPosition;
       }
     },
     methods: {
@@ -152,6 +173,8 @@
         });
       });
       socket.on("updateGameStatus", gameData => {
+        this.rawTeamScores = gameData.teamScores;
+        this.gameIsActive = gameData.isActive;
         // TODO: process game timer
       });
       socket.on("gameStateChange", () => {
