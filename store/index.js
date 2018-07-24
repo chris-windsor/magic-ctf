@@ -57,6 +57,8 @@ const store = () =>
               throw new Error("Passwords do not match");
             } else if (res.status === 400) {
               throw new Error("All fields required");
+            } else if (res.status === 409) {
+              throw new Error("Username taken");
             } else {
               return res.json();
             }
