@@ -2,7 +2,7 @@ const fs = require("fs");
 
 let gameIsRunning = false;
 let gameLength = "3hr:0min";
-let endTime;
+let remainingTime;
 
 let teamList = {};
 
@@ -17,6 +17,12 @@ let helpRequests = {};
 
 const changeGameState = newState => {
   gameIsRunning = newState;
+  if (newState === true && remainingTime === undefined) {
+    let timeComponents = gameLength.split(":");
+    let hrs = Number(timeComponents[0].slice(0, -2)) * 1000 * 3600;
+    let mins = Number(timeComponents[1].slice(0, -3)) * 1000 * 60;
+    remainingTime = hrs + mins;
+  }
 };
 
 const isGameRunning = () => {
@@ -28,6 +34,14 @@ const setEndTime = date => {
 };
 
 const getEndTime = () => endTime;
+
+const getRemainingTime = () => remainingTime;
+
+setInterval(() => {
+  if (gameIsRunning) {
+    remainingTime -= 1000;
+  }
+}, 1000);
 
 const updateTeamScores = () => {
   for (const team in teamList) {
@@ -139,6 +153,7 @@ module.exports = {
   gameLength,
   setEndTime,
   getEndTime,
+  getRemainingTime,
   updateTeamScores,
   getHint,
   checkAnswer,

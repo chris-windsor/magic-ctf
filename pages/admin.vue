@@ -5,7 +5,7 @@
         <p class="menu-label">Info:</p>
         <ul class="menu-list" id="sidebar-info">
           <li>
-            <a>Time Left: 3:00</a>
+            <a>Time Left: {{timeLeft}}</a>
           </li>
         </ul>
         <br/>
@@ -91,7 +91,8 @@
         editorCompName: "",
         gameStateBtnLoading: true,
         gameIsActive: false,
-        gameLength: ""
+        gameLength: "",
+        remainingTime: 0
       };
     },
     computed: {
@@ -99,6 +100,17 @@
         return !this.gameStateBtnLoading && !this.gameIsActive
           ? "Start CTF"
           : "Stop CTF";
+      },
+      timeLeft() {
+        let hrs = Math.floor(this.remainingTime / (1000 * 3600));
+        let mins = Math.round((this.remainingTime % (1000 * 3600)) / 60000);
+        if (this.gameIsActive) {
+          if (mins === 60) {
+            return `${hrs + 1}:00`;
+          }
+          return `${hrs}:${mins}`;
+        }
+        return "-:--";
       }
     },
     methods: {
@@ -145,9 +157,10 @@
     mounted() {
       // TODO: prompt admin to change password on first login
       socket.connect();
-      socket.on("updateGameStatus", status => {
-        this.gameLength = status.gameLength;
-        if (status.isActive === false) {
+      socket.on("updateGameStatus", gameData => {
+        this.gameLength = gameData.gameLength;
+        this.remainingTime = gameData.remainingTime;
+        if (gameData.isActive === false) {
           this.gameStateBtnLoading = false;
           this.gameIsActive = false;
         } else {
@@ -155,6 +168,11 @@
           this.gameIsActive = true;
         }
       });
+      setInterval(() => {
+        if (this.gameIsActive) {
+          this.remainingTime -= 1000;
+        }
+      }, 1000);
     },
     beforeDestroy() {
       socket.disconnect();

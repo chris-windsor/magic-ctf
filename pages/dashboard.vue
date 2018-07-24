@@ -11,7 +11,7 @@
             <a>User: {{userData.username}}</a>
           </li>
           <li>
-            <a>Time Left: 3:00</a>
+            <a>Time Left: {{timeLeft}}</a>
           </li>
         </ul>
         <p class="menu-label"></p>
@@ -78,7 +78,8 @@
         puzzles: [],
         selectedHintCost: 0,
         rawTeamScores: {},
-        gameIsActive: false
+        gameIsActive: false,
+        remainingTime: 0
       };
     },
     computed: {
@@ -109,6 +110,17 @@
           }
         });
         return scoreAndPosition;
+      },
+      timeLeft() {
+        let hrs = Math.floor(this.remainingTime / (1000 * 3600));
+        let mins = Math.round((this.remainingTime % (1000 * 3600)) / 60000);
+        if (this.gameIsActive) {
+          if (mins === 60) {
+            return `${hrs + 1}:00`;
+          }
+          return `${hrs}:${mins}`;
+        }
+        return "-:--";
       }
     },
     methods: {
@@ -177,7 +189,7 @@
       socket.on("updateGameStatus", gameData => {
         this.rawTeamScores = gameData.teamScores;
         this.gameIsActive = gameData.isActive;
-        // TODO: process game timer
+        this.remainingTime = gameData.remainingTime;
       });
       socket.on("gameStateChange", () => {
         this.$router.go({
@@ -185,6 +197,11 @@
           force: true
         });
       });
+      setInterval(() => {
+        if (this.gameIsActive) {
+          this.remainingTime -= 1000;
+        }
+      }, 1000);
     },
     beforeDestroy() {
       socket.disconnect();

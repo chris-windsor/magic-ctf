@@ -5,7 +5,7 @@
         <p class="menu-label">Info:</p>
         <ul class="menu-list" id="sidebar-info">
           <li>
-            <a>Time Left: 3:00</a>
+            <a>Time Left: {{timeLeft}}</a>
           </li>
         </ul>
       </aside>
@@ -50,10 +50,24 @@
     },
     data() {
       return {
-        gameLength: "",
         helpRequests: [],
-        isLoading: true
+        isLoading: true,
+        gameIsActive: false,
+        remainingTime: 0
       };
+    },
+    computed: {
+      timeLeft() {
+        let hrs = Math.floor(this.remainingTime / (1000 * 3600));
+        let mins = Math.round((this.remainingTime % (1000 * 3600)) / 60000);
+        if (this.gameIsActive) {
+          if (mins === 60) {
+            return `${hrs + 1}:00`;
+          }
+          return `${hrs}:${mins}`;
+        }
+        return "-:--";
+      }
     },
     methods: {
       removeRequest(id) {
@@ -63,10 +77,19 @@
     },
     mounted() {
       socket.connect();
+      socket.on("updateGameStatus", gameData => {
+        this.gameIsActive = gameData.isActive;
+        this.remainingTime = gameData.remainingTime;
+      });
       socket.on("updateHelpRequests", requests => {
         this.helpRequests = requests;
         this.isLoading = false;
       });
+      setInterval(() => {
+        if (this.gameIsActive) {
+          this.remainingTime -= 1000;
+        }
+      }, 1000);
     },
     beforeDestroy() {
       socket.disconnect();

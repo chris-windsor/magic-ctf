@@ -25,7 +25,7 @@ const init = io => {
           } else if (user.accountType === "coach") {
             // coach just needs to join the room for their location
             // which allows them to recieve help requests from teams at that location
-            socket.join("coach-location-" + user.locationId);
+            socket.join(["ctf-coaches", "coach-location-" + user.locationId]);
             let helpRequests = [];
             let storedRequests =
               ctf.helpRequests["location-" + user.locationId];
@@ -37,7 +37,7 @@ const init = io => {
             socket.emit("updateHelpRequests", helpRequests);
           } else {
             // admin just needs to join ctf room
-            socket.join("ctf");
+            socket.join(["ctf", "ctf-admins"]);
           }
         }
       }
@@ -46,7 +46,8 @@ const init = io => {
     socket.emit("updateGameStatus", {
       isActive: ctf.isGameRunning(),
       gameLength: ctf.gameLength,
-      teamScores: ctf.teamScores
+      teamScores: ctf.teamScores,
+      remainingTime: ctf.getRemainingTime()
     });
     // handles updating of puzzles per team
     socket.on("requestPuzzles", () => {
@@ -253,11 +254,27 @@ const init = io => {
                   // changes game state to active
                   ctf.changeGameState(true);
                   io.to("ctf").emit("gameStateChange");
+                  io.to("ctf-coaches").emit("updateGameStatus", {
+                    isActive: ctf.isGameRunning(),
+                    remainingTime: ctf.getRemainingTime()
+                  });
+                  io.to("ctf-admins").emit("updateGameStatus", {
+                    isActive: ctf.isGameRunning(),
+                    remainingTime: ctf.getRemainingTime()
+                  });
                   break;
                 case "stop":
                   // changes game state to inactive
                   ctf.changeGameState(false);
                   io.to("ctf").emit("gameStateChange");
+                  io.to("ctf-coaches").emit("updateGameStatus", {
+                    isActive: ctf.isGameRunning(),
+                    remainingTime: ctf.getRemainingTime()
+                  });
+                  io.to("ctf-admins").emit("updateGameStatus", {
+                    isActive: ctf.isGameRunning(),
+                    remainingTime: ctf.getRemainingTime()
+                  });
                   break;
                 default:
                   // no commands were found, this should not be possible
