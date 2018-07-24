@@ -13,6 +13,8 @@ let teamScores = {
   TheWinners: 0
 };
 
+let helpRequests = {};
+
 const changeGameState = newState => {
   gameIsRunning = newState;
 };
@@ -31,7 +33,7 @@ const updateTeamScores = () => {
   for (const team in teamList) {
     if (teamList.hasOwnProperty(team)) {
       const t = teamList[team];
-      teamScores[team] = t.score;    
+      teamScores[team] = t.score;
     }
   }
 };
@@ -133,6 +135,7 @@ module.exports = {
   isGameRunning,
   teamList,
   teamScores,
+  helpRequests,
   gameLength,
   setEndTime,
   getEndTime,

@@ -149,7 +149,7 @@
           title: "Please confirm",
           confirmText: "Yes, please",
           onConfirm: () => {
-            // TODO: send request for help
+            socket.emit("requestHelp");
             this.$toast.open({
               message: "Requesting help...",
               type: "is-info",

@@ -1,6 +1,5 @@
 const User = require("../models/user");
 const ctf = require("./ctf");
-const Team = require("../utils/team");
 
 const init = io => {
   io.on("connection", socket => {
@@ -14,11 +13,28 @@ const init = io => {
           socket.join("ctf");
         } else {
           if (user.accountType === "player") {
-            let teamRoom = "team-" + user.teamName;
             // this adds each team to its own room
             // which allows teams to recieve only their updates
             // updates per team include: puzzle submittal and hint request
-            socket.join(["ctf", teamRoom]);
+            let teamRoom = "team-" + user.teamName;
+            // this adds each team to a room for their respective location
+            // which allows teams to request help from coaches
+            // only sends help to coaches that share that location
+            let locationRoom = "location-" + user.locationId;
+            socket.join(["ctf", teamRoom, locationRoom]);
+          } else if (user.accountType === "coach") {
+            // coach just needs to join the room for their location
+            // which allows them to recieve help requests from teams at that location
+            socket.join("coach-location-" + user.locationId);
+            let helpRequests = [];
+            let storedRequests =
+              ctf.helpRequests["location-" + user.locationId];
+            if (storedRequests) {
+              if (storedRequests.length > 0) {
+                helpRequests = storedRequests;
+              }
+            }
+            socket.emit("updateHelpRequests", helpRequests);
           } else {
             // admin just needs to join ctf room
             socket.join("ctf");
@@ -149,6 +165,75 @@ const init = io => {
         }
       });
     });
+    // handles help requesting
+    socket.on("requestHelp", () => {
+      User.findById(socket.handshake.session.userId).exec(function(
+        error,
+        user
+      ) {
+        if (error) {
+          return error;
+        } else {
+          if (user === null) {
+            // not logged in
+            // this shouldnt be possible theoretically so we arent going to worry about it for now
+          } else {
+            // only want to allow help request for players
+            if (user.accountType === "player") {
+              let storedRequests =
+                ctf.helpRequests["location-" + user.locationId];
+              if (storedRequests) {
+                ctf.helpRequests["location-" + user.locationId].push(
+                  user.teamName
+                );
+              } else {
+                ctf.helpRequests["location-" + user.locationId] = [
+                  user.teamName
+                ];
+              }
+              io.to("coach-location-" + user.locationId).emit(
+                "updateHelpRequests",
+                ctf.helpRequests["location-" + user.locationId]
+              );
+            }
+          }
+        }
+      });
+    });
+    // handles help request removing
+    socket.on("removeHelpRequest", hintIndex => {
+      User.findById(socket.handshake.session.userId).exec(function(
+        error,
+        user
+      ) {
+        if (error) {
+          return error;
+        } else {
+          if (user === null) {
+            // not logged in
+            // this shouldnt be possible theoretically so we arent going to worry about it for now
+          } else {
+            // only want to allow coaches to remove help requests
+            if (user.accountType === "coach") {
+              ctf.helpRequests["location-" + user.locationId].splice(
+                hintIndex,
+                1
+              );
+              let helpRequests = [];
+              let storedRequests =
+                ctf.helpRequests["location-" + user.locationId];
+              if (storedRequests) {
+                if (storedRequests.length > 0) {
+                  helpRequests = storedRequests;
+                }
+              }
+              socket.emit("updateHelpRequests", helpRequests);
+            }
+          }
+        }
+      });
+    });
+    // handles admin commands
     socket.on("adminCommand", command => {
       User.findById(socket.handshake.session.userId).exec(function(
         error,

@@ -12,7 +12,21 @@
     </div>
     <div class="column is-10">
       <div class="box content">
-        help requests will be displayed here
+        <h1 class="title is-4">Help requests:</h1>
+        <b-loading :active.sync="isLoading"></b-loading>
+        <ul v-if="helpRequests.length > 0">
+          <li class="title is-4" v-for="(req, index) in helpRequests" :key="index">{{req}}
+            <button class="button is-danger is-small is-rounded" @click="removeRequest(index)">
+              <span class="icon is-small">
+                <i class="fas fa-times"></i>
+              </span>
+              <span>remove</span>
+            </button>
+          </li>
+        </ul>
+        <div class="notification is-info" v-if="helpRequests.length === 0 && isLoading === false">
+          Help requests will display here when there is any.
+        </div>
       </div>
     </div>
   </div>
@@ -36,11 +50,23 @@
     },
     data() {
       return {
-        gameLength: ""
+        gameLength: "",
+        helpRequests: [],
+        isLoading: true
       };
+    },
+    methods: {
+      removeRequest(id) {
+        this.helpRequests.splice(id, 1);
+        socket.emit("removeHelpRequest", id);
+      }
     },
     mounted() {
       socket.connect();
+      socket.on("updateHelpRequests", requests => {
+        this.helpRequests = requests;
+        this.isLoading = false;
+      });
     },
     beforeDestroy() {
       socket.disconnect();
