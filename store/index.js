@@ -96,6 +96,8 @@ const store = () =>
           .then(res => {
             if (res.status === 401) {
               throw new Error("Username or password is incorrect");
+            } else if (res.status === 400) {
+              throw new Error("All fields required");
             } else {
               return res.json();
             }
