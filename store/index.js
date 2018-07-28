@@ -70,8 +70,10 @@ const store = () =>
               this.$router.replace("/dashboard");
             } else if (authUser.accountType === "coach") {
               this.$router.replace("/coach");
-            } else {
+            } else if (authUser.accountType === "admin") {
               this.$router.replace("/admin");
+            } else {
+              this.$router.replace("/");
             }
           })
           .catch(err => {
@@ -105,8 +107,10 @@ const store = () =>
               this.$router.replace("/dashboard");
             } else if (authUser.accountType === "coach") {
               this.$router.replace("/coach");
-            } else {
+            } else if (authUser.accountType === "admin") {
               this.$router.replace("/admin");
+            } else {
+              this.$router.replace("/");
             }
           })
           .catch(err => {

@@ -97,6 +97,7 @@ async function start() {
   // Give nuxt middleware to express
   app.use(nuxt.render);
 
+  require("../utils/adminInitializer").init(db);
   require("../utils/socketHandler").init(io);
 
   // Listen the server
