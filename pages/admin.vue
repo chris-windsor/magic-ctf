@@ -91,7 +91,6 @@
         editorCompName: "",
         gameStateBtnLoading: true,
         gameIsActive: false,
-        gameLength: "",
         remainingTime: 0
       };
     },
@@ -105,10 +104,15 @@
         let hrs = Math.floor(this.remainingTime / (1000 * 3600));
         let mins = Math.round((this.remainingTime % (1000 * 3600)) / 60000);
         if (this.gameIsActive) {
-          if (mins === 60) {
+          if (mins === 0) {
+            return `${hrs}:00`;
+          } else if (mins === 60) {
             return `${hrs + 1}:00`;
+          } else if (mins < 10) {
+            return `${hrs}:0${mins}`;
+          } else {
+            return `${hrs}:${mins}`;
           }
-          return `${hrs}:${mins}`;
         }
         return "-:--";
       }
@@ -155,17 +159,18 @@
       }
     },
     mounted() {
-      // TODO: prompt admin to change password on first login
       socket.connect();
       socket.on("updateGameStatus", gameData => {
-        this.gameLength = gameData.gameLength;
-        this.remainingTime = gameData.remainingTime;
-        if (gameData.isActive === false) {
-          this.gameStateBtnLoading = false;
-          this.gameIsActive = false;
-        } else {
-          this.gameStateBtnLoading = false;
-          this.gameIsActive = true;
+        if (gameData.remainingTime !== undefined)
+          this.remainingTime = gameData.remainingTime;
+        if (gameData.isActive !== undefined) {
+          if (gameData.isActive === false) {
+            this.gameStateBtnLoading = false;
+            this.gameIsActive = false;
+          } else {
+            this.gameStateBtnLoading = false;
+            this.gameIsActive = true;
+          }
         }
       });
       setInterval(() => {

@@ -61,10 +61,17 @@
       }
     },
     mounted() {
-      let length = this.$parent.gameLength.split(":");
-      this.selectedHour = `${length[0]}`;
-      this.selectedMinute = `${length[1]}`;
-      this.isLoading = false;
+      this.$axios
+        .get("/api/admin/settings/gamelength")
+        .then(res => {
+          let length = res.data.gameLength.split(":");
+          this.selectedHour = `${length[0]}`;
+          this.selectedMinute = `${length[1]}`;
+          this.isLoading = false;
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
   };
 </script>

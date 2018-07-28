@@ -5,6 +5,7 @@ class Team {
     this.name = name;
     this.players = {};
     this.score = 0;
+    ctf.updateTeamScores();
     this.puzzles = ctf.getPuzzlesForPlayer();
   }
 

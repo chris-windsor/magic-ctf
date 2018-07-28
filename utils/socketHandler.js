@@ -22,6 +22,10 @@ const init = io => {
             // only sends help to coaches that share that location
             let locationRoom = "location-" + user.locationId;
             socket.join(["ctf", teamRoom, locationRoom]);
+            // updates scoreboard for everyone
+            io.to("ctf").emit("updateGameStatus", {
+              teamScores: ctf.teamScores
+            });
           } else if (user.accountType === "coach") {
             // coach just needs to join the room for their location
             // which allows them to recieve help requests from teams at that location
@@ -113,6 +117,9 @@ const init = io => {
                     io.to("ctf").emit("updateGameStatus", {
                       teamScores: ctf.teamScores
                     });
+                    socket.emit("updateGameStatus", {
+                      teamScores: ctf.teamScores
+                    });
                   } else {
                     // sends event to alert teams that their answer was incorrect
                     socket.emit("incorrectAnswer", submittedAnswer.puzzleName);
@@ -157,6 +164,9 @@ const init = io => {
                   io.to(teamRoom).emit("updateTeamPuzzles", teamPuzzleData);
                   // broadcasts to everyone the new updated team scores
                   io.to("ctf").emit("updateGameStatus", {
+                    teamScores: ctf.teamScores
+                  });
+                  socket.emit("updateGameStatus", {
                     teamScores: ctf.teamScores
                   });
                 }

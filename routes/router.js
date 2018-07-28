@@ -75,12 +75,15 @@ router.post("/api/register", function(req, res) {
             accountType: user.accountType
           };
           const userTeam = user.teamName;
-          if (!ctf.teamList[userTeam]) {
-            let newTeam = new Team.Team(userTeam);
-            newTeam.addPlayer(user.username);
-            ctf.teamList[userTeam] = newTeam;
-          } else {
-            ctf.teamList[userTeam].addPlayer(user.username);
+          if (userTeam !== undefined) {
+            if (!ctf.teamList[userTeam]) {
+              let newTeam = new Team.Team(userTeam);
+              newTeam.addPlayer(user.username);
+              ctf.teamList[userTeam] = newTeam;
+              ctf.teamScores[userTeam] = 0;
+            } else {
+              ctf.teamList[userTeam].addPlayer(user.username);
+            }
           }
           return res.json({
             username: user.username,
@@ -109,12 +112,15 @@ router.post("/api/login", function(req, res) {
           accountType: user.accountType
         };
         const userTeam = user.teamName;
-        if (!ctf.teamList[userTeam]) {
-          let newTeam = new Team.Team(userTeam);
-          newTeam.addPlayer(user.username);
-          ctf.teamList[userTeam] = newTeam;
-        } else {
-          ctf.teamList[userTeam].addPlayer(user.username);
+        if (userTeam !== undefined) {
+          if (!ctf.teamList[userTeam]) {
+            let newTeam = new Team.Team(userTeam);
+            newTeam.addPlayer(user.username);
+            ctf.teamList[userTeam] = newTeam;
+            ctf.teamScores[userTeam] = 0;
+          } else {
+            ctf.teamList[userTeam].addPlayer(user.username);
+          }
         }
         return res.json({
           username: user.username,
@@ -204,6 +210,31 @@ router.post("/api/admin/settings/locations", function(req, res) {
           ctf.updateLocations(req.body.locationData);
           res.json({
             ok: true
+          });
+        } else {
+          res.status(403).json({
+            error: "You must be an admin to make that request"
+          });
+        }
+      }
+    }
+  });
+});
+
+// GET `/api/admin/settings/gamelength` to retrieve game length
+router.get("/api/admin/settings/gamelength", function(req, res) {
+  User.findById(req.session.userId).exec(function(error, user) {
+    if (error) {
+      return error;
+    } else {
+      if (user === null) {
+        res.status(401).json({
+          error: "You must be an authenticated to make that request"
+        });
+      } else {
+        if (user.accountType === "admin") {
+          return res.json({
+            gameLength: ctf.gameLength
           });
         } else {
           res.status(403).json({

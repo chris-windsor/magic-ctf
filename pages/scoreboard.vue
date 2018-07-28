@@ -8,6 +8,9 @@
       </div>
     </nav>
     <div id="scoreListingContainer">
+      <div class="notification is-info" v-if="processedTeamScores.length === 0">
+        No teams have currently registered for the CTF
+      </div>
       <div class="box" v-for="(score, index) in processedTeamScores" :key="index">
         <h1 class="title is-4">{{index + 1}}. {{score.teamName}} : {{score.teamScore}} points</h1>
       </div>

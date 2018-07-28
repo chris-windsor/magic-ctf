@@ -41,8 +41,8 @@
     },
     data() {
       return {
-        username: "admin",
-        password: "123"
+        username: "",
+        password: ""
       };
     },
     computed: {

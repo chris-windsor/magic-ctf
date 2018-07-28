@@ -6,12 +6,7 @@ let remainingTime;
 
 let teamList = {};
 
-let teamScores = {
-  TheBestTeam: 15,
-  Falcons: 0,
-  Hackers: 40,
-  TheWinners: 0
-};
+let teamScores = {};
 
 let helpRequests = {};
 

@@ -61,10 +61,15 @@
         let hrs = Math.floor(this.remainingTime / (1000 * 3600));
         let mins = Math.round((this.remainingTime % (1000 * 3600)) / 60000);
         if (this.gameIsActive) {
-          if (mins === 60) {
+          if (mins === 0) {
+            return `${hrs}:00`;
+          } else if (mins === 60) {
             return `${hrs + 1}:00`;
+          } else if (mins < 10) {
+            return `${hrs}:0${mins}`;
+          } else {
+            return `${hrs}:${mins}`;
           }
-          return `${hrs}:${mins}`;
         }
         return "-:--";
       }
@@ -78,8 +83,10 @@
     mounted() {
       socket.connect();
       socket.on("updateGameStatus", gameData => {
-        this.gameIsActive = gameData.isActive;
-        this.remainingTime = gameData.remainingTime;
+        if (gameData.isActive !== undefined)
+          this.gameIsActive = gameData.isActive;
+        if (gameData.remainingTime !== undefined)
+          this.remainingTime = gameData.remainingTime;
       });
       socket.on("updateHelpRequests", requests => {
         this.helpRequests = requests;
