@@ -17,14 +17,14 @@
         particlesJS("particles-js", {
           particles: {
             number: {
-              value: 90,
+              value: 80,
               density: {
                 enable: true,
                 value_area: 2604.1872173865
               }
             },
             color: {
-              value: "#1b1e34"
+              value: "#6f4793"
             },
             shape: {
               type: "polygon",
@@ -42,17 +42,17 @@
               }
             },
             opacity: {
-              value: 0.3,
+              value: 0.5,
               random: true,
               anim: {
-                enable: false,
+                enable: true,
                 speed: 1,
                 opacity_min: 0.1,
                 sync: false
               }
             },
             size: {
-              value: 47.34885849793636,
+              value: 43,
               random: false,
               anim: {
                 enable: true,
@@ -64,13 +64,13 @@
             line_linked: {
               enable: true,
               distance: 189.39543399174545,
-              color: "#757575",
-              opacity: 1,
-              width: 2
+              color: "#582c76",
+              opacity: 0.7,
+              width: 2.5
             },
             move: {
               enable: true,
-              speed: 8,
+              speed: 5,
               direction: "none",
               random: false,
               straight: false,
@@ -138,6 +138,7 @@
   }
 
   #login-form {
+    background-color: rgba(255, 255, 255, 0.9);
     width: 300px;
     position: absolute;
     top: 50%;

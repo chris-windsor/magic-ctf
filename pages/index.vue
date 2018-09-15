@@ -3,27 +3,29 @@
     <img src="~/assets/ctficon.png" draggable="false">
     <h1 class="title is-3">MAGIC CTF</h1>
     <div class="notification is-danger" v-if="loginError !== ''">{{loginError}}</div>
-    <div class="field">
-      <p class="control has-icons-left">
-        <input class="input" type="text" placeholder="Username" required="" autofocus="autofocus" v-model="username" />
-        <span class="icon is-small is-left">
-          <i class="fa fa-user"></i>
-        </span>
-      </p>
-    </div>
-    <div class="field">
-      <p class="control has-icons-left">
-        <input class="input" type="password" placeholder="Password" required="" v-model="password" />
-        <span class="icon is-small is-left">
-          <i class="fa fa-lock"></i>
-        </span>
-      </p>
-    </div>
-    <div class="field is-grouped is-grouped-centered">
-      <p class="control">
-        <button class="button is-success is-rounded" @click="login()">Login</button>
-      </p>
-    </div>
+    <form action="/" @submit="submitForm($event)">
+      <div class="field">
+        <p class="control has-icons-left">
+          <input class="input" type="text" placeholder="Username" required="" autofocus="autofocus" v-model="username" />
+          <span class="icon is-small is-left">
+            <i class="fa fa-user"></i>
+          </span>
+        </p>
+      </div>
+      <div class="field">
+        <p class="control has-icons-left">
+          <input class="input" type="password" placeholder="Password" required="" v-model="password" />
+          <span class="icon is-small is-left">
+            <i class="fa fa-lock"></i>
+          </span>
+        </p>
+      </div>
+      <div class="field is-grouped is-grouped-centered">
+        <p class="control">
+          <button class="button is-success is-rounded" @click="login()">Login</button>
+        </p>
+      </div>
+    </form>
     <p class="has-text-blue"></p>Need an account?
     <nuxt-link class="has-text-grey" style="border-bottom: 1px solid currentColor;" tag="a" to="/register">Register</nuxt-link>
   </div>
@@ -55,6 +57,9 @@
       }
     },
     methods: {
+      submitForm(e) {
+        e.preventDefault();
+      },
       login() {
         this.$store.dispatch("login", {
           username: this.username,
