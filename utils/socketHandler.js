@@ -106,8 +106,19 @@ const init = io => {
                     ctf.teamList[user.teamName].addCorrectPuzzle(
                       submittedAnswer.puzzleId
                     );
+                    // get total cost of any hints used
+                    let totalUsedHintsCost = 0;
+                    ctf.teamList[user.teamName].puzzles[
+                      submittedAnswer.puzzleId
+                    ].hints.forEach(hint => {
+                      if (hint.content != "") {
+                        totalUsedHintsCost += hint.cost;
+                      }
+                    });
                     // gives points to team equivalent to puzzle value
-                    ctf.teamList[user.teamName].addScore(answer.reward);
+                    ctf.teamList[user.teamName].addScore(
+                      answer.reward - totalUsedHintsCost
+                    );
                     teamPuzzleData = ctf.teamList[user.teamName].getPuzzles();
                     let teamRoom = "team-" + user.teamName;
                     // broadcasts to all team players their updated puzzles
@@ -155,8 +166,6 @@ const init = io => {
                     requestedHint.hintId,
                     hint.hintContent
                   );
-                  // takes points away from team equivalent to hint cost
-                  ctf.teamList[user.teamName].subtractScore(hint.hintCost);
                   teamPuzzleData = ctf.teamList[user.teamName].getPuzzles();
                   let teamRoom = "team-" + user.teamName;
                   // broadcasts to all team players their updated puzzles

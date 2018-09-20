@@ -8,17 +8,19 @@
       <div class="column is-6">
         <h1 class="title is-3">{{puzzleData.title}}</h1>
         <h1 class="subtitle is-5">{{puzzleData.value}}</h1>
-        <div class="field is-grouped">
-          <div class="control has-icons-left has-icons-right is-expanded">
-            <input type="text" class="input is-info is-active" placeholder="Flag" v-model="answer">
-            <span class="icon is-left">
-              <i class="fa fa-flag"></i>
-            </span>
+        <form action="/" @submit="submitAnswer($event)">
+          <div class="field is-grouped">
+            <div class="control has-icons-left has-icons-right is-expanded">
+              <input type="text" class="input is-info is-active" placeholder="Flag" v-model="answer">
+              <span class="icon is-left">
+                <i class="fa fa-flag"></i>
+              </span>
+            </div>
+            <p class="control">
+              <a class="button is-success" @click="submitAnswer()">Submit</a>
+            </p>
           </div>
-          <p class="control">
-            <a class="button is-success" @click="$emit('submitAnswer', id, puzzleData.title, answer)">Submit</a>
-          </p>
-        </div>
+        </form>
       </div>
       <div class="column is-6">
         <h1 class="title is-5" v-if="puzzleData.hints.length > 1">Hints:</h1>
@@ -42,6 +44,12 @@
       };
     },
     methods: {
+      submitAnswer(e) {
+        this.$emit("submitAnswer", this.id, this.puzzleData.title, this.answer);
+        if (e != null) {
+          e.preventDefault();
+        }
+      },
       requestHint(id, cost) {
         this.$emit("requestHint", this.id, this.puzzleData.title, id, cost);
       }

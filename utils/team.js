@@ -15,6 +15,7 @@ class Team {
 
   addHint(puzzleId, hintId, hintContent) {
     this.puzzles[puzzleId].hints[hintId].content = hintContent;
+    this.puzzles[puzzleId].value -= this.puzzles[puzzleId].hints[hintId].cost;
   }
 
   addCorrectPuzzle(puzzleId) {
@@ -23,11 +24,6 @@ class Team {
 
   addScore(points) {
     this.score += points;
-    ctf.updateTeamScores();
-  }
-
-  subtractScore(points) {
-    this.score -= points;
     ctf.updateTeamScores();
   }
 

@@ -139,7 +139,7 @@
       requestHint(puzzleId, puzzleName, hintId, hintCost) {
         this.selectedHintCost = hintCost;
         this.$dialog.confirm({
-          message: `Upon request of this hint, your team will lose ${
+          message: `If this hint is requested, the total value of this problem will be deducted by ${
             this.selectedHintCost
           } points.`,
           type: "is-success",
