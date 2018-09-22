@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require("../models/user");
 const ctf = require("../utils/ctf");
 const Team = require("../utils/team");
+const dc = require("../utils/datacollection");
 
 // GET `/api/register/locations` to return available locations to register at
 router.get("/api/register/locations", function(req, res) {
@@ -261,6 +262,32 @@ router.post("/api/admin/settings/gamelength", function(req, res) {
           ctf.gameLength = `${req.body.hr}:${req.body.min}`;
           res.json({
             ok: true
+          });
+        } else {
+          res.status(403).json({
+            error: "You must be an admin to make that request"
+          });
+        }
+      }
+    }
+  });
+});
+
+// GET `/api/admin/gamedata` to retrieve game data
+router.get("/api/admin/gamedata", function(req, res) {
+  User.findById(req.session.userId).exec(function(error, user) {
+    if (error) {
+      return error;
+    } else {
+      if (user === null) {
+        res.status(401).json({
+          error: "You must be an authenticated to make that request"
+        });
+      } else {
+        if (user.accountType === "admin") {
+          return res.json({
+            gameStatistics: dc.gameStatistics,
+            gameLog: dc.gameLog
           });
         } else {
           res.status(403).json({

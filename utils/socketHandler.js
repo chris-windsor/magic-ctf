@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const ctf = require("./ctf");
+const dc = require("./datacollection");
 
 const init = io => {
   io.on("connection", socket => {
@@ -131,9 +132,21 @@ const init = io => {
                     socket.emit("updateGameStatus", {
                       teamScores: ctf.teamScores
                     });
+                    dc.addPuzzleSuccess(submittedAnswer.puzzleId);
+                    dc.addLog(
+                      `Team: '${user.teamName}' solved puzzle: '${
+                        submittedAnswer.puzzleName
+                      }`
+                    );
                   } else {
                     // sends event to alert teams that their answer was incorrect
                     socket.emit("incorrectAnswer", submittedAnswer.puzzleName);
+                    dc.addPuzzleAttempt(submittedAnswer.puzzleId);
+                    dc.addLog(
+                      `Team: '${user.teamName}' attempted puzzle: '${
+                        submittedAnswer.puzzleName
+                      }' with answer: '${submittedAnswer.answer}'`
+                    );
                   }
                 }
               }
@@ -178,6 +191,13 @@ const init = io => {
                   socket.emit("updateGameStatus", {
                     teamScores: ctf.teamScores
                   });
+                  dc.addHintUse(requestedHint.puzzleId, requestedHint.hintId);
+                  dc.addLog(
+                    `Team: '${
+                      user.teamName
+                    }' requested hint #${requestedHint.hintId +
+                      1} for puzzle: '${requestedHint.puzzleName}'`
+                  );
                 }
               }
             }

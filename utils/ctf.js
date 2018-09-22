@@ -13,9 +13,9 @@ let helpRequests = {};
 const changeGameState = newState => {
   gameIsRunning = newState;
   if (newState === true && remainingTime === undefined) {
-    let timeComponents = gameLength.split(":");
-    let hrs = Number(timeComponents[0].slice(0, -2)) * 1000 * 3600;
-    let mins = Number(timeComponents[1].slice(0, -3)) * 1000 * 60;
+    const timeComponents = gameLength.split(":");
+    const hrs = Number(timeComponents[0].slice(0, -2)) * 1000 * 3600;
+    const mins = Number(timeComponents[1].slice(0, -3)) * 1000 * 60;
     remainingTime = hrs + mins;
   }
 };
@@ -50,7 +50,7 @@ const updateTeamScores = () => {
 const puzzles = require("./puzzles.json");
 
 const getHint = request => {
-  let hint = puzzles[request.puzzleName].hints[request.hintId];
+  const hint = puzzles[request.puzzleName].hints[request.hintId];
   return {
     hintContent: hint.content,
     hintCost: hint.cost
@@ -70,7 +70,7 @@ const checkAnswer = request => {
 };
 
 const getPuzzlesForPlayer = () => {
-  let puzzleNames = Object.keys(puzzles);
+  const puzzleNames = Object.keys(puzzles);
   let puzzleData = [];
   puzzleNames.forEach(entry => {
     let hints = [];
@@ -91,7 +91,7 @@ const getPuzzlesForPlayer = () => {
 };
 
 const getPuzzlesForAdmin = () => {
-  let puzzleNames = Object.keys(puzzles);
+  const puzzleNames = Object.keys(puzzles);
   let puzzleData = [];
   puzzleNames.forEach(entry => {
     puzzleData.push({
@@ -99,6 +99,26 @@ const getPuzzlesForAdmin = () => {
       answer: puzzles[entry].answer,
       value: puzzles[entry].value,
       hints: puzzles[entry].hints
+    });
+  });
+  return puzzleData;
+};
+
+const getPuzzlesForDataCollection = () => {
+  const puzzleNames = Object.keys(puzzles);
+  let puzzleData = [];
+  puzzleNames.forEach(entry => {
+    let hints = [];
+    puzzles[entry].hints.forEach(hint => {
+      hints.push({
+        uses: 0
+      });
+    });
+    puzzleData.push({
+      name: entry,
+      attempts: 0,
+      successes: 0,
+      hints
     });
   });
   return puzzleData;
@@ -127,7 +147,7 @@ const locations = require("./locations.json");
 const getLocations = () => locations.locations;
 
 const updateLocations = locationData => {
-  let locs = {
+  const locs = {
     locations: locationData
   };
   fs.writeFile(
@@ -154,6 +174,7 @@ module.exports = {
   checkAnswer,
   getPuzzlesForPlayer,
   getPuzzlesForAdmin,
+  getPuzzlesForDataCollection,
   updatePuzzles,
   getLocations,
   updateLocations
