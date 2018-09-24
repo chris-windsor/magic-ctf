@@ -8,7 +8,11 @@
         </span>
       </div>
       <p class="control">
-        <a class="button is-danger" @click="$emit('delete', id)">Delete</a>
+        <a class="button is-danger" @click="$emit('delete', id)">
+          <span class="icon is-small">
+            <i class="fas fa-times"></i>
+          </span>
+        </a>
       </p>
     </div>
   </div>

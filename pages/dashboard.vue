@@ -47,7 +47,7 @@
         </nav>
       </div>
       <div class="box content">
-        <div class="notification is-info" v-if="puzzles.length === 0">Challenges will show when competition is in progress</div>
+        <div class="notification is-success" v-if="puzzles.length === 0">Congratulations you have successfully logged in. The game will begin shortly.</div>
         <div v-else>
           <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" :id="index" @submitAnswer="submitAnswer" @requestHint="requestHint"></puzzle>
         </div>
