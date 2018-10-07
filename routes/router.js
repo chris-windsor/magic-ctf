@@ -81,7 +81,10 @@ router.post("/api/register", function(req, res) {
               let newTeam = new Team.Team(userTeam);
               newTeam.addPlayer(user.username);
               ctf.teamList[userTeam] = newTeam;
-              ctf.teamScores[userTeam] = 0;
+              ctf.teamScores[userTeam] = {
+                score: 0,
+                lastUpdated: Date.now()
+              };
             } else {
               ctf.teamList[userTeam].addPlayer(user.username);
             }
@@ -118,7 +121,10 @@ router.post("/api/login", function(req, res) {
             let newTeam = new Team.Team(userTeam);
             newTeam.addPlayer(user.username);
             ctf.teamList[userTeam] = newTeam;
-            ctf.teamScores[userTeam] = 0;
+            ctf.teamScores[userTeam] = {
+              score: 0,
+              lastUpdated: Date.now()
+            };
           } else {
             ctf.teamList[userTeam].addPlayer(user.username);
           }

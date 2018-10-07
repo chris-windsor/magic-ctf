@@ -7,6 +7,7 @@ class Team {
     this.score = 0;
     ctf.updateTeamScores();
     this.puzzles = ctf.getPuzzlesForPlayer();
+    this.lastUpdated = Date.now();
   }
 
   getPuzzles() {
@@ -24,6 +25,7 @@ class Team {
 
   addScore(points) {
     this.score += points;
+    this.lastUpdated = Date.now();
     ctf.updateTeamScores();
   }
 

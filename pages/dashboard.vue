@@ -97,15 +97,19 @@
       teamScoreAndPosition() {
         let sorted = [];
         for (let team in this.rawTeamScores) {
-          sorted.push({ teamName: team, teamScore: this.rawTeamScores[team] });
+          const { score, lastUpdated } = this.rawTeamScores[team];
+          sorted.push({ teamName: team, score, lastUpdated });
         }
         sorted.sort((a, b) => {
-          return b.teamScore - a.teamScore;
+          return a.lastUpdated - b.lastUpdated;
+        });
+        sorted.sort((a, b) => {
+          return b.score - a.score;
         });
         let scoreAndPosition = {};
         sorted.forEach((entry, index) => {
           if (entry.teamName === this.userData.teamName) {
-            scoreAndPosition.score = entry.teamScore;
+            scoreAndPosition.score = entry.score;
             scoreAndPosition.position = index + 1;
           }
         });

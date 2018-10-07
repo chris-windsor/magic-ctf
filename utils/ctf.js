@@ -41,8 +41,11 @@ setInterval(() => {
 const updateTeamScores = () => {
   for (const team in teamList) {
     if (teamList.hasOwnProperty(team)) {
-      const t = teamList[team];
-      teamScores[team] = t.score;
+      const { score, lastUpdated } = teamList[team];
+      teamScores[team] = {
+        score,
+        lastUpdated
+      };
     }
   }
 };

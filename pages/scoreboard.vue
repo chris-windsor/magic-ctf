@@ -12,7 +12,7 @@
         No teams have currently registered for the CTF
       </div>
       <div class="box" v-for="(score, index) in processedTeamScores" :key="index">
-        <h1 class="title is-4">{{index + 1}}. {{score.teamName}} : {{score.teamScore}} points</h1>
+        <h1 class="title is-4">{{index + 1}}. {{score.teamName}} : {{score.score}} points</h1>
       </div>
     </div>
   </div>
@@ -31,10 +31,14 @@
       processedTeamScores() {
         let sorted = [];
         for (let team in this.rawTeamScores) {
-          sorted.push({ teamName: team, teamScore: this.rawTeamScores[team] });
+          const { score, lastUpdated } = this.rawTeamScores[team];
+          sorted.push({ teamName: team, score, lastUpdated });
         }
         sorted.sort((a, b) => {
-          return b.teamScore - a.teamScore;
+          return a.lastUpdated - b.lastUpdated;
+        });
+        sorted.sort((a, b) => {
+          return b.score - a.score;
         });
         return sorted;
       }
