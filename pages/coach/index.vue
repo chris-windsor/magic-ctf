@@ -61,7 +61,9 @@
         let hrs = Math.floor(this.remainingTime / (1000 * 3600));
         let mins = Math.round((this.remainingTime % (1000 * 3600)) / 60000);
         if (this.gameIsActive) {
-          if (mins === 0) {
+          if (hrs <= 0 && mins <= 0) {
+            return `0:00`;
+          } else if (mins === 0) {
             return `${hrs}:00`;
           } else if (mins === 60) {
             return `${hrs + 1}:00`;
