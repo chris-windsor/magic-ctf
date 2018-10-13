@@ -8,14 +8,14 @@
 ## Installation/Starting up
 
 - Start MongoDB server
-- Run: `npm install`
-- Run: `npm run dev` for dev mode or `npm start` for production mode
+- Run: `npm i`
+- Run: `npm run dev` for dev mode OR `npm run generate` then `npm run start` for production mode
 
 ## Usage
 
-- Copy admin password from start up logs
-- Log into admin account and configure game to liking
-- Start game when everyone is registered and ready
+- Copy admin password from server start up logs
+- Log into admin account and configure game to your liking
+- Start game when everyone is registered and ready to begin
 
 ## License
 
