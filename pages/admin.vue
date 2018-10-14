@@ -8,7 +8,7 @@
             <a>Time Left: {{timeLeft}}</a>
           </li>
         </ul>
-        <br/>
+        <br />
         <ul class="menu-list">
           <li class="has-text-centered">
             <button class="button is-medium is-rounded" :class="{'is-loading': gameStateBtnLoading, 'is-success': !gameStateBtnLoading && !gameIsActive,  'is-danger': !gameStateBtnLoading && gameIsActive}" @click="toggleGameState()">{{gameStateBtnLabel}}</button>
@@ -163,6 +163,9 @@
     mounted() {
       socket.connect();
       socket.on("updateGameStatus", gameData => {
+        if (!gameData.isAuth) {
+          this.$store.dispatch("logout");
+        }
         if (gameData.remainingTime !== undefined)
           this.remainingTime = gameData.remainingTime;
         if (gameData.isActive !== undefined) {

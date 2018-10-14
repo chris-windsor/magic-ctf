@@ -85,6 +85,9 @@
     mounted() {
       socket.connect();
       socket.on("updateGameStatus", gameData => {
+        if (!gameData.isAuth) {
+          this.$store.dispatch("logout");
+        }
         if (gameData.isActive !== undefined)
           this.gameIsActive = gameData.isActive;
         if (gameData.remainingTime !== undefined)

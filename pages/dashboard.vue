@@ -198,6 +198,9 @@
         });
       });
       socket.on("updateGameStatus", gameData => {
+        if (!gameData.isAuth) {
+          this.$store.dispatch("logout");
+        }
         if (gameData.teamScores !== undefined)
           this.rawTeamScores = gameData.teamScores;
         if (gameData.isActive !== undefined)

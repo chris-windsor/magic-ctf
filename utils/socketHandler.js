@@ -5,6 +5,7 @@ const dc = require("./datacollection");
 const init = io => {
   io.on("connection", socket => {
     User.findById(socket.handshake.session.userId).exec(function(error, user) {
+      let isAuth = true;
       if (error) {
         return error;
       } else {
@@ -12,6 +13,7 @@ const init = io => {
           // this adds people who are not authenticated to the room
           // this allows non participants to still get scoreboard updates
           socket.join("ctf");
+          isAuth = false;
         } else {
           if (user.accountType === "player") {
             // this adds each team to its own room
@@ -46,13 +48,14 @@ const init = io => {
           }
         }
       }
-    });
-    // sends game state at time of initial socket connection
-    socket.emit("updateGameStatus", {
-      isActive: ctf.isGameRunning(),
-      gameLength: ctf.gameLength,
-      teamScores: ctf.teamScores,
-      remainingTime: ctf.getRemainingTime()
+      // sends game state at time of initial socket connection
+      socket.emit("updateGameStatus", {
+        isAuth,
+        isActive: ctf.isGameRunning(),
+        gameLength: ctf.gameLength,
+        teamScores: ctf.teamScores,
+        remainingTime: ctf.getRemainingTime()
+      });
     });
     // handles updating of puzzles per team
     socket.on("requestPuzzles", () => {
