@@ -27,6 +27,7 @@ const init = io => {
             socket.join(["ctf", teamRoom, locationRoom]);
             // updates scoreboard for everyone
             io.to("ctf").emit("updateGameStatus", {
+              isAuth,
               teamScores: ctf.teamScores
             });
           } else if (user.accountType === "coach") {
@@ -130,16 +131,18 @@ const init = io => {
                     io.to(teamRoom).emit("updateTeamPuzzles", teamPuzzleData);
                     // broadcasts to everyone the new updated team scores
                     io.to("ctf").emit("updateGameStatus", {
+                      isAuth: true,
                       teamScores: ctf.teamScores
                     });
                     socket.emit("updateGameStatus", {
+                      isAuth: true,
                       teamScores: ctf.teamScores
                     });
                     dc.addPuzzleSuccess(submittedAnswer.puzzleId);
                     dc.addLog(
                       `Team: '${user.teamName}' solved puzzle: '${
                         submittedAnswer.puzzleName
-                      }`
+                      }'.`
                     );
                   } else {
                     // sends event to alert teams that their answer was incorrect
@@ -148,7 +151,7 @@ const init = io => {
                     dc.addLog(
                       `Team: '${user.teamName}' attempted puzzle: '${
                         submittedAnswer.puzzleName
-                      }' with answer: '${submittedAnswer.answer}'`
+                      }' with answer: '${submittedAnswer.answer}'.`
                     );
                   }
                 }
@@ -189,9 +192,11 @@ const init = io => {
                   io.to(teamRoom).emit("updateTeamPuzzles", teamPuzzleData);
                   // broadcasts to everyone the new updated team scores
                   io.to("ctf").emit("updateGameStatus", {
+                    isAuth: true,
                     teamScores: ctf.teamScores
                   });
                   socket.emit("updateGameStatus", {
+                    isAuth: true,
                     teamScores: ctf.teamScores
                   });
                   dc.addHintUse(requestedHint.puzzleId, requestedHint.hintId);
@@ -199,7 +204,7 @@ const init = io => {
                     `Team: '${
                       user.teamName
                     }' requested hint #${requestedHint.hintId +
-                      1} for puzzle: '${requestedHint.puzzleName}'`
+                      1} for puzzle: '${requestedHint.puzzleName}'.`
                   );
                 }
               }
@@ -297,10 +302,12 @@ const init = io => {
                   ctf.changeGameState(true);
                   io.to("ctf").emit("gameStateChange");
                   io.to("ctf-coaches").emit("updateGameStatus", {
+                    isAuth: true,
                     isActive: ctf.isGameRunning(),
                     remainingTime: ctf.getRemainingTime()
                   });
                   io.to("ctf-admins").emit("updateGameStatus", {
+                    isAuth: true,
                     isActive: ctf.isGameRunning(),
                     remainingTime: ctf.getRemainingTime()
                   });
@@ -310,10 +317,12 @@ const init = io => {
                   ctf.changeGameState(false);
                   io.to("ctf").emit("gameStateChange");
                   io.to("ctf-coaches").emit("updateGameStatus", {
+                    isAuth: true,
                     isActive: ctf.isGameRunning(),
                     remainingTime: ctf.getRemainingTime()
                   });
                   io.to("ctf-admins").emit("updateGameStatus", {
+                    isAuth: true,
                     isActive: ctf.isGameRunning(),
                     remainingTime: ctf.getRemainingTime()
                   });

@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const ios = require("socket.io-express-session");
 const MongoStore = require("connect-mongo")(session);
-const chalk = require("chalk");
+const logger = require("../utils/logger");
 const process = require("process");
 
 const app = express();
@@ -32,13 +32,10 @@ mongoose.connect(
   connectionOptions,
   (err, success) => {
     if (err) {
-      console.log(
-        chalk.red.bold("Encountered error while connecting to database...")
-      );
-      console.log(chalk.red.bold("Shutting down server..."));
+      logger.error("Encountered error while connecting to database...");
+      logger.error("Shutting down server...");
       process.exit();
-    } else
-      console.log(chalk.green.bold(`Successfully connected to database... `));
+    } else logger.success("Successfully connected to database...");
   }
 );
 
@@ -97,14 +94,13 @@ async function start() {
   // Give nuxt middleware to express
   app.use(nuxt.render);
 
-  require("../utils/adminInitializer").init(db);
+  require("../utils/coreInitializer").init(db);
+  require("../models/team").init(db);
   require("../utils/socketHandler").init(io);
 
   // Listen the server
   server.listen(port, () =>
-    console.log(
-      chalk.green.bold(`Web server successfully started on port ${port}...`)
-    )
+    logger.success(`Web server successfully started on port ${port}...`)
   );
 }
 start();

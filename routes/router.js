@@ -4,6 +4,7 @@ const User = require("../models/user");
 const ctf = require("../utils/ctf");
 const Team = require("../utils/team");
 const dc = require("../utils/datacollection");
+const logger = require("../utils/logger");
 
 // GET `/api/register/locations` to return available locations to register at
 router.get("/api/register/locations", function(req, res) {
@@ -57,7 +58,7 @@ router.post("/api/register", function(req, res) {
   }
 
   User.findOne({ username }, (err, resp) => {
-    if (err) return console.log("err", err);
+    if (err) return logger.error(err);
     if (resp !== null) {
       return res.status(409).json({
         error: "Username taken"
@@ -78,8 +79,7 @@ router.post("/api/register", function(req, res) {
           const userTeam = user.teamName;
           if (userTeam !== undefined) {
             if (!ctf.teamList[userTeam]) {
-              let newTeam = new Team.Team(userTeam);
-              newTeam.addPlayer(user.username);
+              let newTeam = new Team.Team(userTeam, user.username);
               ctf.teamList[userTeam] = newTeam;
               ctf.teamScores[userTeam] = {
                 score: 0,
@@ -118,8 +118,7 @@ router.post("/api/login", function(req, res) {
         const userTeam = user.teamName;
         if (userTeam !== undefined) {
           if (!ctf.teamList[userTeam]) {
-            let newTeam = new Team.Team(userTeam);
-            newTeam.addPlayer(user.username);
+            let newTeam = new Team.Team(userTeam, user.username);
             ctf.teamList[userTeam] = newTeam;
             ctf.teamScores[userTeam] = {
               score: 0,
