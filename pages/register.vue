@@ -1,6 +1,6 @@
 <template>
   <div class="box has-text-centered" id="login-form">
-    <img src="~/assets/ctficon.png" draggable="false">
+    <img src="~/assets/ctficon.png" id="form-icon" draggable="false">
     <h1 class="title is-3">MAGIC CTF</h1>
     <div class="notification is-danger" v-if="registerError !== ''">{{registerError}}</div>
     <form action="/register" @submit="submitForm($event)">
@@ -13,12 +13,8 @@
         </p>
       </div>
       <div class="field">
-        <p class="control has-icons-left">
-          <input class="input" type="text" placeholder="Team Name" required="" v-model="userdata.teamName" />
-          <span class="icon is-small is-left">
-            <i class="fa fa-user-friends"></i>
-          </span>
-        </p>
+        <b-autocomplete v-model="userdata.teamName" placeholder="Team name" required="" icon-pack="fa" icon="user-friends" :open-on-focus="true" :data="teams" @select="option => selected = option">
+        </b-autocomplete>
       </div>
       <div class="field">
         <div class="control has-icons-left">
@@ -71,7 +67,8 @@
           password: "",
           passwordConf: ""
         },
-        locations: []
+        locations: [],
+        teams: []
       };
     },
     computed: {
@@ -96,6 +93,14 @@
         .get("/api/register/locations")
         .then(res => {
           this.locations = res.data.sort();
+        })
+        .catch(err => {
+          console.error(err);
+        });
+      this.$axios
+        .get("/api/register/teams")
+        .then(res => {
+          this.teams = res.data.sort();
         })
         .catch(err => {
           console.error(err);

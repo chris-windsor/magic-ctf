@@ -60,7 +60,7 @@ const addHintUse = (puzzleId, hintId) => {
 };
 
 const addLog = entry => {
-  gameLog.push(entry);
+  gameLog.push(`[${new Date().toLocaleTimeString()}]: ${entry}`);
   fs.appendFile(logCollectionFileName, `${entry}\n`, err => {
     if (err) {
       logger.error(err);

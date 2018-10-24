@@ -7,12 +7,17 @@ const dc = require("../utils/datacollection");
 const logger = require("../utils/logger");
 
 // GET `/api/register/locations` to return available locations to register at
-router.get("/api/register/locations", function(req, res) {
+router.get("/api/register/locations", (req, res) => {
   return res.json(ctf.getLocations());
 });
 
+// GET `/api/register/teams` to return available teams that have already been registered
+router.get("/api/register/teams", (req, res) => {
+  return res.json(Object.keys(ctf.teamList));
+});
+
 // POST `/api/register` to register and login in the user and then add them to the `req.session.authUser`
-router.post("/api/register", function(req, res) {
+router.post("/api/register", (req, res) => {
   if (req.body.password !== req.body.passwordConf) {
     return res.status(401).json({
       error: "Passwords do not match"
@@ -101,7 +106,7 @@ router.post("/api/register", function(req, res) {
 });
 
 // POST `/api/login` to log in the user and then add them to the `req.session.authUser`
-router.post("/api/login", function(req, res) {
+router.post("/api/login", (req, res) => {
   if (req.body.username && req.body.password) {
     User.authenticate(req.body.username, req.body.password, (error, user) => {
       if (error || !user) {
@@ -143,7 +148,7 @@ router.post("/api/login", function(req, res) {
 });
 
 // POST `/api/logout` to log out the user and remove them from the `req.session`
-router.post("/api/logout", function(req, res) {
+router.post("/api/logout", (req, res) => {
   delete req.session.authUser;
   res.json({
     ok: true
@@ -151,8 +156,8 @@ router.post("/api/logout", function(req, res) {
 });
 
 // GET `/api/admin/settings/puzzles` to retrieve puzzle data
-router.get("/api/admin/settings/puzzles", function(req, res) {
-  User.findById(req.session.userId).exec(function(error, user) {
+router.get("/api/admin/settings/puzzles", (req, res) => {
+  User.findById(req.session.userId).exec((error, user) => {
     if (error) {
       return error;
     } else {
@@ -176,8 +181,8 @@ router.get("/api/admin/settings/puzzles", function(req, res) {
 });
 
 // POST `/api/admin/settings/puzzles` to save new puzzle data
-router.post("/api/admin/settings/puzzles", function(req, res) {
-  User.findById(req.session.userId).exec(function(error, user) {
+router.post("/api/admin/settings/puzzles", (req, res) => {
+  User.findById(req.session.userId).exec((error, user) => {
     if (error) {
       return error;
     } else {
@@ -202,8 +207,8 @@ router.post("/api/admin/settings/puzzles", function(req, res) {
 });
 
 // POST `/api/admin/settings/locations` to save new location data
-router.post("/api/admin/settings/locations", function(req, res) {
-  User.findById(req.session.userId).exec(function(error, user) {
+router.post("/api/admin/settings/locations", (req, res) => {
+  User.findById(req.session.userId).exec((error, user) => {
     if (error) {
       return error;
     } else {
@@ -228,8 +233,8 @@ router.post("/api/admin/settings/locations", function(req, res) {
 });
 
 // GET `/api/admin/settings/gamelength` to retrieve game length
-router.get("/api/admin/settings/gamelength", function(req, res) {
-  User.findById(req.session.userId).exec(function(error, user) {
+router.get("/api/admin/settings/gamelength", (req, res) => {
+  User.findById(req.session.userId).exec((error, user) => {
     if (error) {
       return error;
     } else {
@@ -253,8 +258,8 @@ router.get("/api/admin/settings/gamelength", function(req, res) {
 });
 
 // POST `/api/admin/settings/gamelength` to update game length
-router.post("/api/admin/settings/gamelength", function(req, res) {
-  User.findById(req.session.userId).exec(function(error, user) {
+router.post("/api/admin/settings/gamelength", (req, res) => {
+  User.findById(req.session.userId).exec((error, user) => {
     if (error) {
       return error;
     } else {
@@ -279,8 +284,8 @@ router.post("/api/admin/settings/gamelength", function(req, res) {
 });
 
 // GET `/api/admin/gamedata` to retrieve game data
-router.get("/api/admin/gamedata", function(req, res) {
-  User.findById(req.session.userId).exec(function(error, user) {
+router.get("/api/admin/gamedata", (req, res) => {
+  User.findById(req.session.userId).exec((error, user) => {
     if (error) {
       return error;
     } else {
