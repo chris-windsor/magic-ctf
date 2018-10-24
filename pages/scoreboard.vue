@@ -7,12 +7,16 @@
         </div>
       </div>
     </nav>
-    <div id="scoreListingContainer">
-      <div class="notification is-info" v-if="processedTeamScores.length === 0">
-        No teams have currently registered for the CTF
+    <nav class="level box" id="topThreeListingContainer" style="align-items:center;justify-content:space-around;">
+      <div class="has-text-centered" v-for="(score, index) in 3" :key="index">
+        <h1 class="title is-4">{{topThreeScores[index] ? `#${(index + 1)}: ${topThreeScores[index].teamName}`: "n/a"}}</h1>
+        <h1 class="subtitle is-4">{{topThreeScores[index] ? topThreeScores[index].score : "n/a"}}</h1>
       </div>
-      <div class="box" v-for="(score, index) in processedTeamScores" :key="index">
-        <h1 class="title is-4">{{index + 1}}. {{score.teamName}} : {{score.score}} points</h1>
+    </nav>
+    <div id="scoreListingContainer">
+      <div class="box" v-for="(score, index) in remainingScores" :key="index">
+        <h1 class="title is-4" style="display:inline;">#{{index + 4}}: {{score.teamName}}</h1>
+        <h1 class="subtitle is-4" style="display:inline;"> - {{score.score}} points</h1>
       </div>
     </div>
   </div>
@@ -28,6 +32,12 @@
       };
     },
     computed: {
+      topThreeScores() {
+        return this.processedTeamScores.splice(0, 3);
+      },
+      remainingScores() {
+        return this.processedTeamScores;
+      },
       processedTeamScores() {
         let sorted = [];
         for (let team in this.rawTeamScores) {
@@ -64,13 +74,20 @@
     left: 3rem;
   }
 
+  #topThreeListingContainer {
+    position: absolute;
+    top: 4.75rem;
+    left: 1.25rem;
+    right: 1.25rem;
+  }
+
   #scoreListingContainer {
     position: absolute;
-    top: 4rem;
+    top: 11rem;
     left: 0;
     bottom: 0;
     right: 0;
-    padding: 1rem;
+    padding: 1.25rem;
     overflow: scroll;
   }
 </style>
