@@ -2,6 +2,7 @@
   <div class="box has-text-centered" id="login-form">
     <img src="~/assets/ctficon.png" draggable="false">
     <h1 class="title is-3">MAGIC CTF</h1>
+    <h1 class="subtitle is-5">Register as a coach.</h1>
     <div class="notification is-danger" v-if="registerError !== ''">{{registerError}}</div>
     <div class="field">
       <p class="control has-icons-left">

@@ -14,6 +14,17 @@
             <button class="button is-medium is-rounded" :class="{'is-loading': gameStateBtnLoading, 'is-success': !gameStateBtnLoading && !gameIsActive,  'is-danger': !gameStateBtnLoading && gameIsActive}" @click="toggleGameState()">{{gameStateBtnLabel}}</button>
           </li>
         </ul>
+        <p class="menu-label"></p>
+        <ul class="menu-list">
+          <li>
+            <a class="button is-rounded is-info is-outlined" href="/scoreboard" target="_blank">
+              <span class="icon">
+                <i class="fa fa-list-ol"></i>
+              </span>
+              <span>Scoreboard</span>
+            </a>
+          </li>
+        </ul>
       </aside>
     </div>
     <div class="column is-10">
