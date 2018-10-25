@@ -17,17 +17,6 @@
         <p class="menu-label"></p>
         <ul class="menu-list">
           <li>
-            <a class="button is-rounded is-warning is-outlined" @click="requestHelp()">
-              <span class="icon">
-                <i class="fa fa-chalkboard-teacher"></i>
-              </span>
-              <span>Request Help</span>
-            </a>
-          </li>
-        </ul>
-        <p class="menu-label"></p>
-        <ul class="menu-list">
-          <li>
             <a class="button is-rounded is-info is-outlined" href="/scoreboard" target="_blank">
               <span class="icon">
                 <i class="fa fa-list-ol"></i>
@@ -170,22 +159,6 @@
             });
             this.$toast.open({
               message: "Requesting hint...",
-              type: "is-info",
-              duration: 1500
-            });
-          }
-        });
-      },
-      requestHelp() {
-        this.$dialog.confirm({
-          message: "Are you sure you want to request help?",
-          type: "is-success",
-          title: "Please confirm",
-          confirmText: "Yes, please",
-          onConfirm: () => {
-            socket.emit("requestHelp");
-            this.$toast.open({
-              message: "Requesting help...",
               type: "is-info",
               duration: 1500
             });
