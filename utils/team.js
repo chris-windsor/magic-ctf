@@ -24,7 +24,7 @@ const updateTeam = (name, prop, val) => {
 class Team {
   constructor(name, players, score, puzzles, lastUpdated, isNew) {
     this.name = name;
-    this.players = players instanceof String ? new Array(players) : players;
+    this.players = new Array(players);
     this.score = score ? score : 0;
     ctf.updateTeamScores();
     this.puzzles = puzzles ? puzzles : ctf.getPuzzlesForPlayer();
