@@ -13,7 +13,7 @@
         <h1 class="subtitle is-4">{{topThreeScores[index] ? topThreeScores[index].score : "n/a"}}</h1>
       </div>
     </nav>
-    <div id="scoreListingContainer">
+    <div id="scoreListingContainer" ref="remainingScoresList">
       <div class="box" v-for="(score, index) in remainingScores" :key="index">
         <h1 class="title is-4" style="display:inline;">#{{index + 4}}: {{score.teamName}}</h1>
         <h1 class="subtitle is-4" style="display:inline;"> - {{score.score}} points</h1>
@@ -53,11 +53,20 @@
         return sorted;
       }
     },
+    methods: {
+      scrollScoreboard() {
+        const el = this.$refs.remainingScoresList;
+        el.scrollTop = el.scrollTop + 1;
+        if (el.scrollTop >= el.scrollHeight - el.offsetHeight) el.scrollTop = 0;
+        setTimeout(this.scrollScoreboard, 25);
+      }
+    },
     mounted() {
       socket.connect();
       socket.on("updateGameStatus", gameData => {
         this.rawTeamScores = gameData.teamScores;
       });
+      this.scrollScoreboard();
     },
     beforeDestroy() {
       socket.disconnect();
@@ -89,5 +98,9 @@
     right: 0;
     padding: 1.25rem;
     overflow: scroll;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
   }
 </style>
