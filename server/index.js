@@ -27,8 +27,13 @@ const connectionOptions = {
 };
 
 mongoose.Promise = global.Promise;
+
+require("dotenv").config();
+
 mongoose.connect(
-  "mongodb://localhost:27017/magic-ctf",
+  `mongodb://${process.env.DB_USER}:${
+    process.env.DB_PASS
+  }@localhost:27017/magic-ctf`,
   connectionOptions,
   (err, success) => {
     if (err) {
