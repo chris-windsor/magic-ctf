@@ -31,9 +31,7 @@ mongoose.Promise = global.Promise;
 require("dotenv").config();
 
 mongoose.connect(
-  `mongodb://${process.env.DB_USER}:${
-    process.env.DB_PASS
-  }@localhost:27017/magic-ctf`,
+  `mongodb://localhost:27017/magic-ctf`,
   connectionOptions,
   (err, success) => {
     if (err) {
@@ -100,7 +98,6 @@ async function start() {
   app.use(nuxt.render);
 
   require("../utils/coreInitializer").init(db);
-  require("../models/team").init(db);
   require("../utils/socketHandler").init(io);
 
   // Listen the server

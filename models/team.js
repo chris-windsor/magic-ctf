@@ -1,11 +1,4 @@
 const mongoose = require("mongoose");
-const logger = require("../utils/logger");
-
-let db;
-
-const init = DB => {
-  db = DB;
-};
 
 const TeamSchema = new mongoose.Schema({
   name: {
@@ -13,6 +6,10 @@ const TeamSchema = new mongoose.Schema({
     unique: true,
     required: true,
     trim: true
+  },
+  location: {
+    type: String,
+    required: true
   },
   players: {
     type: Array,
@@ -33,4 +30,4 @@ const TeamSchema = new mongoose.Schema({
 });
 
 const Team = mongoose.model("Team", TeamSchema);
-module.exports = { init, Team };
+module.exports = { Team };

@@ -22,8 +22,9 @@ const updateTeam = (name, prop, val) => {
 };
 
 class Team {
-  constructor(name, players, score, puzzles, lastUpdated, isNew) {
+  constructor(name, location, players, score, puzzles, lastUpdated, isNew) {
     this.name = name;
+    this.location = location;
     this.players = new Array(players);
     this.score = score ? score : 0;
     ctf.updateTeamScores();
@@ -33,6 +34,7 @@ class Team {
     if (isNew === undefined) {
       const doc = {
         name,
+        location,
         players: this.players,
         score: 0,
         puzzles: this.puzzles,
@@ -85,9 +87,17 @@ class Team {
         if (err) {
           logger.error("Error loading team data from db... ", err);
         } else {
-          const { name, players, score, puzzles, lastUpdated } = res[0];
+          const {
+            name,
+            location,
+            players,
+            score,
+            puzzles,
+            lastUpdated
+          } = res[0];
           ctf.teamList[name] = new this(
             name,
+            location,
             players,
             score,
             puzzles,
@@ -96,7 +106,8 @@ class Team {
           );
           ctf.teamScores[name] = {
             score,
-            lastUpdated
+            lastUpdated,
+            location
           };
           ctf.updateTeamScores();
         }

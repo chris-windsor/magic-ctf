@@ -84,11 +84,14 @@ router.post("/api/register", (req, res) => {
           const userTeam = user.teamName;
           if (userTeam !== undefined) {
             if (!ctf.teamList[userTeam]) {
-              let newTeam = new Team.Team(userTeam, [user.username]);
+              let newTeam = new Team.Team(userTeam, user.locationId, [
+                user.username
+              ]);
               ctf.teamList[userTeam] = newTeam;
               ctf.teamScores[userTeam] = {
                 score: 0,
-                lastUpdated: Date.now()
+                lastUpdated: Date.now(),
+                location: user.locationId
               };
             } else {
               ctf.teamList[userTeam].addPlayer(user.username);
@@ -123,11 +126,14 @@ router.post("/api/login", (req, res) => {
         const userTeam = user.teamName;
         if (userTeam !== undefined) {
           if (!ctf.teamList[userTeam]) {
-            let newTeam = new Team.Team(userTeam, [user.username]);
+            let newTeam = new Team.Team(userTeam, user.locationId, [
+              user.username
+            ]);
             ctf.teamList[userTeam] = newTeam;
             ctf.teamScores[userTeam] = {
               score: 0,
-              lastUpdated: Date.now()
+              lastUpdated: Date.now(),
+              location: user.locationId
             };
           } else {
             ctf.teamList[userTeam].addPlayer(user.username);
