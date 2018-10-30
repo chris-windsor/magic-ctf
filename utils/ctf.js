@@ -78,10 +78,11 @@ const getPuzzlesForPlayer = () => {
   let puzzleData = [];
   puzzleNames.forEach(entry => {
     let hints = [];
-    puzzles[entry].hints.forEach(hint => {
+    puzzles[entry].hints.forEach((hint, index) => {
       hints.push({
         cost: hint.cost,
-        content: ""
+        content: "",
+        unlocked: index == 0
       });
     });
     puzzleData.push({

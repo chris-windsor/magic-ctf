@@ -55,9 +55,16 @@ class Team {
     return this.puzzles;
   }
 
+  hasHintAccess(puzzleId, hintId) {
+    return this.puzzles[puzzleId].hints[hintId].unlocked;
+  }
+
   addHint(puzzleId, hintId, hintContent) {
     this.puzzles[puzzleId].hints[hintId].content = hintContent;
     this.puzzles[puzzleId].value -= this.puzzles[puzzleId].hints[hintId].cost;
+    if (this.puzzles[puzzleId].hints[hintId + 1] !== undefined) {
+      this.puzzles[puzzleId].hints[hintId + 1].unlocked = true;
+    }
     updateTeam(this.name, "puzzles", this.puzzles);
   }
 
