@@ -315,4 +315,30 @@ router.get("/api/admin/gamedata", (req, res) => {
   });
 });
 
+// GET `/api/top5` to retrieve top 5 teams
+router.get("/api/top5", (req, res) => {
+  const rawScores = ctf.teamScores;
+  let sorted = [];
+  for (let team in rawScores) {
+    const { score, lastUpdated, location } = rawScores[team];
+    sorted.push({
+      teamName: team,
+      score,
+      lastUpdated,
+      location
+    });
+  }
+  sorted.sort((a, b) => {
+    return a.lastUpdated - b.lastUpdated;
+  });
+  sorted.sort((a, b) => {
+    return b.score - a.score;
+  });
+  sorted = sorted.map(o => {
+    const { teamName, score } = o;
+    return { teamName, score };
+  });
+  return res.json(sorted.splice(0, 5));
+});
+
 module.exports = router;
