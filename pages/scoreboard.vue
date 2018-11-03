@@ -6,6 +6,13 @@
           <h1 class="title is-3 has-text-primary">MAGIC CTF</h1>
         </div>
       </div>
+      <div class="navbar-menu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <h1 class="title is-3 has-text-grey">Time Left: {{timeLeft}}</h1>
+          </div>
+        </div>
+      </div>
     </nav>
     <nav class="level box" id="topThreeListingContainer" style="align-items:center;justify-content:space-around;">
       <div class="has-text-centered" v-for="(score, index) in 3" :key="index">
@@ -30,7 +37,9 @@
     data() {
       return {
         locations: [],
-        rawTeamScores: {}
+        rawTeamScores: {},
+        gameIsActive: false,
+        remainingTime: 0
       };
     },
     computed: {
@@ -53,6 +62,24 @@
           return b.score - a.score;
         });
         return sorted;
+      },
+      timeLeft() {
+        let hrs = Math.floor(this.remainingTime / (1000 * 3600));
+        let mins = Math.round((this.remainingTime % (1000 * 3600)) / 60000);
+        if (this.gameIsActive) {
+          if (hrs <= 0 && mins <= 0) {
+            return `0:00`;
+          } else if (mins === 0) {
+            return `${hrs}:00`;
+          } else if (mins === 60) {
+            return `${hrs + 1}:00`;
+          } else if (mins < 10) {
+            return `${hrs}:0${mins}`;
+          } else {
+            return `${hrs}:${mins}`;
+          }
+        }
+        return "-:--";
       }
     },
     methods: {
@@ -67,6 +94,10 @@
       socket.connect();
       socket.on("updateGameStatus", gameData => {
         this.rawTeamScores = gameData.teamScores;
+        if (gameData.isActive !== undefined)
+          this.gameIsActive = gameData.isActive;
+        if (gameData.remainingTime !== undefined)
+          this.remainingTime = gameData.remainingTime;
       });
       this.$axios
         .get("/api/register/locations")
@@ -77,6 +108,11 @@
           console.error(err);
         });
       this.scrollScoreboard();
+      setInterval(() => {
+        if (this.gameIsActive) {
+          this.remainingTime -= 1000;
+        }
+      }, 1000);
     },
     beforeDestroy() {
       socket.disconnect();
