@@ -62,15 +62,21 @@ const getHint = request => {
 };
 
 const checkAnswer = request => {
-  if (puzzles[request.puzzleName].answer === request.answer) {
+  try {
+    if (puzzles[request.puzzleName].answer === request.answer) {
+      return {
+        correct: true,
+        reward: puzzles[request.puzzleName].value
+      };
+    }
     return {
-      correct: true,
-      reward: puzzles[request.puzzleName].value
+      correct: false
+    };
+  } catch (error) {
+    return {
+      correct: false
     };
   }
-  return {
-    correct: false
-  };
 };
 
 const getPuzzlesForPlayer = () => {
