@@ -27,7 +27,6 @@ class Team {
     this.location = location;
     this.players = new Array(players);
     this.score = score ? score : 0;
-    ctf.updateTeamScores();
     this.puzzles = puzzles ? puzzles : ctf.getPuzzlesForPlayer();
     this.lastUpdated = lastUpdated ? lastUpdated : Date.now();
 

@@ -30,10 +30,13 @@ mongoose.Promise = global.Promise;
 
 require("dotenv").config();
 
+const dbConnectParams =
+  process.env.NODE_ENV === "production"
+    ? `${process.env.DB_USER}:${process.env.DB_PASS}@`
+    : "";
+
 mongoose.connect(
-  `mongodb://${process.env.DB_USER}:${
-    process.env.DB_PASS
-  }@localhost:27017/magic-ctf`,
+  `mongodb://${dbConnectParams}localhost:27017/magic-ctf`,
   connectionOptions,
   (err, success) => {
     if (err) {
