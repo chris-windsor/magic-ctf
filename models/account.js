@@ -28,6 +28,9 @@ const AccountSchema = new mongoose.Schema({
   }
 });
 
+/*
+ * Authenticates user
+ * */
 AccountSchema.statics.authenticate = (name, password, callback) => {
   Account.findOne({
            name: name
@@ -47,6 +50,9 @@ AccountSchema.statics.authenticate = (name, password, callback) => {
          });
 };
 
+/*
+ * Hashes user password before saving it to database
+ * */
 AccountSchema.pre("save", function (next) {
   let account = this;
   bcrypt.hash(account.password, 10, (err, hash) => {

@@ -4,18 +4,26 @@ const logger = require("./logger");
 const loadedTeams = {};
 
 const createAdminAccount = db => {
-  // delete old admin account
+  /*
+   * Delete pre-existing admin account
+   * */
   db.collections["accounts"].deleteMany({
     accountType: "admin"
   });
-  // generate random password for admin account
+
+  /*
+   * Generate random password for admin account
+   * */
   let rndPswd = "";
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   for (let i = 0; i < 10; i++) {
-    let chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-    let r = Math.floor(Math.random() * chars.length);
+    const r = Math.floor(Math.random() * chars.length);
     rndPswd += chars[r];
   }
-  // create admin account
+
+  /*
+   * Create the new admin account
+   * */
   Account.create(
     {
       name: "admin",
@@ -23,9 +31,9 @@ const createAdminAccount = db => {
       password: rndPswd,
       passwordConf: rndPswd
     },
-    (error, user) => {
-      if (error) {
-        logger.error("Error encountered while creating admin account...", error);
+    (err, user) => {
+      if (err) {
+        logger.error("Error encountered while creating admin account...", err);
       } else {
         logger.success(
           `Successfully created admin account with password: ${rndPswd}`
@@ -35,33 +43,33 @@ const createAdminAccount = db => {
   );
 };
 
-const findAllPlayers = (db, callback) => {
-  Account.find({accountType: "player"}, (err, res) => {
+const loadTeams = db => {
+  /*
+   * Locate all teams in database and load their team data into memory
+   * */
+  Account.find({accountType: "player"}, (err, players) => {
     if (err) {
-      logger.error(err);
+      return logger.error(err);
     }
-    callback(res);
-  });
-};
 
-const loadTeams = players => {
-  if (players.length) {
-    players.forEach(p => {
-      const teamName = p.name;
-      if (!loadedTeams[teamName]) {
-        logger.info(`Loading account: '${teamName}'.`);
-        Team.loadTeam(teamName);
-        loadedTeams[teamName] = true;
-      }
-    });
-  } else {
-    logger.info("Found no pre-existing accounts to load...");
-  }
+    if (players.length) {
+      players.forEach(p => {
+        const teamName = p.name;
+        if (!loadedTeams[teamName]) {
+          logger.info(`Loading account: '${teamName}'...`);
+          Team.loadTeam(teamName);
+          loadedTeams[teamName] = true;
+        }
+      });
+    } else {
+      logger.info("Found no pre-existing accounts to load...");
+    }
+  });
 };
 
 const init = db => {
   createAdminAccount(db);
-  findAllPlayers(db, loadTeams);
+  loadTeams(db);
 };
 
 module.exports = {

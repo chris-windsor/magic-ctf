@@ -1,4 +1,4 @@
-const { Nuxt, Builder } = require("nuxt");
+const {Nuxt, Builder} = require("nuxt");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -10,13 +10,17 @@ const process = require("process");
 
 const app = express();
 
-const server = require("http").createServer(app);
+const server = require("http")
+  .createServer(app);
 const io = require("socket.io")(server);
 
 const port = process.env.PORT || 3000;
 
 app.set("port", port);
 
+/*
+ * Mongo connection parameters
+ * */
 const connectionOptions = {
   autoIndex: false,
   reconnectTries: Number.MAX_VALUE,
@@ -28,17 +32,23 @@ const connectionOptions = {
 
 mongoose.Promise = global.Promise;
 
-require("dotenv").config();
+/*
+ * Load environment config
+ *
+ * Used to store database authentication details
+ * */
+require("dotenv")
+  .config();
 
 const dbConnectParams =
-  process.env.NODE_ENV === "production"
-    ? `${process.env.DB_USER}:${process.env.DB_PASS}@`
-    : "";
+        process.env.NODE_ENV === "production"
+          ? `${process.env.DB_USER}:${process.env.DB_PASS}@`
+          : "";
 
 mongoose.connect(
   `mongodb://${dbConnectParams}localhost:27017/magic-ctf`,
   connectionOptions,
-  (err, success) => {
+  err => {
     if (err) {
       logger.error("Encountered error while connecting to database...");
       logger.error("Shutting down server...");
@@ -49,7 +59,9 @@ mongoose.connect(
 
 const db = mongoose.connection;
 
-// Sessions to create `req.session`
+/*
+ * Configure Mongo Session
+ * */
 app.use(
   session({
     secret: "work hard",
@@ -61,6 +73,9 @@ app.use(
   })
 );
 
+/*
+ * Configure Mongo Session usage for Socket.io
+ * */
 io.use(
   ios(
     session({
@@ -74,7 +89,9 @@ io.use(
   )
 );
 
-// Body parser, to access `req.body`
+/*
+ * Configure request body parser
+ * */
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
@@ -85,33 +102,51 @@ app.use(
 const routes = require("../routes/router");
 app.use("/", routes);
 
-// Import and Set Nuxt.js options
+/*
+ * Import and Set Nuxt.js options
+ * */
 let config = require("../nuxt.config.js");
 config.dev = !(process.env.NODE_ENV === "production");
 
 async function start() {
-  // Init Nuxt.js
+  /*
+   * Init Nuxt.js
+   * */
   const nuxt = new Nuxt(config);
 
-  // Build only in dev mode
+  /*
+   * Build only in dev mode
+   * */
   if (config.dev) {
     const builder = new Builder(nuxt);
     await builder.build();
   }
 
-  // Give nuxt middleware to express
+  /*
+   * Pass nuxt middleware to express
+   * */
   app.use(nuxt.render);
 
-  require("../utils/coreInitializer").init(db);
-  require("../utils/socketHandler").init(io);
+  require("../utils/coreInitializer")
+    .init(db);
+  require("../utils/socketHandler")
+    .init(io);
 
-  // Listen the server
+  /*
+   * Start the server on desired port
+   * */
   server.listen(port, () =>
     logger.success(`Web server successfully started on port ${port}...`)
   );
 }
+
 start();
 
+/*
+ * Ensures process is properly shutdown
+ *
+ * Mostly for use in dev-mode
+ * */
 process.on("SIGINT", () => {
   process.exit();
 });

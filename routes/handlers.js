@@ -1,11 +1,14 @@
 const Account = require("../models/account");
 
+/*
+ * Compares client's account type to desired authentication type
+ * */
 const isAuth = (userId, reqUserType) => {
   return new Promise((resolve, reject) => {
     Account.findById(userId)
-           .exec((error, user) => {
-             if (error) {
-               reject({error});
+           .exec((err, user) => {
+             if (err) {
+               reject({error: err});
              } else {
                if (user === null) {
                  reject({
@@ -26,6 +29,9 @@ const isAuth = (userId, reqUserType) => {
   });
 };
 
+/*
+ * Easy router error handler
+ * */
 const routeError = (res, err) => {
   return res.status(err.errCode ? err.errCode : 400)
             .json({

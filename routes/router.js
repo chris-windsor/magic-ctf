@@ -41,7 +41,6 @@ router.post("/api/login", (req, res) => {
             location: locationId
           };
         }
-        console.log(ctf.teamList);
         return res.json({
           name: acc.name,
           accountType: acc.accountType
