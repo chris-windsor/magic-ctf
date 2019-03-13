@@ -80,7 +80,7 @@ const store = () =>
             commit("SET_REGISTER_ERROR", err.toString());
           });
       },
-      login({ commit }, { username, password }) {
+      login({ commit }, { accountName, password }) {
         return fetch("/api/login", {
           // Send the client cookies to the server
           credentials: "same-origin",
@@ -89,7 +89,7 @@ const store = () =>
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            username,
+            accountName,
             password
           })
         })

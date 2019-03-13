@@ -8,10 +8,12 @@
             <a>Time Left: {{timeLeft}}</a>
           </li>
         </ul>
-        <br />
+        <br/>
         <ul class="menu-list">
           <li class="has-text-centered">
-            <button class="button is-medium is-rounded" :class="{'is-loading': gameStateBtnLoading, 'is-success': !gameStateBtnLoading && !gameIsActive,  'is-danger': !gameStateBtnLoading && gameIsActive}" @click="toggleGameState()">{{gameStateBtnLabel}}</button>
+            <button :class="{'is-loading': gameStateBtnLoading, 'is-success': !gameStateBtnLoading && !gameIsActive,  'is-danger': !gameStateBtnLoading && gameIsActive}" @click="toggleGameState()" class="button is-medium is-rounded">
+              {{gameStateBtnLabel}}
+            </button>
           </li>
         </ul>
         <p class="menu-label"></p>
@@ -31,34 +33,42 @@
       <div class="box content">
         <div class="tabs is-centered is-boxed is-medium">
           <ul>
-            <li class="control-panel-tab" :class="{'is-active': selectedSettings === 'puzzles'}" @click="changeSettingsTab('puzzles')">
+            <li :class="{'is-active': selectedSettings === 'puzzles'}" @click="changeSettingsTab('puzzles')" class="control-panel-tab">
               <a>
                 <span class="icon is-small">
-                  <i class="fas fa-file-alt" aria-hidden="true"></i>
+                  <i aria-hidden="true" class="fas fa-file-alt"></i>
                 </span>
                 <span>Puzzles</span>
               </a>
             </li>
-            <li class="control-panel-tab" :class="{'is-active': selectedSettings === 'mechanics'}" @click="changeSettingsTab('mechanics')">
+            <li :class="{'is-active': selectedSettings === 'mechanics'}" @click="changeSettingsTab('mechanics')" class="control-panel-tab">
               <a>
                 <span class="icon is-small">
-                  <i class="fas fa-sliders-h" aria-hidden="true"></i>
+                  <i aria-hidden="true" class="fas fa-sliders-h"></i>
                 </span>
                 <span>Mechanics</span>
               </a>
             </li>
-            <li class="control-panel-tab" :class="{'is-active': selectedSettings === 'locations'}" @click="changeSettingsTab('locations')">
+            <li :class="{'is-active': selectedSettings === 'locations'}" @click="changeSettingsTab('locations')" class="control-panel-tab">
               <a>
                 <span class="icon is-small">
-                  <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                  <i aria-hidden="true" class="fas fa-map-marked-alt"></i>
                 </span>
                 <span>Locations</span>
               </a>
             </li>
-            <li class="control-panel-tab" :class="{'is-active': selectedSettings === 'data'}" @click="changeSettingsTab('data')">
+            <li :class="{'is-active': selectedSettings === 'teams'}" @click="changeSettingsTab('teams')" class="control-panel-tab">
               <a>
                 <span class="icon is-small">
-                  <i class="far fa-chart-bar" aria-hidden="true"></i>
+                  <i aria-hidden="true" class="fas fa-user-friends"></i>
+                </span>
+                <span>Teams</span>
+              </a>
+            </li>
+            <li :class="{'is-active': selectedSettings === 'data'}" @click="changeSettingsTab('data')" class="control-panel-tab">
+              <a>
+                <span class="icon is-small">
+                  <i aria-hidden="true" class="far fa-chart-bar"></i>
                 </span>
                 <span>Data</span>
               </a>
@@ -77,15 +87,16 @@
 </template>
 
 <script>
-  import socket from "~/plugins/socket.io.js";
-  import puzzlesEditor from "~/components/editors/puzzlesEditor";
-  import mechanicsEditor from "~/components/editors/mechanicsEditor";
-  import locationsEditor from "~/components/editors/locationsEditor";
   import dataViewer from "~/components/editors/dataViewer";
+  import locationsEditor from "~/components/editors/locationsEditor";
+  import mechanicsEditor from "~/components/editors/mechanicsEditor";
+  import puzzlesEditor from "~/components/editors/puzzlesEditor";
+  import teamsEditor from "~/components/editors/teamsEditor";
+  import socket from "~/plugins/socket.io.js";
 
   export default {
     layout: "profile",
-    fetch({ store, redirect }) {
+    fetch({store, redirect}) {
       if (!store.state.authUser) {
         return redirect("/");
       } else {
@@ -137,6 +148,7 @@
           case "puzzles":
           case "mechanics":
           case "locations":
+          case "teams":
             this.editorCompName = tabName + "Editor";
             break;
           case "data":
@@ -154,7 +166,7 @@
             onConfirm: () => {
               this.gameIsActive = false;
               socket.emit("adminCommand", {
-                command: "stop"
+                name: "stop"
               });
               this.$toast.open({
                 message: "Stopping game...",
@@ -166,7 +178,7 @@
         } else {
           this.gameIsActive = true;
           socket.emit("adminCommand", {
-            command: "start"
+            name: "start"
           });
         }
       }
@@ -174,9 +186,6 @@
     mounted() {
       socket.connect();
       socket.on("updateGameStatus", gameData => {
-        if (!gameData.isAuth) {
-          this.$store.dispatch("logout");
-        }
         if (gameData.remainingTime !== undefined)
           this.remainingTime = gameData.remainingTime;
         if (gameData.isActive !== undefined) {
@@ -202,6 +211,7 @@
       puzzlesEditor,
       mechanicsEditor,
       locationsEditor,
+      teamsEditor,
       dataViewer
     }
   };

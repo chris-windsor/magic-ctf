@@ -1,343 +1,274 @@
-const User = require("../models/user");
+const Account = require("../models/account");
 const ctf = require("./ctf");
 const dc = require("./datacollection");
+const logger = require("./logger");
 
 const init = io => {
+  /*
+   * Handles initial socket connection to server
+   *
+   * Checks client authorization and dispatches appropriate information relative to the client
+   * */
   io.on("connection", socket => {
-    User.findById(socket.handshake.session.userId).exec(function(error, user) {
-      let isAuth = true;
-      if (error) {
-        return error;
-      } else {
-        if (user === null) {
-          // this adds people who are not authenticated to the room
-          // this allows non participants to still get scoreboard updates
-          socket.join("ctf");
-          isAuth = false;
-        } else {
-          if (user.accountType === "player") {
-            // this adds each team to its own room
-            // which allows teams to recieve only their updates
-            // updates per team include: puzzle submittal and hint request
-            const teamRoom = "team-" + user.teamName;
-            // this adds each team to a room for their respective location
-            // which allows teams to request help from coaches
-            // only sends help to coaches that share that location
-            const locationRoom = "location-" + user.locationId;
-            socket.join(["ctf", teamRoom, locationRoom]);
-            // updates scoreboard for everyone
-            io.to("ctf").emit("updateGameStatus", {
-              isAuth,
-              teamScores: ctf.teamScores
-            });
-          } else if (user.accountType === "coach") {
-            // coach just needs to join the room for their location
-            // which allows them to recieve help requests from teams at that location
-            socket.join(["ctf-coaches", "coach-location-" + user.locationId]);
-            let helpRequests = [];
-            const storedRequests =
-              ctf.helpRequests["location-" + user.locationId];
-            if (storedRequests) {
-              if (storedRequests.length > 0) {
-                helpRequests = storedRequests;
-              }
-            }
-            socket.emit("updateHelpRequests", helpRequests);
-          } else {
-            // admin just needs to join ctf room
-            socket.join(["ctf", "ctf-admins"]);
-          }
-        }
-      }
-      // sends game state at time of initial socket connection
-      socket.emit("updateGameStatus", {
-        isAuth,
-        isActive: ctf.isGameRunning(),
-        gameLength: ctf.gameLength,
-        teamScores: ctf.teamScores,
-        remainingTime: ctf.getRemainingTime()
-      });
-    });
-    // handles updating of puzzles per team
+    const {userId} = socket.handshake.session;
+
+    Account.findById(userId)
+           .exec((err, user) => {
+             let isAuth = true;
+             if (err) {
+               return logger.error(err);
+             } else {
+               if (user === null) {
+                 /*
+                  * Clients that are un-authorized just need to be included in the general ctf room
+                  *
+                  * Currently these requests are only applicable to general clients who are just viewing scoreboard page
+                  * */
+                 socket.join("ctf");
+                 isAuth = false;
+               } else {
+                 if (user.accountType === "player") {
+                   /*
+                    * Teams are put into respective rooms so that their updates are only passed to them
+                    *
+                    * These per team responses will include: answer submission, hint requests, and their puzzle set
+                    * */
+                   const teamRoom = `team-${user.name}`;
+                   socket.join(["ctf", teamRoom]);
+                 } else {
+                   /*
+                    * Anyone logged into admin account just needs general ctf data and some extra admin data
+                    * */
+                   socket.join(["ctf", "ctf-admin"]);
+                 }
+               }
+             }
+             /*
+              * Emit game state to connected client
+              * */
+             socket.emit("updateGameStatus", {
+               isAuth,
+               isActive: ctf.isGameRunning(),
+               gameLength: ctf.gameLength,
+               teamScores: ctf.teamScores,
+               remainingTime: ctf.getRemainingTime()
+             });
+           });
+
+    /*
+     * Return respective puzzle set to team
+     * */
     socket.on("requestPuzzles", () => {
-      User.findById(socket.handshake.session.userId).exec(function(
-        error,
-        user
-      ) {
-        if (error) {
-          return error;
-        } else {
-          if (user === null) {
-            // not logged in
-            // this shouldnt be possible theoretically so we arent going to worry about it for now
-          } else {
-            // only want to send data to players
-            if (user.accountType === "player") {
-              let teamPuzzleData = [];
-              // only want to send teams the puzzles if the game is active
-              if (ctf.isGameRunning()) {
-                if (ctf.teamList[user.teamName]) {
-                  teamPuzzleData = ctf.teamList[user.teamName].getPuzzles();
-                }
-              }
-              // sends back puzzle data
-              socket.emit("updateTeamPuzzles", teamPuzzleData);
-            }
-          }
-        }
-      });
+      Account.findById(userId)
+             .exec((err, user) => {
+               if (err) {
+                 return logger.error(err);
+               } else {
+                 if (user !== null && user.accountType === "player") {
+                   if (ctf.isGameRunning() && ctf.teamList[user.name]) {
+                     socket.emit("updateTeamPuzzles", ctf.teamList[user.name].getPuzzles());
+                   }
+                 }
+               }
+             });
     });
-    // handles answer submittal
+
+    /*
+     * Handle answer submission
+     * */
     socket.on("submitAnswer", submittedAnswer => {
-      User.findById(socket.handshake.session.userId).exec(function(
-        error,
-        user
-      ) {
-        if (error) {
-          return error;
-        } else {
-          if (user === null) {
-            // not logged in
-            // this shouldnt be possible theoretically so we arent going to worry about it for now
-          } else {
-            // only want to send data to players
-            if (user.accountType === "player") {
-              let teamPuzzleData = [];
-              if (ctf.isGameRunning()) {
-                if (ctf.teamList[user.teamName]) {
-                  const { puzzleId, puzzleName } = submittedAnswer;
-                  // runs comparison between submitted and actual answer
-                  const answer = ctf.checkAnswer(submittedAnswer);
-                  if (answer.correct === true) {
-                    ctf.teamList[user.teamName].addCorrectPuzzle(puzzleId);
-                    // get total cost of any hints used
-                    let totalUsedHintsCost = 0;
-                    ctf.teamList[user.teamName].puzzles[puzzleId].hints.forEach(
-                      hint => {
-                        if (hint.content != "") {
-                          totalUsedHintsCost += hint.cost;
-                        }
-                      }
-                    );
-                    // gives points to team equivalent to puzzle value
-                    ctf.teamList[user.teamName].addScore(
-                      answer.reward - totalUsedHintsCost
-                    );
-                    teamPuzzleData = ctf.teamList[user.teamName].getPuzzles();
-                    const teamRoom = "team-" + user.teamName;
-                    // broadcasts to all team players their updated puzzles
-                    // their puzzles will display the answered puzzle as solved
-                    io.to(teamRoom).emit("updateTeamPuzzles", teamPuzzleData);
-                    // broadcasts to everyone the new updated team scores
-                    io.to("ctf").emit("updateGameStatus", {
-                      isAuth: true,
-                      teamScores: ctf.teamScores
-                    });
-                    socket.emit("updateGameStatus", {
-                      isAuth: true,
-                      teamScores: ctf.teamScores
-                    });
-                    dc.addPuzzleSuccess(puzzleId);
-                    dc.addLog(
-                      `Team: '${user.teamName}' solved puzzle: '${puzzleName}'.`
-                    );
-                  } else {
-                    // sends event to alert teams that their answer was incorrect
-                    socket.emit("incorrectAnswer", puzzleName);
-                    dc.addPuzzleAttempt(puzzleId);
-                    dc.addLog(
-                      `Team: '${
-                        user.teamName
-                      }' attempted puzzle: '${puzzleName}' with answer: '${
-                        submittedAnswer.answer
-                      }'.`
-                    );
-                  }
-                }
-              }
-            }
-          }
-        }
-      });
+      Account.findById(userId)
+             .exec((err, user) => {
+               if (err) {
+                 return logger.error(err);
+               } else {
+                 if (user !== null && user.accountType === "player") {
+                   let teamPuzzleData = [];
+                   if (ctf.isGameRunning() && ctf.teamList[user.name]) {
+                     const {puzzleId, puzzleName} = submittedAnswer;
+
+                     const answer = ctf.checkAnswer(submittedAnswer);
+                     if (answer.correct === true) {
+                       const team = ctf.teamList[user.name];
+
+                       team.addCorrectPuzzle(puzzleId);
+
+                       /*
+                        * Calculate final puzzle cost based on usage of hints
+                        *
+                        * Update team's score with new puzzle reward
+                        * */
+                       let totalUsedHintsCost = 0;
+                       team.getPuzzles()[puzzleId].hints.forEach(hint => {
+                         if (hint.content !== "") totalUsedHintsCost += hint.cost;
+                       });
+
+                       team.addScore(
+                         answer.reward - totalUsedHintsCost
+                       );
+
+                       teamPuzzleData = team.getPuzzles();
+
+                       const teamRoom = `team-${user.name}`;
+
+                       /*
+                        * Send the team their updated puzzle set
+                        * */
+                       io.in(teamRoom)
+                         .emit("updateTeamPuzzles", teamPuzzleData);
+
+                       /*
+                        * Update game status with newly calculated score list
+                        * */
+                       io.in("ctf")
+                         .emit("updateGameStatus", {
+                           teamScores: ctf.teamScores
+                         });
+
+                       /*
+                        * Log team action for data collection
+                        * */
+                       dc.addPuzzleSuccess(puzzleId);
+                       dc.addLog(
+                         `Team: '${user.name}' solved puzzle: '${puzzleName}'.`
+                       );
+                     } else {
+                       /*
+                        * Alert team of their incorrect answer submission
+                        * */
+                       socket.emit("incorrectAnswer", puzzleName);
+
+                       /*
+                        * Log team action for data collection
+                        */
+                       dc.addPuzzleAttempt(puzzleId);
+                       dc.addLog(
+                         `Team: '${
+                           user.name
+                           }' attempted puzzle: '${puzzleName}' with answer: '${
+                           submittedAnswer.answer
+                           }'.`
+                       );
+                     }
+                   }
+                 }
+               }
+             });
     });
-    // handles hint requesting
+
+    /*
+     * Handle hint requests
+     * */
     socket.on("requestHint", requestedHint => {
-      User.findById(socket.handshake.session.userId).exec(function(
-        error,
-        user
-      ) {
-        if (error) {
-          return error;
-        } else {
-          if (user === null) {
-            // not logged in
-            // this shouldnt be possible theoretically so we arent going to worry about it for now
-          } else {
-            // only want to send data to players
-            if (user.accountType === "player") {
-              let teamPuzzleData = [];
-              if (ctf.isGameRunning()) {
-                if (ctf.teamList[user.teamName]) {
-                  const { puzzleId, puzzleName, hintId } = requestedHint;
-                  if (
-                    ctf.teamList[user.teamName].hasHintAccess(puzzleId, hintId)
-                  ) {
-                    const hint = ctf.getHint(requestedHint);
-                    ctf.teamList[user.teamName].addHint(
-                      puzzleId,
-                      hintId,
-                      hint.hintContent
-                    );
-                    teamPuzzleData = ctf.teamList[user.teamName].getPuzzles();
-                    const teamRoom = "team-" + user.teamName;
-                    // broadcasts to all team players their updated puzzles
-                    // their puzzles will now contain the selected hint
-                    io.to(teamRoom).emit("updateTeamPuzzles", teamPuzzleData);
-                    // broadcasts to everyone the new updated team scores
-                    io.to("ctf").emit("updateGameStatus", {
-                      isAuth: true,
-                      teamScores: ctf.teamScores
-                    });
-                    socket.emit("updateGameStatus", {
-                      isAuth: true,
-                      teamScores: ctf.teamScores
-                    });
-                    dc.addHintUse(puzzleId, hintId);
-                    dc.addLog(
-                      `Team: '${user.teamName}' requested hint #${hintId +
-                        1} for puzzle: '${puzzleName}'.`
-                    );
-                  }
-                }
-              }
-            }
-          }
-        }
-      });
+      Account.findById(userId)
+             .exec((err, user) => {
+               if (err) {
+                 return logger.error(err);
+               } else {
+                 if (user !== null && user.accountType === "player") {
+                   let teamPuzzleData = [];
+                   if (ctf.isGameRunning() && ctf.teamList[user.name]) {
+                     const {puzzleId, puzzleName, hintId} = requestedHint;
+
+                     const team = ctf.teamList[user.name];
+
+                     if (team.hasHintAccess(puzzleId, hintId)) {
+                       const hint = ctf.getHint(requestedHint);
+
+                       /*
+                        * Add requested hint to team's puzzle set
+                        * */
+                       team.addHint(
+                         puzzleId,
+                         hintId,
+                         hint.hintContent
+                       );
+
+                       teamPuzzleData = team.getPuzzles();
+
+                       const teamRoom = `team-${user.name}`;
+
+                       /*
+                        * Send the team their updated puzzle set
+                        * */
+                       io.in(teamRoom)
+                         .emit("updateTeamPuzzles", teamPuzzleData);
+
+                       /*
+                        * Update game status with newly calculated score list
+                        * */
+                       io.in("ctf")
+                         .emit("updateGameStatus", {
+                           teamScores: ctf.teamScores
+                         });
+
+                       /*
+                        * Log team action for data collection
+                        * */
+                       dc.addHintUse(puzzleId, hintId);
+                       dc.addLog(
+                         `Team: '${user.name}' requested hint #${hintId +
+                         1} for puzzle: '${puzzleName}'.`
+                       );
+                     }
+                   }
+                 }
+               }
+             });
     });
-    // handles help requesting
-    socket.on("requestHelp", () => {
-      User.findById(socket.handshake.session.userId).exec(function(
-        error,
-        user
-      ) {
-        if (error) {
-          return error;
-        } else {
-          if (user === null) {
-            // not logged in
-            // this shouldnt be possible theoretically so we arent going to worry about it for now
-          } else {
-            // only want to allow help request for players
-            if (user.accountType === "player") {
-              const storedRequests =
-                ctf.helpRequests["location-" + user.locationId];
-              if (storedRequests) {
-                ctf.helpRequests["location-" + user.locationId].push(
-                  user.teamName
-                );
-              } else {
-                ctf.helpRequests["location-" + user.locationId] = [
-                  user.teamName
-                ];
-              }
-              io.to("coach-location-" + user.locationId).emit(
-                "updateHelpRequests",
-                ctf.helpRequests["location-" + user.locationId]
-              );
-            }
-          }
-        }
-      });
-    });
-    // handles help request removing
-    socket.on("removeHelpRequest", hintIndex => {
-      User.findById(socket.handshake.session.userId).exec(function(
-        error,
-        user
-      ) {
-        if (error) {
-          return error;
-        } else {
-          if (user === null) {
-            // not logged in
-            // this shouldnt be possible theoretically so we arent going to worry about it for now
-          } else {
-            // only want to allow coaches to remove help requests
-            if (user.accountType === "coach") {
-              ctf.helpRequests["location-" + user.locationId].splice(
-                hintIndex,
-                1
-              );
-              let helpRequests = [];
-              const storedRequests =
-                ctf.helpRequests["location-" + user.locationId];
-              if (storedRequests) {
-                if (storedRequests.length > 0) {
-                  helpRequests = storedRequests;
-                }
-              }
-              socket.emit("updateHelpRequests", helpRequests);
-            }
-          }
-        }
-      });
-    });
-    // handles admin commands
+
+    /*
+     * Handle admin commands
+     * */
     socket.on("adminCommand", command => {
-      User.findById(socket.handshake.session.userId).exec(function(
-        error,
-        user
-      ) {
-        if (error) {
-          return error;
-        } else {
-          if (user === null) {
-            // not logged in
-            // this shouldnt be possible theoretically so we arent going to worry about it for now
-          } else {
-            // only want to perform commands if user is an admin
-            if (user.accountType === "admin") {
-              switch (command.command) {
-                case "start":
-                  // changes game state to active
-                  ctf.changeGameState(true);
-                  io.to("ctf").emit("gameStateChange");
-                  io.to("ctf-coaches").emit("updateGameStatus", {
-                    isAuth: true,
-                    isActive: ctf.isGameRunning(),
-                    remainingTime: ctf.getRemainingTime()
-                  });
-                  io.to("ctf-admins").emit("updateGameStatus", {
-                    isAuth: true,
-                    isActive: ctf.isGameRunning(),
-                    remainingTime: ctf.getRemainingTime()
-                  });
-                  break;
-                case "stop":
-                  // changes game state to inactive
-                  ctf.changeGameState(false);
-                  io.to("ctf").emit("gameStateChange");
-                  io.to("ctf-coaches").emit("updateGameStatus", {
-                    isAuth: true,
-                    isActive: ctf.isGameRunning(),
-                    remainingTime: ctf.getRemainingTime()
-                  });
-                  io.to("ctf-admins").emit("updateGameStatus", {
-                    isAuth: true,
-                    isActive: ctf.isGameRunning(),
-                    remainingTime: ctf.getRemainingTime()
-                  });
-                  break;
-                default:
-                  // no commands were found, this should not be possible
-                  // this probably does not need to be handled
-                  break;
-              }
-            }
-          }
-        }
-      });
+      Account.findById(socket.handshake.session.userId)
+             .exec((err, user) => {
+               if (err) {
+                 return logger.error(err);
+               } else {
+                 if (user !== null && user.accountType === "admin") {
+                   switch (command.name) {
+                     case "start":
+                       /*
+                        * Change game state to active and update all users of state change
+                        * */
+                       ctf.changeGameState(true);
+
+                       io.in("ctf")
+                         .emit("gameStateChange");
+
+                       io.in("ctf-admin")
+                         .emit("updateGameStatus", {
+                           isActive: ctf.isGameRunning(),
+                           remainingTime: ctf.getRemainingTime()
+                         });
+                       break;
+                     case "stop":
+                       /*
+                        * Change game state to inactive and update all users of state change
+                        * */
+                       ctf.changeGameState(false);
+
+                       io.in("ctf")
+                         .emit("gameStateChange");
+
+                       io.in("ctf-admin")
+                         .emit("updateGameStatus", {
+                           isActive: ctf.isGameRunning(),
+                           remainingTime: ctf.getRemainingTime()
+                         });
+                       break;
+                     default:
+                       /*
+                        * No matching command found
+                        *
+                        * Currently ignored...
+                        * */
+                       break;
+                   }
+                 }
+               }
+             });
     });
   });
 };

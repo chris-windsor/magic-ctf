@@ -5,20 +5,20 @@
         <div class="navbar-item">
           <h1 class="title is-3">MAGIC CTF</h1>
         </div>
-        <div class="navbar-burger" @click="showNav = !showNav" :class="{ 'is-active': showNav }">
+        <div :class="{ 'is-active': showNav }" @click="showNav = !showNav" class="navbar-burger">
           <span></span>
           <span></span>
           <span></span>
         </div>
       </div>
-      <div class="navbar-menu" :class="{ 'is-active': showNav }">
+      <div :class="{ 'is-active': showNav }" class="navbar-menu">
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="field is-grouped is-grouped-centered">
               <p class="control">
-                <a class="button is-danger is-rounded is-outlined" @click="logout()">
+                <a @click="logout()" class="button is-danger is-rounded is-outlined">
                   <span class="icon">
-                    <i class="fa fa-user" aria-hidden="true"></i>
+                    <i aria-hidden="true" class="fa fa-user"></i>
                   </span>
                   <span>Logout</span>
                 </a>
@@ -29,12 +29,12 @@
       </div>
     </nav>
     <section class="container is-fluid">
-      <nuxt />
+      <nuxt/>
     </section>
     <footer class="footer">
       <div class="container">
         <div class="content has-text-centered">
-          <p>Copyright © 2018 Chris Windsor</p>
+          <p>Copyright © 2018-2019 Chris Windsor</p>
         </div>
       </div>
     </footer>

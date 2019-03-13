@@ -41,7 +41,7 @@ setInterval(() => {
 const updateTeamScores = () => {
   for (const team in teamList) {
     if (teamList.hasOwnProperty(team)) {
-      const { score, lastUpdated, location } = teamList[team];
+      const {score, lastUpdated, location} = teamList[team];
       teamScores[team] = {
         score,
         lastUpdated,
@@ -88,7 +88,7 @@ const getPuzzlesForPlayer = () => {
       hints.push({
         cost: hint.cost,
         content: "",
-        unlocked: index == 0
+        unlocked: index === 0
       });
     });
     puzzleData.push({

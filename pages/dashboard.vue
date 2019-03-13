@@ -5,10 +5,7 @@
         <p class="menu-label">Info:</p>
         <ul class="menu-list" id="sidebar-info">
           <li>
-            <a>Team: {{userData.teamName}}</a>
-          </li>
-          <li>
-            <a>User: {{userData.username}}</a>
+            <a>Team: {{userData.name}}</a>
           </li>
           <li>
             <a>Time Left: {{timeLeft}}</a>
@@ -47,9 +44,11 @@
         </nav>
       </div>
       <div class="box content">
-        <div class="title is-5 has-text-centered" v-if="puzzles.length === 0">Congratulations you have successfully logged in. The game will begin shortly.</div>
+        <div class="title is-5 has-text-centered" v-if="puzzles.length === 0">Congratulations you have successfully
+          logged in. The game will begin shortly.
+        </div>
         <div v-else>
-          <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" :id="index" @submitAnswer="submitAnswer" @requestHint="requestHint"></puzzle>
+          <puzzle :id="index" :key="index" :puzzleData="puzzles[index]" @requestHint="requestHint" @submitAnswer="submitAnswer" v-for="(puzzle, index) in puzzles"></puzzle>
         </div>
       </div>
     </div>
@@ -57,12 +56,12 @@
 </template>
 
 <script>
-  import socket from "~/plugins/socket.io.js";
   import puzzle from "~/components/puzzle";
+  import socket from "~/plugins/socket.io.js";
 
   export default {
     layout: "profile",
-    fetch({ store, redirect }) {
+    fetch({store, redirect}) {
       if (!store.state.authUser) {
         return redirect("/");
       } else {
@@ -85,20 +84,16 @@
     computed: {
       userData() {
         if (this.$store.state.authUser !== null) {
-          this.team = this.$store.state.authUser.teamName;
           return this.$store.state.authUser;
         } else {
-          return {
-            teamName: "",
-            username: ""
-          };
+          return "";
         }
       },
       teamScoreAndPosition() {
         let sorted = [];
         for (let team in this.rawTeamScores) {
-          const { score, lastUpdated } = this.rawTeamScores[team];
-          sorted.push({ teamName: team, score, lastUpdated });
+          const {score, lastUpdated} = this.rawTeamScores[team];
+          sorted.push({teamName: team, score, lastUpdated});
         }
         sorted.sort((a, b) => {
           return a.lastUpdated - b.lastUpdated;
@@ -108,7 +103,7 @@
         });
         let scoreAndPosition = {};
         sorted.forEach((entry, index) => {
-          if (entry.teamName === this.userData.teamName) {
+          if (entry.teamName === this.userData.name) {
             scoreAndPosition.score = entry.score;
             scoreAndPosition.position = index + 1;
           }
@@ -147,7 +142,7 @@
         this.$dialog.confirm({
           message: `If this hint is requested, the total value of this problem will be deducted by ${
             this.selectedHintCost
-          } points.`,
+            } points.`,
           type: "is-success",
           title: "Please confirm",
           confirmText: "Okay, continue",
@@ -182,9 +177,6 @@
         });
       });
       socket.on("updateGameStatus", gameData => {
-        if (!gameData.isAuth) {
-          this.$store.dispatch("logout");
-        }
         if (gameData.teamScores !== undefined)
           this.rawTeamScores = gameData.teamScores;
         if (gameData.isActive !== undefined)

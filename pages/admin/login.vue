@@ -1,25 +1,12 @@
 <template>
   <div class="box has-text-centered" id="login-form">
-    <img draggable="false" id="form-icon" src="~/assets/ctficon.png">
+    <img src="~/assets/ctficon.png" id="form-icon" draggable="false">
     <h1 class="title is-3">MAGIC CTF</h1>
     <div class="notification is-danger" v-if="loginError !== ''">{{loginError}}</div>
-    <form @submit="submitForm($event)" action="/">
-      <div class="field">
-        <div class="control has-icons-left">
-          <div class="select is-fullwidth">
-            <select autofocus required="" v-model="teamName">
-              <option disabled="disabled" selected="selected" value="">Select Team</option>
-              <option :key="index" :value="team" v-for="(team, index) in teamList">{{team}}</option>
-            </select>
-          </div>
-          <span class="icon is-small is-left">
-            <i class="fa fa-user"></i>
-          </span>
-        </div>
-      </div>
+    <form @submit="submitForm($event)">
       <div class="field">
         <p class="control has-icons-left">
-          <input class="input" placeholder="Password" required="" type="password" v-model="password"/>
+          <input class="input" type="password" placeholder="Password" required="" v-model="password" autofocus />
           <span class="icon is-small is-left">
             <i class="fa fa-lock"></i>
           </span>
@@ -27,7 +14,7 @@
       </div>
       <div class="field is-grouped is-grouped-centered">
         <p class="control">
-          <button @click="login()" class="button is-success is-rounded">Login</button>
+          <button class="button is-success is-rounded" @click="login()">Login</button>
         </p>
       </div>
     </form>
@@ -36,7 +23,7 @@
 
 <script>
   export default {
-    fetch({store, redirect}) {
+    fetch({ store, redirect }) {
       if (store.state.authUser) {
         if (store.state.authUser.accountType === "admin") {
           return redirect("/admin");
@@ -46,8 +33,6 @@
     },
     data() {
       return {
-        teamList: [],
-        teamName: "",
         password: ""
       };
     },
@@ -66,20 +51,10 @@
       },
       login() {
         this.$store.dispatch("login", {
-          accountName: this.teamName,
+          accountName: "admin",
           password: this.password
         });
       }
-    },
-    mounted() {
-      this.$axios
-          .get("/api/teams")
-          .then(res => {
-            this.teamList = res.data.sort();
-          })
-          .catch(err => {
-            console.error(err);
-          });
     }
   };
 </script>

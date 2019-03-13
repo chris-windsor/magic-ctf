@@ -1,11 +1,11 @@
-const User = require("../models/user");
-const Team = require("./team").Team;
+const Account = require("../models/account");
+const Team = require("./team");
 const logger = require("./logger");
 const loadedTeams = {};
 
 const createAdminAccount = db => {
   // delete old admin account
-  db.collections["users"].deleteMany({
+  db.collections["accounts"].deleteMany({
     accountType: "admin"
   });
   // generate random password for admin account
@@ -16,17 +16,16 @@ const createAdminAccount = db => {
     rndPswd += chars[r];
   }
   // create admin account
-  User.create(
+  Account.create(
     {
-      username: "admin",
+      name: "admin",
       accountType: "admin",
-      locationId: -1,
       password: rndPswd,
       passwordConf: rndPswd
     },
     (error, user) => {
       if (error) {
-        logger.error("Error encounted while creating admin account...", error);
+        logger.error("Error encountered while creating admin account...", error);
       } else {
         logger.success(
           `Successfully created admin account with password: ${rndPswd}`
@@ -37,7 +36,7 @@ const createAdminAccount = db => {
 };
 
 const findAllPlayers = (db, callback) => {
-  User.find({ accountType: "player" }, (err, res) => {
+  Account.find({accountType: "player"}, (err, res) => {
     if (err) {
       logger.error(err);
     }
@@ -48,15 +47,15 @@ const findAllPlayers = (db, callback) => {
 const loadTeams = players => {
   if (players.length) {
     players.forEach(p => {
-      teamName = p.teamName;
+      const teamName = p.name;
       if (!loadedTeams[teamName]) {
-        logger.info(`Loading team: '${teamName}'.`);
+        logger.info(`Loading account: '${teamName}'.`);
         Team.loadTeam(teamName);
         loadedTeams[teamName] = true;
       }
     });
   } else {
-    logger.info("Found no pre-existing users to load...");
+    logger.info("Found no pre-existing accounts to load...");
   }
 };
 
