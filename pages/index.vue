@@ -7,7 +7,7 @@
       <b-field>
         <b-autocomplete
           :data="teamList"
-          :keep-first="true"
+          :keep-first="false"
           :open-on-focus="true"
           @select="option => selected = option"
           autofocus

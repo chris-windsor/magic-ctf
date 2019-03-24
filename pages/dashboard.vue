@@ -8,7 +8,7 @@
             <a>Team: {{userData.name}}</a>
           </li>
           <li>
-            <a>Time Left: {{timeLeft}}</a>
+            <a>Time left: {{timeLeft}}</a>
           </li>
         </ul>
         <p class="menu-label"></p>
@@ -91,9 +91,9 @@
       },
       teamScoreAndPosition() {
         let sorted = [];
-        for (let team in this.rawTeamScores) {
-          const {score, lastUpdated} = this.rawTeamScores[team];
-          sorted.push({teamName: team, score, lastUpdated});
+        for (let _id in this.rawTeamScores) {
+          const {name, score, lastUpdated} = this.rawTeamScores[_id];
+          sorted.push({teamName: name, score, lastUpdated});
         }
         sorted.sort((a, b) => {
           return a.lastUpdated - b.lastUpdated;

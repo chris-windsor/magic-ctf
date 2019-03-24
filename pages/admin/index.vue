@@ -5,7 +5,7 @@
         <p class="menu-label">Info:</p>
         <ul class="menu-list" id="sidebar-info">
           <li>
-            <a>Time Left: {{timeLeft}}</a>
+            <a>Time left: {{timeLeft}}</a>
           </li>
         </ul>
         <br/>

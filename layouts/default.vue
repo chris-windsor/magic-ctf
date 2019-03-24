@@ -1,7 +1,9 @@
 <template>
-  <div class="is-unselectable" id="particles-js">
-    <nuxt />
-  </div>
+  <section class="hero is-fullheight" id="particles-js">
+    <div class="hero-body">
+      <nuxt/>
+    </div>
+  </section>
 </template>
 
 <script>
@@ -132,8 +134,7 @@
 <style>
   #particles-js canvas {
     position: absolute;
-    height: 100%;
-    width: 100%;
+    height: 100vh;
     z-index: -1;
   }
 

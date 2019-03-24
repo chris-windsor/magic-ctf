@@ -1,34 +1,36 @@
 <template>
-  <div class="box" id="scoreboardContainer">
-    <nav class="navbar is-white">
-      <div class="navbar-brand">
-        <div class="navbar-item">
-          <h1 class="title is-3 has-text-primary">MAGIC CTF</h1>
-        </div>
-      </div>
-      <div class="navbar-menu">
-        <div class="navbar-end">
+  <div class="container is-fluid">
+    <div class="box" id="scoreboard-container">
+      <nav class="navbar is-transparent">
+        <div class="navbar-brand">
           <div class="navbar-item">
-            <h1 class="title is-3 has-text-grey">Time Left: {{timeLeft}}</h1>
+            <h1 class="title 2 has-text-primary">MAGIC CTF</h1>
           </div>
         </div>
-      </div>
-    </nav>
-    <nav class="level box" id="topThreeListingContainer" style="align-items:center;justify-content:space-around;">
-      <div :key="index" class="has-text-centered" v-for="(score, index) in 3">
-        <h1 class="title is-3">{{topThreeScores[index] ? `#${(index + 1)}: ${topThreeScores[index].teamName}`:
-          "n/a"}}</h1>
-        <h1 class="subtitle is-5">{{topThreeScores[index] ? `(${locations[topThreeScores[index].locationId]})` :
-          ""}}</h1>
-        <h1 class="subtitle is-3">{{topThreeScores[index] ? topThreeScores[index].score : "n/a"}}</h1>
-      </div>
-    </nav>
-    <div id="scoreListingContainer" ref="remainingScoresList">
-      <div :key="index" class="box" v-for="(score, index) in remainingScores">
-        <h1 class="title is-4" style="display:inline;">#{{index + 4}}: {{score.teamName}}</h1>
-        <h1 class="subtitle is-4" style="display:inline;"> - {{score.score}} points
-          <small>({{locations[score.location]}})</small>
-        </h1>
+        <div class="navbar-menu is-active">
+          <div class="navbar-end">
+            <div class="navbar-item">
+              <h1 class="subtitle is-5 has-text-grey">Time left: {{timeLeft}}</h1>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <nav class="level box" id="top-three-listing-container" style="align-items:center;justify-content:space-around;">
+        <div :key="index" class="has-text-centered" v-for="(score, index) in 3">
+          <h1 class="title is-3">{{topThreeScores[index] ? `#${(index + 1)}: ${topThreeScores[index].teamName}`:
+            "n/a"}}</h1>
+          <h1 class="subtitle is-5">{{topThreeScores[index] ? `(${locations[topThreeScores[index].locationId]})` :
+            ""}}</h1>
+          <h1 class="subtitle is-3">{{topThreeScores[index] ? topThreeScores[index].score : "n/a"}}</h1>
+        </div>
+      </nav>
+      <div id="score-listing-container" ref="remainingScoresList">
+        <div :key="index" class="box" v-for="(score, index) in remainingScores">
+          <h1 class="title is-4" style="display:inline;">#{{index + 4}}: {{score.teamName}}</h1>
+          <h1 class="subtitle is-4" style="display:inline;"> - {{score.score}} points
+            <small>({{locations[score.locationId]}})</small>
+          </h1>
+        </div>
       </div>
     </div>
   </div>
@@ -125,29 +127,20 @@
 </script>
 
 <style>
-  #scoreboardContainer {
-    position: absolute;
-    top: 3rem;
-    right: 3rem;
-    bottom: 3rem;
-    left: 3rem;
+  #scoreboard-container {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
   }
 
-  #topThreeListingContainer {
-    position: absolute;
-    top: 4.75rem;
-    left: 1.25rem;
-    right: 1.25rem;
+  #top-three-listing-container {
+    margin: 1rem 0.075rem 0;
   }
 
-  #scoreListingContainer {
-    position: absolute;
-    top: 15.25rem;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    padding: 1.25rem;
+  #score-listing-container {
+    padding: 0.05rem;
     overflow: scroll;
+    height: calc(100vh - 30rem);
   }
 
   ::-webkit-scrollbar {
