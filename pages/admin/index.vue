@@ -31,54 +31,17 @@
     </div>
     <div class="column is-10">
       <div class="box content">
-        <div class="tabs is-centered is-boxed is-medium">
-          <ul>
-            <li :class="{'is-active': selectedSettings === 'puzzles'}" @click="changeSettingsTab('puzzles')" class="control-panel-tab">
-              <a>
-                <span class="icon is-small">
-                  <i aria-hidden="true" class="fas fa-file-alt"></i>
-                </span>
-                <span>Puzzles</span>
-              </a>
-            </li>
-            <li :class="{'is-active': selectedSettings === 'mechanics'}" @click="changeSettingsTab('mechanics')" class="control-panel-tab">
-              <a>
-                <span class="icon is-small">
-                  <i aria-hidden="true" class="fas fa-sliders-h"></i>
-                </span>
-                <span>Mechanics</span>
-              </a>
-            </li>
-            <li :class="{'is-active': selectedSettings === 'locations'}" @click="changeSettingsTab('locations')" class="control-panel-tab">
-              <a>
-                <span class="icon is-small">
-                  <i aria-hidden="true" class="fas fa-map-marked-alt"></i>
-                </span>
-                <span>Locations</span>
-              </a>
-            </li>
-            <li :class="{'is-active': selectedSettings === 'teams'}" @click="changeSettingsTab('teams')" class="control-panel-tab">
-              <a>
-                <span class="icon is-small">
-                  <i aria-hidden="true" class="fas fa-user-friends"></i>
-                </span>
-                <span>Teams</span>
-              </a>
-            </li>
-            <li :class="{'is-active': selectedSettings === 'data'}" @click="changeSettingsTab('data')" class="control-panel-tab">
-              <a>
-                <span class="icon is-small">
-                  <i aria-hidden="true" class="far fa-chart-bar"></i>
-                </span>
-                <span>Data</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div class="notification is-info" v-if="selectedSettings === ''">Select a tab above to edit game settings.</div>
+        <b-tabs class="is-medium" position="is-centered" type="is-boxed" v-model="selectedTab">
+          <b-tab-item icon="file-alt" label="Puzzles"></b-tab-item>
+          <b-tab-item icon="sliders-h" label="Mechanics"></b-tab-item>
+          <b-tab-item icon="map-marked-alt" label="Locations"></b-tab-item>
+          <b-tab-item icon="user-friends" label="Teams"></b-tab-item>
+          <b-tab-item icon="chart-bar" label="Data"></b-tab-item>
+        </b-tabs>
+        <div class="notification is-info" v-if="!selectedTab">Select a tab above to edit game settings.</div>
         <div v-else>
           <keep-alive>
-            <component :is="editorCompName"></component>
+            <component :is="tabMappings[selectedTab]"></component>
           </keep-alive>
         </div>
       </div>
@@ -109,8 +72,14 @@
     },
     data() {
       return {
-        selectedSettings: "",
-        editorCompName: "",
+        selectedTab: null,
+        tabMappings: {
+          0: "puzzlesEditor",
+          1: "mechanicsEditor",
+          2: "locationsEditor",
+          3: "teamsEditor",
+          4: "dataViewer"
+        },
         gameStateBtnLoading: true,
         gameIsActive: false,
         remainingTime: 0
@@ -142,20 +111,6 @@
       }
     },
     methods: {
-      changeSettingsTab(tabName) {
-        this.selectedSettings = tabName;
-        switch (tabName) {
-          case "puzzles":
-          case "mechanics":
-          case "locations":
-          case "teams":
-            this.editorCompName = tabName + "Editor";
-            break;
-          case "data":
-            this.editorCompName = tabName + "Viewer";
-            break;
-        }
-      },
       toggleGameState() {
         if (this.gameIsActive) {
           this.$dialog.confirm({
@@ -216,3 +171,9 @@
     }
   };
 </script>
+
+<style>
+  .b-tabs .tab-content {
+    padding: 0;
+  }
+</style>

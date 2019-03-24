@@ -4,28 +4,28 @@ module.exports = {
   mode: "universal",
 
   /*
-  ** Headers of the page
-  */
+   ** Headers of the page
+   */
   head: {
     title: "MAGIC CTF",
     meta: [
-      { charset: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { hid: "description", name: "description", content: pkg.description }
+      {charset: "utf-8"},
+      {name: "viewport", content: "width=device-width, initial-scale=1"},
+      {hid: "description", name: "description", content: pkg.description}
     ],
-    link: [{ rel: "icon", href: "/favicon.png", sizes: "192x192" }]
+    link: [{rel: "icon", href: "/favicon.png", sizes: "192x192"}]
   },
 
   /*
-  ** Customize the progress-bar color
-  */
+   ** Customize the progress-bar color
+   */
   loading: {
     color: "#5a79e8"
   },
 
   /*
-  ** Global CSS
-  */
+   ** Global CSS
+   */
   css: [
     {
       src: "@fortawesome/fontawesome-free/css/all.min.css",
@@ -34,36 +34,38 @@ module.exports = {
   ],
 
   /*
-  ** Plugins to load before mounting the App
-  */
+   ** Plugins to load before mounting the App
+   */
   plugins: [],
 
   /*
-  ** Nuxt.js modules
-  */
+   ** Nuxt.js modules
+   */
   modules: [
     // Doc: https://github.com/nuxt-community/axios-module#usage
     "@nuxtjs/axios",
     // Doc: https://buefy.github.io/#/documentation
-    "nuxt-buefy",
+    ["nuxt-buefy", {
+      defaultIconPack: "fas"
+    }],
     // Socket.io
     "~/io"
   ],
   /*
-  ** Axios module configuration
-  */
+   ** Axios module configuration
+   */
   axios: {
     baseURL: ""
     // See https://github.com/nuxt-community/axios-module#options
   },
 
   /*
-  ** Build configuration
-  */
+   ** Build configuration
+   */
   build: {
     /*
-    ** You can extend webpack config here
-    */
+     ** You can extend webpack config here
+     */
     extend(config, ctx) {}
   }
 };
