@@ -33,7 +33,7 @@ const init = io => {
                     *
                     * These per team responses will include: answer submission, hint requests, and their puzzle set
                     * */
-                   const teamRoom = `team-${user.name}`;
+                   const teamRoom = `team-${user._id}`;
                    socket.join(["ctf", teamRoom]);
                  } else {
                    /*
@@ -65,8 +65,8 @@ const init = io => {
                  return logger.error(err);
                } else {
                  if (user !== null && user.accountType === "player") {
-                   if (ctf.isGameRunning() && ctf.teamList[user.name]) {
-                     socket.emit("updateTeamPuzzles", ctf.teamList[user.name].getPuzzles());
+                   if (ctf.isGameRunning() && ctf.teamList[user._id]) {
+                     socket.emit("updateTeamPuzzles", ctf.teamList[user._id].getPuzzles());
                    }
                  }
                }
@@ -84,12 +84,12 @@ const init = io => {
                } else {
                  if (user !== null && user.accountType === "player") {
                    let teamPuzzleData = [];
-                   if (ctf.isGameRunning() && ctf.teamList[user.name]) {
+                   if (ctf.isGameRunning() && ctf.teamList[user._id]) {
                      const {puzzleId, puzzleName} = submittedAnswer;
 
                      const answer = ctf.checkAnswer(submittedAnswer);
                      if (answer.correct === true) {
-                       const team = ctf.teamList[user.name];
+                       const team = ctf.teamList[user._id];
 
                        team.addCorrectPuzzle(puzzleId);
 
@@ -109,7 +109,7 @@ const init = io => {
 
                        teamPuzzleData = team.getPuzzles();
 
-                       const teamRoom = `team-${user.name}`;
+                       const teamRoom = `team-${team._id}`;
 
                        /*
                         * Send the team their updated puzzle set
@@ -130,7 +130,7 @@ const init = io => {
                         * */
                        dc.addPuzzleSuccess(puzzleId);
                        dc.addLog(
-                         `Team: '${user.name}' solved puzzle: '${puzzleName}'.`
+                         `Team: '${team.name}' solved puzzle: '${puzzleName}'.`
                        );
                      } else {
                        /*
@@ -167,10 +167,10 @@ const init = io => {
                } else {
                  if (user !== null && user.accountType === "player") {
                    let teamPuzzleData = [];
-                   if (ctf.isGameRunning() && ctf.teamList[user.name]) {
+                   if (ctf.isGameRunning() && ctf.teamList[user._id]) {
                      const {puzzleId, puzzleName, hintId} = requestedHint;
 
-                     const team = ctf.teamList[user.name];
+                     const team = ctf.teamList[user._id];
 
                      if (team.hasHintAccess(puzzleId, hintId)) {
                        const hint = ctf.getHint(requestedHint);
@@ -186,7 +186,7 @@ const init = io => {
 
                        teamPuzzleData = team.getPuzzles();
 
-                       const teamRoom = `team-${user.name}`;
+                       const teamRoom = `team-${team._id}`;
 
                        /*
                         * Send the team their updated puzzle set
@@ -207,7 +207,7 @@ const init = io => {
                         * */
                        dc.addHintUse(puzzleId, hintId);
                        dc.addLog(
-                         `Team: '${user.name}' requested hint #${hintId +
+                         `Team: '${team.name}' requested hint #${hintId +
                          1} for puzzle: '${puzzleName}'.`
                        );
                      }

@@ -8,8 +8,6 @@ let teamList = {};
 
 let teamScores = {};
 
-let helpRequests = {};
-
 const changeGameState = newState => {
   gameIsRunning = newState;
   if (newState === true && remainingTime === undefined) {
@@ -24,12 +22,6 @@ const isGameRunning = () => {
   return gameIsRunning;
 };
 
-const setEndTime = date => {
-  endTime = date;
-};
-
-const getEndTime = () => endTime;
-
 const getRemainingTime = () => remainingTime;
 
 setInterval(() => {
@@ -39,13 +31,14 @@ setInterval(() => {
 }, 1000);
 
 const updateTeamScores = () => {
-  for (const team in teamList) {
-    if (teamList.hasOwnProperty(team)) {
-      const {score, lastUpdated, location} = teamList[team];
-      teamScores[team] = {
+  for (const _id in teamList) {
+    if (teamList.hasOwnProperty(_id)) {
+      const {name, locationId, score, lastUpdated} = teamList[_id];
+      teamScores[_id] = {
+        name,
+        locationId,
         score,
-        lastUpdated,
-        location
+        lastUpdated
       };
     }
   }
@@ -175,10 +168,7 @@ module.exports = {
   isGameRunning,
   teamList,
   teamScores,
-  helpRequests,
   gameLength,
-  setEndTime,
-  getEndTime,
   getRemainingTime,
   updateTeamScores,
   getHint,

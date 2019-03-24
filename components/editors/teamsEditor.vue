@@ -3,7 +3,7 @@
     <b-loading :active.sync="isLoading"></b-loading>
     <p class="has-text-success has-text-weight-bold">NOTE: team names will automatically be sorted alphabetically for
       the register page</p>
-    <team :id="index" :key="index" :locations="locations" :teamData="team" @delete="deleteTeam" @updateAccountName="updateTeam" v-for="(team, index) in teamList"></team>
+    <team :index="idx" :key="idx" :locations="locations" :teamData="team" @delete="deleteTeam" @updateAccountName="updateTeam" v-for="(team, idx) in teamList"></team>
     <div class="buttons is-centered">
       <button @click="addNewTeam" class="button is-success is-rounded is-medium">Add new team</button>
       <button @click="saveTeamList" class="button is-info is-rounded is-medium">Save teams</button>
@@ -29,8 +29,13 @@
       updateTeam(id, val) {
         this.teamList[id] = val;
       },
-      deleteTeam(id) {
-        this.teamList.splice(id, 1);
+      deleteTeam(idx, _id) {
+        this.$axios.post("/api/admin/settings/deactivateteam", {
+              teamId: _id
+            })
+            .then(() => {
+              this.teamList.splice(idx, 1);
+            });
       },
       saveTeamList() {
         this.$axios
@@ -55,9 +60,14 @@
     },
     mounted() {
       const getTeams = this.$axios
-                           .get("/api/teams")
+                           .get("/api/admin/settings/teams")
                            .then(res => {
-                             // this.teamList = res.data.sort();
+                             this.teamList = res.data.sort((a, b) => {
+                               const t1 = a.name.toUpperCase();
+                               const t2 = b.name.toUpperCase();
+
+                               return (t1 < t2) ? -1 : (t1 > t2) ? 1 : 0;
+                             });
                            })
                            .catch(err => {
                              console.error(err);

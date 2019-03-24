@@ -13,9 +13,13 @@ router.get("/api/locations", (req, res) =>
 );
 
 // GET `/api/teams` to return available teams that have already been registered
-router.get("/api/teams", (req, res) =>
-  res.json(Object.keys(ctf.teamList))
-);
+router.get("/api/teams", (req, res) => {
+  let teamNameList = [];
+  for (let team in ctf.teamList) {
+    teamNameList.push(ctf.teamList[team].name);
+  }
+  res.json(teamNameList);
+});
 
 // POST `/api/login` to log in the user and then add them to the `req.session.authUser`
 router.post("/api/login", (req, res) => {
@@ -70,7 +74,7 @@ router
     handlers
       .isAuth(req.session.userId, "admin")
       .then(() => {
-        return res.json({
+        res.json({
           puzzles: ctf.getPuzzlesForAdmin()
         });
       })
@@ -81,7 +85,8 @@ router
       .isAuth(req.session.userId, "admin")
       .then(() => {
         ctf.updatePuzzles(req.body.puzzleData);
-        return res.status(200);
+        res.status(200)
+           .send();
       })
       .catch(err => handlers.routeError(res, err));
   });
@@ -92,52 +97,94 @@ router.post("/api/admin/settings/locations", (req, res) => {
     .isAuth(req.session.userId, "admin")
     .then(() => {
       ctf.updateLocations(req.body.locationData);
-      return res.status(200);
+      res.status(200)
+         .send();
     })
     .catch(err => handlers.routeError(res, err));
 });
 
+// GET `/api/admin/settings/teams` to retrieve admin team data
 // POST `/api/admin/settings/teams` to save team list
-router.post("/api/admin/settings/teams", (req, res) => {
+router
+  .route("/api/admin/settings/teams")
+  .get((req, res) => {
+    handlers
+      .isAuth(req.session.userId, "admin")
+      .then(() => {
+        let teamList = [];
+        for (let team in ctf.teamList) {
+          const {_id, name, locationId} = ctf.teamList[team];
+          teamList.push({_id, name, locationId});
+        }
+        res.json(teamList);
+      })
+      .catch(err => handlers.routeError(res, err));
+  })
+  .post((req, res) => {
+    handlers
+      .isAuth(req.session.userId, "admin")
+      .then(() => {
+        const {teamList} = req.body;
+        teamList.forEach((team) => {
+          const {_id, name, locationId, password} = team;
+
+          const userData = {
+            name,
+            locationId,
+            password
+          };
+
+          Account.findOne({_id}, (err, acc) => {
+            if (err) return logger.error(err);
+            if (acc !== null) {
+              /*
+               * Team already exists, therefor we just need to update its properties
+               * */
+              if (name !== null && name !== "") ctf.teamList[_id].changeName(name);
+
+              if (locationId !== null && locationId > -1) ctf.teamList[_id].changeLocationId(locationId);
+
+              if (password !== null && password !== "") {
+                acc.password = password;
+                acc.save();
+              }
+            } else {
+              Account.create(userData, (error, user) => {
+                if (error) {
+                  return logger.error(err);
+                } else {
+                  new Team(user._id, user.name, user.locationId);
+                }
+              });
+            }
+          });
+        });
+      })
+      .catch(err => handlers.routeError(res, err));
+    res.status(200)
+       .send();
+  });
+
+// POST `/api/admin/settings/deactivateteam` to deactivate team
+router.post("/api/admin/settings/deactivateteam", (req, res) => {
   handlers
     .isAuth(req.session.userId, "admin")
     .then(() => {
-      const {teamList} = req.body;
-      teamList.forEach((team) => {
-        const {name, locationId, password} = team;
+      const {teamId} = req.body;
 
-        const userData = {
-          name,
-          locationId,
-          password
-        };
-
-        Account.findOne({name}, (err, resp) => {
-          if (err) return logger.error(err);
-          if (resp !== null) {
-            // Team name taken
-          } else {
-            Account.create(userData, (error, user) => {
-              if (error) {
-                return logger.error(err);
-              } else {
-                if (!ctf.teamList[name]) {
-                  ctf.teamList[name] = new Team(name, locationId);
-                  ctf.teamScores[name] = {
-                    score: 0,
-                    lastUpdated: Date.now(),
-                    location: user.locationId
-                  };
-                }
-              }
-            });
-          }
-        });
+      Account.findOne({_id: teamId}, (err, acc) => {
+        if (err) return logger.error(err);
+        if (acc !== null) {
+          delete ctf.teamList[teamId];
+          acc.isActive = false;
+          acc.save();
+        }
       });
+
+      res.status(200)
+         .send();
     })
     .catch(err => handlers.routeError(res, err));
-  res.status(200)
-     .send();
 });
 
 // GET `/api/admin/settings/gamelength` to retrieve game length
@@ -159,7 +206,8 @@ router
       .isAuth(req.session.userId, "admin")
       .then(() => {
         ctf.gameLength = `${req.body.hr}:${req.body.min}`;
-        return res.status(200);
+        res.status(200)
+           .send();
       })
       .catch(err => handlers.routeError(res, err));
   });

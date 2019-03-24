@@ -15,16 +15,20 @@
       </div>
     </nav>
     <nav class="level box" id="topThreeListingContainer" style="align-items:center;justify-content:space-around;">
-      <div class="has-text-centered" v-for="(score, index) in 3" :key="index">
-        <h1 class="title is-3">{{topThreeScores[index] ? `#${(index + 1)}: ${topThreeScores[index].teamName}`: "n/a"}}</h1>
-        <h1 class="subtitle is-5">{{topThreeScores[index] ? `(${locations[topThreeScores[index].location]})` : ""}}</h1>
+      <div :key="index" class="has-text-centered" v-for="(score, index) in 3">
+        <h1 class="title is-3">{{topThreeScores[index] ? `#${(index + 1)}: ${topThreeScores[index].teamName}`:
+          "n/a"}}</h1>
+        <h1 class="subtitle is-5">{{topThreeScores[index] ? `(${locations[topThreeScores[index].locationId]})` :
+          ""}}</h1>
         <h1 class="subtitle is-3">{{topThreeScores[index] ? topThreeScores[index].score : "n/a"}}</h1>
       </div>
     </nav>
     <div id="scoreListingContainer" ref="remainingScoresList">
-      <div class="box" v-for="(score, index) in remainingScores" :key="index">
+      <div :key="index" class="box" v-for="(score, index) in remainingScores">
         <h1 class="title is-4" style="display:inline;">#{{index + 4}}: {{score.teamName}}</h1>
-        <h1 class="subtitle is-4" style="display:inline;"> - {{score.score}} points <small>({{locations[score.location]}})</small></h1>
+        <h1 class="subtitle is-4" style="display:inline;"> - {{score.score}} points
+          <small>({{locations[score.location]}})</small>
+        </h1>
       </div>
     </div>
   </div>
@@ -52,8 +56,8 @@
       processedTeamScores() {
         let sorted = [];
         for (let team in this.rawTeamScores) {
-          const { score, lastUpdated, location } = this.rawTeamScores[team];
-          sorted.push({ teamName: team, score, lastUpdated, location });
+          const {name, score, lastUpdated, locationId} = this.rawTeamScores[team];
+          sorted.push({teamName: name, score, lastUpdated, locationId});
         }
         sorted.sort((a, b) => {
           return a.lastUpdated - b.lastUpdated;
@@ -100,13 +104,13 @@
           this.remainingTime = gameData.remainingTime;
       });
       this.$axios
-        .get("/api/register/locations")
-        .then(res => {
-          this.locations = res.data.sort();
-        })
-        .catch(err => {
-          console.error(err);
-        });
+          .get("/api/locations")
+          .then(res => {
+            this.locations = res.data.sort();
+          })
+          .catch(err => {
+            console.error(err);
+          });
       this.scrollScoreboard();
       setInterval(() => {
         if (this.gameIsActive) {

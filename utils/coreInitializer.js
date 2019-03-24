@@ -47,22 +47,21 @@ const loadTeams = db => {
   /*
    * Locate all teams in database and load their team data into memory
    * */
-  Account.find({accountType: "player"}, (err, players) => {
+  Account.find({accountType: "player", isActive: true}, (err, teams) => {
     if (err) {
       return logger.error(err);
     }
 
-    if (players.length) {
-      players.forEach(p => {
-        const teamName = p.name;
-        if (!loadedTeams[teamName]) {
-          logger.info(`Loading account: '${teamName}'...`);
-          Team.loadTeam(teamName);
-          loadedTeams[teamName] = true;
+    if (teams.length) {
+      teams.forEach(team => {
+        const {_id, name} = team;
+        if (!loadedTeams[_id]) {
+          logger.info(`Loading team: '${name}'...`);
+          Team.loadTeam(_id);
         }
       });
     } else {
-      logger.info("Found no pre-existing accounts to load...");
+      logger.info("Found no pre-existing teams to load...");
     }
   });
 };

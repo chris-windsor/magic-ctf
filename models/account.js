@@ -25,6 +25,10 @@ const AccountSchema = new mongoose.Schema({
   },
   lastUpdated: {
     type: Number
+  },
+  isActive: {
+    type: Boolean,
+    default: true
   }
 });
 

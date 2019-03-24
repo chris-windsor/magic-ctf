@@ -25,7 +25,7 @@
         </span>
       </div>
       <p class="control">
-        <a @click="$emit('delete', id)" class="button is-danger">
+        <a @click="$emit('delete', index, teamData._id)" class="button is-danger">
           <span class="icon is-small">
             <i class="fas fa-times"></i>
           </span>
@@ -37,6 +37,6 @@
 
 <script>
   export default {
-    props: ["teamData", "locations", "id"]
+    props: ["teamData", "locations", "index"]
   };
 </script>

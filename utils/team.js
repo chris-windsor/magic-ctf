@@ -1,16 +1,16 @@
 const ctf = require("./ctf");
-const accountSchema = require("../models/account");
+const Account = require("../models/account");
 const logger = require("../utils/logger");
 const loadedTeams = {};
 
-const updateTeam = (name, prop, val) => {
+const updateTeam = (_id, prop, val) => {
   /*
    * Update team properties in the database
    * */
 
-  accountSchema.update(
+  Account.update(
     {
-      name
+      _id
     },
     {
       $set: {
@@ -26,66 +26,80 @@ const updateTeam = (name, prop, val) => {
 };
 
 class Team {
-  constructor(name, locationId, players, score, puzzles, lastUpdated) {
+  constructor(_id, name, locationId, score, puzzles, lastUpdated) {
     /*
-     * Name -> team name
-     * LocationId -> team location identifier
-     * Score -> team score
-     * Puzzles -> team puzzle set; contains all their puzzle data including their hints
-     * LastUpdated -> when team's score was last updated; used to decide leading team if there is score tie
+     * _id -> team uuid
+     * mame -> team name
+     * locationId -> team location identifier
+     * score -> team score
+     * puzzles -> team puzzle set; contains all their puzzle data including their hints
+     * lastUpdated -> when team's score was last updated; used to decide leading team if there is score tie
      * */
+    this._id = _id;
     this.name = name;
     this.locationId = locationId;
     this.score = score ? score : 0;
     this.puzzles = puzzles ? puzzles : ctf.getPuzzlesForPlayer();
     this.lastUpdated = lastUpdated ? lastUpdated : Date.now();
+
+    /*
+     * Load team instance into list with all other teams
+     * */
+    ctf.teamList[_id] = this;
+
+    /*
+     * Load teams score data
+     * */
+    ctf.teamScores[_id] = {
+      name: this.name,
+      locationId: this.locationId,
+      score: this.score,
+      lastUpdated: this.lastUpdated
+    };
   }
 
   /*
    * Load an existing team from the database
    * */
-  static loadTeam(teamName) {
-    if (!loadedTeams[teamName]) {
-      accountSchema.find({name: teamName})
-                   .then((res, err) => {
-                     if (res[0].accountType === "player") {
-                       if (err) {
-                         logger.error("Error loading team data from db... ", err);
-                       } else {
-                         const {
-                                 name,
-                                 locationId,
-                                 score,
-                                 puzzles,
-                                 lastUpdated
-                               } = res[0];
-
-                         /*
-                          * Load team instance into list with all other teams
-                          * */
-                         ctf.teamList[name] = new this(
+  static loadTeam(_id) {
+    if (!loadedTeams[_id]) {
+      Account.find({_id})
+             .then((res, err) => {
+               if (res[0].accountType === "player") {
+                 if (err) {
+                   logger.error("Error loading team data from db... ", err);
+                 } else {
+                   const {
+                           _id,
                            name,
                            locationId,
                            score,
                            puzzles,
                            lastUpdated
-                         );
+                         } = res[0];
 
-                         /*
-                          * Load teams score data
-                          * */
-                         ctf.teamScores[name] = {
-                           score,
-                           lastUpdated,
-                           locationId
-                         };
-
-                         ctf.updateTeamScores();
-                       }
-                     }
-                   });
+                   new this(_id, name, locationId, score, puzzles, lastUpdated);
+                 }
+               }
+             });
     }
-    loadedTeams[teamName] = true;
+    loadedTeams[_id] = true;
+  }
+
+  /*
+   * Change team's name in database
+   * */
+  changeName(newName) {
+    this.name = newName;
+    updateTeam(this._id, "name", this.name);
+  }
+
+  /*
+   * Change team's locationId in database
+   * */
+  changeLocationId(newLocationId) {
+    this.locationId = newLocationId;
+    updateTeam(this._id, "locationId", this.locationId);
   }
 
   /*
@@ -116,7 +130,7 @@ class Team {
       this.puzzles[puzzleId].hints[hintId + 1].unlocked = true;
     }
 
-    updateTeam(this.name, "puzzles", this.puzzles);
+    updateTeam(this._id, "puzzles", this.puzzles);
   }
 
   /*
@@ -125,7 +139,7 @@ class Team {
   addCorrectPuzzle(puzzleId) {
     this.puzzles[puzzleId].isSolved = true;
 
-    updateTeam(this.name, "puzzles", this.puzzles);
+    updateTeam(this._id, "puzzles", this.puzzles);
   }
 
 
@@ -139,8 +153,8 @@ class Team {
 
     ctf.updateTeamScores();
 
-    updateTeam(this.name, "score", this.score);
-    updateTeam(this.name, "lastUpdated", this.lastUpdated);
+    updateTeam(this._id, "score", this.score);
+    updateTeam(this._id, "lastUpdated", this.lastUpdated);
   }
 }
 
