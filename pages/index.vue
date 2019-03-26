@@ -8,7 +8,7 @@
         <b-autocomplete
           :data="teamList"
           :keep-first="false"
-          :open-on-focus="true"
+          :open-on-focus="false"
           @select="option => selected = option"
           autofocus
           icon="user"

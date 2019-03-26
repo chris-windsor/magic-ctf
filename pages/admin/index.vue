@@ -38,7 +38,7 @@
           <b-tab-item icon="user-friends" label="Teams"></b-tab-item>
           <b-tab-item icon="chart-bar" label="Data"></b-tab-item>
         </b-tabs>
-        <div class="notification is-info" v-if="!selectedTab">Select a tab above to edit game settings.</div>
+        <div class="notification is-info" v-if="selectedTab === null">Select a tab above to edit game settings.</div>
         <div v-else>
           <keep-alive>
             <component :is="tabMappings[selectedTab]"></component>

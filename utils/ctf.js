@@ -8,6 +8,24 @@ let teamList = {};
 
 let teamScores = {};
 
+const getTop5 = () => {
+  let sorted = [];
+  for (let _id in teamScores) {
+    const {name, score, lastUpdated} = teamScores[_id];
+    sorted.push({
+      name,
+      score,
+      lastUpdated
+    });
+  }
+  sorted.sort((a, b) => a.lastUpdated - b.lastUpdated);
+  sorted.sort((a, b) => b.score - a.score);
+  sorted = sorted.map(({name, score}) => {
+    return {name, score};
+  });
+  return sorted.splice(0, 5);
+};
+
 const changeGameState = newState => {
   gameIsRunning = newState;
   if (newState === true && remainingTime === undefined) {
@@ -164,6 +182,7 @@ const updateLocations = locationData => {
 };
 
 module.exports = {
+  getTop5,
   changeGameState,
   isGameRunning,
   teamList,

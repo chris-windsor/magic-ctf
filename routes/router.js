@@ -227,22 +227,19 @@ router.get("/api/admin/gamedata", (req, res) => {
 
 // GET `/api/top5` to retrieve top 5 teams
 router.get("/api/top5", (req, res) => {
-  const rawScores = ctf.teamScores;
-  let sorted = [];
-  for (let team in rawScores) {
-    const {score, lastUpdated} = rawScores[team];
-    sorted.push({
-      teamName: team,
-      score,
-      lastUpdated
-    });
+  const {format} = req.query;
+  if (format === "json") {
+    res.json(ctf.getTop5());
+  } else if (format === "csv") {
+    let content = "position,name,score";
+    ctf.getTop5()
+       .forEach((e, i) => {
+         content += `\n${i + 1},${e.name},${e.score}`;
+       });
+    res.send(content);
+  } else {
+    res.send("Please specify a format query option of either: json, csv");
   }
-  sorted.sort((a, b) => a.lastUpdated - b.lastUpdated);
-  sorted.sort((a, b) => b.score - a.score);
-  sorted = sorted.map(({teamName, score}) => {
-    return {teamName, score};
-  });
-  return res.json(sorted.splice(0, 5));
 });
 
 module.exports = router;
