@@ -32,13 +32,14 @@
     <div class="column is-10">
       <div class="box content">
         <b-tabs class="is-medium" position="is-centered" type="is-boxed" v-model="selectedTab">
+          <b-tab-item :visible="false"></b-tab-item>
           <b-tab-item icon="file-alt" label="Puzzles"></b-tab-item>
           <b-tab-item icon="sliders-h" label="Mechanics"></b-tab-item>
           <b-tab-item icon="map-marked-alt" label="Locations"></b-tab-item>
           <b-tab-item icon="user-friends" label="Teams"></b-tab-item>
           <b-tab-item icon="chart-bar" label="Data"></b-tab-item>
         </b-tabs>
-        <div class="notification is-info" v-if="selectedTab === null">Select a tab above to edit game settings.</div>
+        <div class="notification is-info" v-if="selectedTab === 0">Select a tab above to edit game settings.</div>
         <div v-else>
           <keep-alive>
             <component :is="tabMappings[selectedTab]"></component>
@@ -72,13 +73,13 @@
     },
     data() {
       return {
-        selectedTab: null,
+        selectedTab: 0,
         tabMappings: {
-          0: "puzzlesEditor",
-          1: "mechanicsEditor",
-          2: "locationsEditor",
-          3: "teamsEditor",
-          4: "dataViewer"
+          1: "puzzlesEditor",
+          2: "mechanicsEditor",
+          3: "locationsEditor",
+          4: "teamsEditor",
+          5: "dataViewer"
         },
         gameStateBtnLoading: true,
         gameIsActive: false,
