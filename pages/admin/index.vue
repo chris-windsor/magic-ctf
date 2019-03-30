@@ -8,7 +8,7 @@
             <a>Remaining time:</a>
           </li>
           <li>
-            <a>{{remainingTime}}</a>
+            <a>{{countdown}}</a>
           </li>
         </ul>
         <br/>
@@ -60,6 +60,7 @@
   import puzzlesEditor from "~/components/editors/puzzlesEditor";
   import teamsEditor from "~/components/editors/teamsEditor";
   import socket from "~/plugins/socket.io.js";
+  import "moment-timezone";
 
   export default {
     layout: "profile",
@@ -86,7 +87,9 @@
         },
         gameStateBtnLoading: true,
         gameIsActive: false,
-        endTime: null
+        gameEndtime: null,
+        timer: null,
+        countdown: null
       };
     },
     computed: {
@@ -94,26 +97,6 @@
         return !this.gameStateBtnLoading && !this.gameIsActive
           ? "Start CTF"
           : "Stop CTF";
-      },
-      remainingTime() {
-        const currentTime = this.$moment();
-        this.endTime = this.$moment(this.gameEndTime);
-
-        if (this.gameIsActive) {
-          let duration = Math.abs(this.$moment().diff(this.gameEndTime));
-
-          let seconds = Math.floor((duration / 1000) % 60),
-              minutes = Math.floor((duration / (1000 * 60)) % 60),
-              hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-
-          hours = (hours < 10) ? "0" + hours : hours;
-          minutes = (minutes < 10) ? "0" + minutes : minutes;
-          seconds = (seconds < 10) ? "0" + seconds : seconds;
-
-          return hours + ":" + minutes + ":" + seconds
-        }
-
-        return "--:--:--";
       }
     },
     methods: {
@@ -158,9 +141,13 @@
           }
         }
       });
+      this.timer = setInterval(() => {
+        this.countdown = this.$moment(this.$moment(this.gameEndTime).diff(this.$moment.tz("America/New_York"))).format('h:mm:ss')
+      }, 250);
     },
     beforeDestroy() {
       socket.disconnect();
+      clearInterval(this.timer);
     },
     components: {
       puzzlesEditor,

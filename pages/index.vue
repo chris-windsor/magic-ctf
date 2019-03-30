@@ -7,10 +7,9 @@
       <b-field>
         <b-autocomplete
           :data="teamList"
-          :keep-first="false"
-          :open-on-focus="false"
+          :keep-first="true"
+          :open-on-focus="true"
           @select="option => selected = option"
-          autofocus
           icon="user"
           placeholder="Team name"
           v-model="teamName">
@@ -30,6 +29,8 @@
         </p>
       </div>
     </form>
+    <p class="has-text-blue"></p>Need an account?
+    <nuxt-link class="has-text-grey" style="border-bottom: 1px solid currentColor;" tag="a" to="/register">Register</nuxt-link>
   </div>
 </template>
 

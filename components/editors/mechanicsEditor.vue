@@ -21,6 +21,8 @@
 </template>
 
 <script>
+  import "moment-timezone";
+
   export default {
     data() {
       return {
@@ -30,6 +32,8 @@
     },
     methods: {
       updateGameLength() {
+        console.log(this.gameEndTime.getHours());
+        console.log(this.$moment(this.gameEndTime).tz("America/New_York").utc());
         this.$axios
           .post("/api/admin/settings/gamelength", {
             gameEndTime: this.gameEndTime

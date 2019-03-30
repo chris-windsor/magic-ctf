@@ -1,5 +1,5 @@
 <template>
-  <section class="hero is-fullheight" id="particles-js">
+  <section class="hero is-fullheight is-unselectable" id="particles-js">
     <div class="hero-body">
       <nuxt/>
     </div>

@@ -21,6 +21,57 @@ router.get("/api/teams", (req, res) => {
   res.json(teamNameList);
 });
 
+// POST `/api/register` to register new team
+router.post("/api/register", (req, res) => {
+  const {name, locationId, password, passwordConf} = req.body;
+
+  if (password !== passwordConf) {
+    return res.status(401)
+              .json({
+                error: "Passwords do not match"
+              });
+  }
+
+  if (!(name && locationId !== -1 && password && passwordConf)) {
+    return res.status(400)
+              .json({
+                error: "All fields required"
+              });
+  }
+
+  Account.findOne({name}, (err, resp) => {
+    if (resp !== null) {
+      return res.status(409)
+                .json({
+                  error: "Username taken"
+                });
+    } else {
+      Account.create({
+        name,
+        locationId,
+        password
+      }, (error, acc) => {
+        if (error) {
+          return logger.error(error);
+        } else {
+          new Team(acc._id, acc.name, acc.locationId);
+        }
+
+        req.session.userId = acc._id;
+        req.session.authUser = {
+          name: acc.name,
+          accountType: acc.accountType
+        };
+
+        res.json({
+          name: acc.name,
+          accountType: acc.accountType
+        })
+      });
+    }
+  });
+});
+
 // POST `/api/login` to log in the user and then add them to the `req.session.authUser`
 router.post("/api/login", (req, res) => {
   if (req.body.accountName && req.body.password) {
@@ -136,7 +187,7 @@ router
 
           Account.findOne({_id}, (err, acc) => {
             if (err) return logger.error(err);
-            if (acc !== null) {
+            if (acc !== null && _id) {
               /*
                * Team already exists, therefor we just need to update its properties
                * */
@@ -151,7 +202,7 @@ router
             } else {
               Account.create(userData, (error, user) => {
                 if (error) {
-                  return logger.error(err);
+                  return logger.error(error);
                 } else {
                   new Team(user._id, user.name, user.locationId);
                 }
