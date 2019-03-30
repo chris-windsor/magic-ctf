@@ -2,26 +2,20 @@
   <div class="columns">
     <b-loading :active.sync="isLoading"></b-loading>
     <div class="column is-3">
-      <h1 class="title is-5">Game length:</h1>
-      <div class="field is-grouped">
-        <div class="control">
-          <div class="select is-info is-fullwidth">
-            <select v-model="selectedHour">
-              <option v-for="(hr, index) in hours" :key="index">{{hr}}hr</option>
-            </select>
-          </div>
-        </div>
-        <div class="control">
-          <div class="select is-info is-fullwidth">
-            <select v-model="selectedMinute">
-              <option v-for="(min, index) in minutes" :key="index">{{min}}min</option>
-            </select>
-          </div>
-        </div>
+      <h1 class="title is-5">Game end time:</h1>
+      <b-field grouped>
+        <b-timepicker
+          rounded
+          placeholder="Click to select..."
+          icon="clock"
+          hour-format="12"
+          :increment-minutes="10"
+          v-model="gameEndTime">
+        </b-timepicker>
         <p class="control">
           <a class="button is-success" @click="updateGameLength()">Update</a>
         </p>
-      </div>
+      </b-field>
     </div>
   </div>
 </template>
@@ -31,18 +25,14 @@
     data() {
       return {
         isLoading: true,
-        hours: [1, 2, 3, 4],
-        minutes: [0, 15, 30, 45],
-        selectedHour: "",
-        selectedMinute: ""
+        gameEndTime: undefined,
       };
     },
     methods: {
       updateGameLength() {
         this.$axios
           .post("/api/admin/settings/gamelength", {
-            hr: this.selectedHour,
-            min: this.selectedMinute
+            gameEndTime: this.gameEndTime
           })
           .then(res => {
             this.$toast.open({
@@ -64,9 +54,7 @@
       this.$axios
         .get("/api/admin/settings/gamelength")
         .then(res => {
-          let length = res.data.gameLength.split(":");
-          this.selectedHour = `${length[0]}`;
-          this.selectedMinute = `${length[1]}`;
+          console.log(res);
           this.isLoading = false;
         })
         .catch(err => {

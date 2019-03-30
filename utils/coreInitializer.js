@@ -14,12 +14,14 @@ const createAdminAccount = db => {
   /*
    * Generate random password for admin account
    * */
-  let rndPswd = "";
+  let adminPswd = "";
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   for (let i = 0; i < 10; i++) {
     const r = Math.floor(Math.random() * chars.length);
-    rndPswd += chars[r];
+    adminPswd += chars[r];
   }
+
+  if (process.env.NODE_ENV === "development") adminPswd = "1234";
 
   /*
    * Create the new admin account
@@ -28,15 +30,15 @@ const createAdminAccount = db => {
     {
       name: "admin",
       accountType: "admin",
-      password: rndPswd,
-      passwordConf: rndPswd
+      password: adminPswd,
+      passwordConf: adminPswd
     },
     (err, user) => {
       if (err) {
         logger.error("Error encountered while creating admin account...", err);
       } else {
         logger.success(
-          `Successfully created admin account with password: ${rndPswd}`
+          `Successfully created admin account with password: ${adminPswd}`
         );
       }
     }

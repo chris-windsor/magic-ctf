@@ -1,53 +1,33 @@
 const fs = require("fs");
 
 let gameIsRunning = false;
-let gameLength = "3hr:0min";
-let remainingTime;
-
+let gameEndTime = new Date();
 let teamList = {};
-
 let teamScores = {};
 
-const getTop5 = () => {
-  let sorted = [];
-  for (let _id in teamScores) {
-    const {name, score, lastUpdated} = teamScores[_id];
-    sorted.push({
-      name,
-      score,
-      lastUpdated
-    });
-  }
-  sorted.sort((a, b) => a.lastUpdated - b.lastUpdated);
-  sorted.sort((a, b) => b.score - a.score);
-  sorted = sorted.map(({name, score}) => {
-    return {name, score};
-  });
-  return sorted.splice(0, 5);
-};
+/*
+ * Change current game state
+ * */
+const changeGameState = newState => gameIsRunning = newState;
 
-const changeGameState = newState => {
-  gameIsRunning = newState;
-  if (newState === true && remainingTime === undefined) {
-    const timeComponents = gameLength.split(":");
-    const hrs = Number(timeComponents[0].slice(0, -2)) * 1000 * 3600;
-    const mins = Number(timeComponents[1].slice(0, -3)) * 1000 * 60;
-    remainingTime = hrs + mins;
-  }
-};
+/*
+ * Return current game state
+ * */
+const isGameRunning = () => gameIsRunning;
 
-const isGameRunning = () => {
-  return gameIsRunning;
-};
+/*
+ * Change game end time
+ * */
+const updateEndTime = newEndTime => gameEndTime = newEndTime;
 
-const getRemainingTime = () => remainingTime;
+/*
+ * Retrieve game end time
+ * */
+const getEndTime = () => gameEndTime;
 
-setInterval(() => {
-  if (gameIsRunning) {
-    remainingTime -= 1000;
-  }
-}, 1000);
-
+/*
+ * Re-process team score list when any team's score updates
+ * */
 const updateTeamScores = () => {
   for (const _id in teamList) {
     if (teamList.hasOwnProperty(_id)) {
@@ -62,8 +42,14 @@ const updateTeamScores = () => {
   }
 };
 
+/*
+ * Load in puzzle data from its respective file
+ * */
 const puzzles = require("./puzzles.json");
 
+/*
+ * Retrieve a hint from the master puzzle set to be returned to the team
+ * */
 const getHint = request => {
   const hint = puzzles[request.puzzleName].hints[request.hintId];
   return {
@@ -72,6 +58,9 @@ const getHint = request => {
   };
 };
 
+/*
+ * Compare submitted answer for a puzzle to the correct answer in the master set
+ * */
 const checkAnswer = request => {
   try {
     if (puzzles[request.puzzleName].answer === request.answer) {
@@ -90,6 +79,9 @@ const checkAnswer = request => {
   }
 };
 
+/*
+ * Retrieve blank puzzle data set for newly created teams
+ * */
 const getPuzzlesForPlayer = () => {
   const puzzleNames = Object.keys(puzzles);
   let puzzleData = [];
@@ -112,6 +104,9 @@ const getPuzzlesForPlayer = () => {
   return puzzleData;
 };
 
+/*
+ * Retrieve puzzle data set in efficient format for the admin panel
+ * */
 const getPuzzlesForAdmin = () => {
   const puzzleNames = Object.keys(puzzles);
   let puzzleData = [];
@@ -126,6 +121,9 @@ const getPuzzlesForAdmin = () => {
   return puzzleData;
 };
 
+/*
+ * Retrieve puzzle data set in efficient format for the data colletion system
+ * */
 const getPuzzlesForDataCollection = () => {
   const puzzleNames = Object.keys(puzzles);
   let puzzleData = [];
@@ -146,6 +144,9 @@ const getPuzzlesForDataCollection = () => {
   return puzzleData;
 };
 
+/*
+ * Modify puzzle data set with newly created puzzle set from admin panel
+ * */
 const updatePuzzles = puzzleData => {
   let puzzles = {};
   puzzleData.forEach(entry => {
@@ -164,10 +165,19 @@ const updatePuzzles = puzzleData => {
   );
 };
 
+/*
+ * Load in location data from its respective json file
+ * */
 const locations = require("./locations.json");
 
+/*
+ * Retrieve location data
+ * */
 const getLocations = () => locations.locations;
 
+/*
+ * Update the location data file with new location list
+ * */
 const updateLocations = locationData => {
   const locs = {
     locations: locationData
@@ -181,21 +191,42 @@ const updateLocations = locationData => {
   );
 };
 
+/*
+ * Retrieve the current top five scoring teams
+ * */
+const getTop5 = () => {
+  let sorted = [];
+  for (let _id in teamScores) {
+    const {name, score, lastUpdated} = teamScores[_id];
+    sorted.push({
+      name,
+      score,
+      lastUpdated
+    });
+  }
+  sorted.sort((a, b) => a.lastUpdated - b.lastUpdated);
+  sorted.sort((a, b) => b.score - a.score);
+  sorted = sorted.map(({name, score}) => {
+    return {name, score};
+  });
+  return sorted.splice(0, 5);
+};
+
 module.exports = {
-  getTop5,
   changeGameState,
+  checkAnswer,
+  getEndTime,
+  getHint,
+  getLocations,
+  getPuzzlesForAdmin,
+  getPuzzlesForDataCollection,
+  getPuzzlesForPlayer,
+  getTop5,
   isGameRunning,
   teamList,
   teamScores,
-  gameLength,
-  getRemainingTime,
-  updateTeamScores,
-  getHint,
-  checkAnswer,
-  getPuzzlesForPlayer,
-  getPuzzlesForAdmin,
-  getPuzzlesForDataCollection,
+  updateEndTime,
+  updateLocations,
   updatePuzzles,
-  getLocations,
-  updateLocations
+  updateTeamScores
 };

@@ -5,7 +5,10 @@
         <p class="menu-label">Info:</p>
         <ul class="menu-list" id="sidebar-info">
           <li>
-            <a>Time left: {{timeLeft}}</a>
+            <a>Remaining time:</a>
+          </li>
+          <li>
+            <a>{{remainingTime}}</a>
           </li>
         </ul>
         <br/>
@@ -83,7 +86,7 @@
         },
         gameStateBtnLoading: true,
         gameIsActive: false,
-        remainingTime: 0
+        endTime: null
       };
     },
     computed: {
@@ -92,23 +95,18 @@
           ? "Start CTF"
           : "Stop CTF";
       },
-      timeLeft() {
-        let hrs = Math.floor(this.remainingTime / (1000 * 3600));
-        let mins = Math.round((this.remainingTime % (1000 * 3600)) / 60000);
+      remainingTime() {
+        const currentTime = this.$moment();
+        this.endTime = this.$moment(this.gameEndTime);
+
+        const {hours: currentTimeHours, minutes: currentTimeMinutes, seconds: currentTimeSeconds} = currentTime.toObject();
+        const {hours: endTimeHours, minutes: endTimeMinutes, seconds: endTimeSeconds} = this.endTime.toObject();
+
         if (this.gameIsActive) {
-          if (hrs <= 0 && mins <= 0) {
-            return `0:00`;
-          } else if (mins === 0) {
-            return `${hrs}:00`;
-          } else if (mins === 60) {
-            return `${hrs + 1}:00`;
-          } else if (mins < 10) {
-            return `${hrs}:0${mins}`;
-          } else {
-            return `${hrs}:${mins}`;
-          }
+          return `${endTimeHours - currentTimeHours}:${endTimeMinutes - currentTimeMinutes}:${endTimeSeconds - currentTimeSeconds}`;
         }
-        return "-:--";
+
+        return "--:--:--";
       }
     },
     methods: {
@@ -142,8 +140,7 @@
     mounted() {
       socket.connect();
       socket.on("updateGameStatus", gameData => {
-        if (gameData.remainingTime !== undefined)
-          this.remainingTime = gameData.remainingTime;
+        this.gameEndTime = gameData.endTime;
         if (gameData.isActive !== undefined) {
           if (gameData.isActive === false) {
             this.gameStateBtnLoading = false;
@@ -154,11 +151,6 @@
           }
         }
       });
-      setInterval(() => {
-        if (this.gameIsActive) {
-          this.remainingTime -= 1000;
-        }
-      }, 1000);
     },
     beforeDestroy() {
       socket.disconnect();

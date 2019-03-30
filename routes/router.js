@@ -196,7 +196,7 @@ router
       .isAuth(req.session.userId, "admin")
       .then(() => {
         return res.json({
-          gameLength: ctf.gameLength
+          endTime: ctf.getEndTime()
         });
       })
       .catch(err => handlers.routeError(res, err));
@@ -205,7 +205,10 @@ router
     handlers
       .isAuth(req.session.userId, "admin")
       .then(() => {
-        ctf.gameLength = `${req.body.hr}:${req.body.min}`;
+        const {gameEndTime} = req.body;
+
+        ctf.updateEndTime(gameEndTime);
+
         res.status(200)
            .send();
       })

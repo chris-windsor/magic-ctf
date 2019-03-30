@@ -42,21 +42,38 @@ module.exports = {
    ** Nuxt.js modules
    */
   modules: [
-    // Doc: https://github.com/nuxt-community/axios-module#usage
+    /*
+     * Axios module
+     *
+     * Adds easy request building and sending
+     * */
     "@nuxtjs/axios",
-    // Doc: https://buefy.github.io/#/documentation
+    /*
+     * Buefy module
+     *
+     * Adds pre-built bulma components with Vue functionality
+     * */
     ["nuxt-buefy", {
       defaultIconPack: "fas"
     }],
-    // Socket.io
-    "~/io"
+    /*
+     * Socket.io
+     *
+     * Adds easy socket handling
+     * */
+    "~/io",
+    /*
+     * Moment
+     *
+     * Adds date utilities for just about everything
+     * */
+    "@nuxtjs/moment"
   ],
   /*
-   ** Axios module configuration
+   * Axios module configuration
    */
   axios: {
     baseURL: ""
-    // See https://github.com/nuxt-community/axios-module#options
   },
 
   /*

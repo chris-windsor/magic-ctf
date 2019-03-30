@@ -49,9 +49,8 @@ const init = io => {
              socket.emit("updateGameStatus", {
                isAuth,
                isActive: ctf.isGameRunning(),
-               gameLength: ctf.gameLength,
                teamScores: ctf.teamScores,
-               remainingTime: ctf.getRemainingTime()
+               endTime: ctf.getEndTime()
              });
            });
 
@@ -240,7 +239,7 @@ const init = io => {
                        io.in("ctf-admin")
                          .emit("updateGameStatus", {
                            isActive: ctf.isGameRunning(),
-                           remainingTime: ctf.getRemainingTime()
+                           endTime: ctf.getEndTime()
                          });
                        break;
                      case "stop":
@@ -255,7 +254,7 @@ const init = io => {
                        io.in("ctf-admin")
                          .emit("updateGameStatus", {
                            isActive: ctf.isGameRunning(),
-                           remainingTime: ctf.getRemainingTime()
+                           endTime: ctf.getEndTime()
                          });
                        break;
                      default:

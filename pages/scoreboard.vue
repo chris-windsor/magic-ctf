@@ -70,22 +70,7 @@
         return sorted;
       },
       timeLeft() {
-        let hrs = Math.floor(this.remainingTime / (1000 * 3600));
-        let mins = Math.round((this.remainingTime % (1000 * 3600)) / 60000);
-        if (this.gameIsActive) {
-          if (hrs <= 0 && mins <= 0) {
-            return `0:00`;
-          } else if (mins === 0) {
-            return `${hrs}:00`;
-          } else if (mins === 60) {
-            return `${hrs + 1}:00`;
-          } else if (mins < 10) {
-            return `${hrs}:0${mins}`;
-          } else {
-            return `${hrs}:${mins}`;
-          }
-        }
-        return "-:--";
+
       }
     },
     methods: {
@@ -100,10 +85,8 @@
       socket.connect();
       socket.on("updateGameStatus", gameData => {
         this.rawTeamScores = gameData.teamScores;
-        if (gameData.isActive !== undefined)
-          this.gameIsActive = gameData.isActive;
-        if (gameData.remainingTime !== undefined)
-          this.remainingTime = gameData.remainingTime;
+        this.gameEndTime = gameData.endTime;
+        this.gameIsActive = gameData.isActive;
       });
       this.$axios
           .get("/api/locations")
@@ -114,11 +97,6 @@
             console.error(err);
           });
       this.scrollScoreboard();
-      setInterval(() => {
-        if (this.gameIsActive) {
-          this.remainingTime -= 1000;
-        }
-      }, 1000);
     },
     beforeDestroy() {
       socket.disconnect();

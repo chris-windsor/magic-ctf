@@ -111,22 +111,11 @@
         return scoreAndPosition;
       },
       timeLeft() {
-        let hrs = Math.floor(this.remainingTime / (1000 * 3600));
-        let mins = Math.round((this.remainingTime % (1000 * 3600)) / 60000);
-        if (this.gameIsActive) {
-          if (hrs <= 0 && mins <= 0) {
-            return `0:00`;
-          } else if (mins === 0) {
-            return `${hrs}:00`;
-          } else if (mins === 60) {
-            return `${hrs + 1}:00`;
-          } else if (mins < 10) {
-            return `${hrs}:0${mins}`;
-          } else {
-            return `${hrs}:${mins}`;
-          }
-        }
-        return "-:--";
+        const currentTime = this.$moment();
+        const endTime = this.$moment(this.gameEndTime);
+
+        console.log(currentTime.toObject());
+        console.log(endTime.toObject());
       }
     },
     methods: {
@@ -177,12 +166,9 @@
         });
       });
       socket.on("updateGameStatus", gameData => {
-        if (gameData.teamScores !== undefined)
-          this.rawTeamScores = gameData.teamScores;
-        if (gameData.isActive !== undefined)
-          this.gameIsActive = gameData.isActive;
-        if (gameData.remainingTime !== undefined)
-          this.remainingTime = gameData.remainingTime;
+        this.rawTeamScores = gameData.teamScores;
+        this.gameEndTime = gameData.endTime;
+        this.gameIsActive = gameData.isActive;
       });
       socket.on("gameStateChange", () => {
         this.$router.go({
@@ -190,11 +176,6 @@
           force: true
         });
       });
-      setInterval(() => {
-        if (this.gameIsActive) {
-          this.remainingTime -= 1000;
-        }
-      }, 1000);
     },
     beforeDestroy() {
       socket.disconnect();
