@@ -99,11 +99,18 @@
         const currentTime = this.$moment();
         this.endTime = this.$moment(this.gameEndTime);
 
-        const {hours: currentTimeHours, minutes: currentTimeMinutes, seconds: currentTimeSeconds} = currentTime.toObject();
-        const {hours: endTimeHours, minutes: endTimeMinutes, seconds: endTimeSeconds} = this.endTime.toObject();
-
         if (this.gameIsActive) {
-          return `${endTimeHours - currentTimeHours}:${endTimeMinutes - currentTimeMinutes}:${endTimeSeconds - currentTimeSeconds}`;
+          let duration = Math.abs(this.$moment().diff(this.gameEndTime));
+
+          let seconds = Math.floor((duration / 1000) % 60),
+              minutes = Math.floor((duration / (1000 * 60)) % 60),
+              hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+          hours = (hours < 10) ? "0" + hours : hours;
+          minutes = (minutes < 10) ? "0" + minutes : minutes;
+          seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+          return hours + ":" + minutes + ":" + seconds
         }
 
         return "--:--:--";
