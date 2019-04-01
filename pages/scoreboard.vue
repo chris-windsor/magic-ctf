@@ -10,7 +10,7 @@
         <div class="navbar-menu is-active">
           <div class="navbar-end">
             <div class="navbar-item">
-              <h1 class="subtitle is-5 has-text-grey">Time left: {{timeLeft}}</h1>
+              <h1 class="subtitle is-5 has-text-grey">Time left: {{countdown}}</h1>
             </div>
           </div>
         </div>
@@ -37,9 +37,8 @@
 </template>
 
 <script>
-  import socket from "~/plugins/socket.io.js";
-
   export default {
+    mixins: ["socket", "countdown"],
     data() {
       return {
         locations: [],
@@ -68,9 +67,6 @@
           return b.score - a.score;
         });
         return sorted;
-      },
-      timeLeft() {
-
       }
     },
     methods: {
@@ -82,8 +78,8 @@
       }
     },
     mounted() {
-      socket.connect();
-      socket.on("updateGameStatus", gameData => {
+      this.socket.connect();
+      this.socket.on("updateGameStatus", gameData => {
         this.rawTeamScores = gameData.teamScores;
         this.gameEndTime = gameData.endTime;
         this.gameIsActive = gameData.isActive;
@@ -99,7 +95,7 @@
       this.scrollScoreboard();
     },
     beforeDestroy() {
-      socket.disconnect();
+      this.socket.disconnect();
     }
   };
 </script>

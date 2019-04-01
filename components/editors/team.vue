@@ -24,13 +24,13 @@
           <i class="fa fa-lock"></i>
         </span>
       </div>
-      <p class="control">
+      <div class="control">
         <a @click="$emit('delete', index, teamData._id)" class="button is-danger">
           <span class="icon is-small">
             <i class="fas fa-times"></i>
           </span>
         </a>
-      </p>
+      </div>
     </div>
   </div>
 </template>

@@ -42,6 +42,8 @@
 </template>
 
 <script>
+  import "moment-timezone";
+
   export default {
     data() {
       return {
@@ -52,6 +54,9 @@
       logout() {
         this.$store.dispatch("logout");
       }
+    },
+    mounted() {
+      this.$store.commit("SET_USER_TIMEZONE", this.$moment.tz.guess());
     }
   };
 </script>

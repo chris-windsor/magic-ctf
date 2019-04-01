@@ -8,7 +8,7 @@
             <a>Remaining time:</a>
           </li>
           <li>
-            <a>{{countdown}}</a>
+            <a><b>{{countdown}}</b></a>
           </li>
         </ul>
         <br/>
@@ -59,7 +59,6 @@
   import mechanicsEditor from "~/components/editors/mechanicsEditor";
   import puzzlesEditor from "~/components/editors/puzzlesEditor";
   import teamsEditor from "~/components/editors/teamsEditor";
-  import socket from "~/plugins/socket.io.js";
   import "moment-timezone";
 
   export default {
@@ -70,11 +69,10 @@
       } else {
         if (store.state.authUser.accountType === "player") {
           return redirect("/dashboard");
-        } else if (store.state.authUser.accountType === "coach") {
-          return redirect("/coach");
         }
       }
     },
+    mixins: ["socket", "countdown"],
     data() {
       return {
         selectedTab: 0,
@@ -88,8 +86,6 @@
         gameStateBtnLoading: true,
         gameIsActive: false,
         gameEndtime: null,
-        timer: null,
-        countdown: null
       };
     },
     computed: {
@@ -109,7 +105,7 @@
             confirmText: "Yes, continue",
             onConfirm: () => {
               this.gameIsActive = false;
-              socket.emit("adminCommand", {
+              this.socket.emit("adminCommand", {
                 name: "stop"
               });
               this.$toast.open({
@@ -121,15 +117,15 @@
           });
         } else {
           this.gameIsActive = true;
-          socket.emit("adminCommand", {
+          this.socket.emit("adminCommand", {
             name: "start"
           });
         }
       }
     },
     mounted() {
-      socket.connect();
-      socket.on("updateGameStatus", gameData => {
+      this.socket.connect();
+      this.socket.on("updateGameStatus", gameData => {
         this.gameEndTime = gameData.endTime;
         if (gameData.isActive !== undefined) {
           if (gameData.isActive === false) {
@@ -141,13 +137,9 @@
           }
         }
       });
-      this.timer = setInterval(() => {
-        this.countdown = this.$moment(this.$moment(this.gameEndTime).diff(this.$moment.tz("America/New_York"))).format('h:mm:ss')
-      }, 250);
     },
     beforeDestroy() {
-      socket.disconnect();
-      clearInterval(this.timer);
+      this.socket.disconnect();
     },
     components: {
       puzzlesEditor,

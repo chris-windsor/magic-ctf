@@ -1,16 +1,16 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import "whatwg-fetch";
 
 Vue.use(Vuex);
-
-require("whatwg-fetch");
 
 const store = () =>
   new Vuex.Store({
     state: {
       authUser: null,
       loginError: "",
-      registerError: ""
+      registerError: "",
+      timezone: null
     },
 
     mutations: {
@@ -22,6 +22,9 @@ const store = () =>
       },
       SET_REGISTER_ERROR: function (state, err) {
         state.registerError = err;
+      },
+      SET_USER_TIMEZONE: function (state, timezone) {
+        state.timezone = timezone;
       }
     },
 
@@ -42,10 +45,10 @@ const store = () =>
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-              name,
-              locationId,
-              password,
-              passwordConf
+            name,
+            locationId,
+            password,
+            passwordConf
           })
         })
           .then(res => {
@@ -88,7 +91,7 @@ const store = () =>
         })
           .then(res => {
             if (res.status === 401) {
-              throw new Error("Username or password is incorrect");
+              throw new Error("Team name or password is incorrect");
             } else if (res.status === 400) {
               throw new Error("All fields required");
             } else {

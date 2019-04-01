@@ -1,3 +1,4 @@
+import Vue from "vue";
 import io from "socket.io-client";
 
 /*
@@ -5,8 +6,10 @@ import io from "socket.io-client";
  *
  * Ensures client always points to host server
  * */
-const socket = io("", {
-  autoConnect: false
+const socket = Vue.mixin({
+  beforeMount() {
+    this.socket = io("", {
+      autoConnect: false
+    });
+  }
 });
-
-export default socket;

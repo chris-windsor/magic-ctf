@@ -8,7 +8,10 @@
             <a>Team: {{userData.name}}</a>
           </li>
           <li>
-            <a>Time left: {{timeLeft}}</a>
+            <a>Remaining time:</a>
+          </li>
+          <li>
+            <a><b>{{countdown}}</b></a>
           </li>
         </ul>
         <p class="menu-label"></p>
@@ -57,7 +60,6 @@
 
 <script>
   import puzzle from "~/components/puzzle";
-  import socket from "~/plugins/socket.io.js";
 
   export default {
     layout: "profile",
@@ -67,11 +69,10 @@
       } else {
         if (store.state.authUser.accountType === "admin") {
           return redirect("/admin");
-        } else if (store.state.authUser.accountType === "coach") {
-          return redirect("/coach");
         }
       }
     },
+    mixins: ["socket", "countdown"],
     data() {
       return {
         puzzles: [],
@@ -109,18 +110,11 @@
           }
         });
         return scoreAndPosition;
-      },
-      timeLeft() {
-        const currentTime = this.$moment();
-        const endTime = this.$moment(this.gameEndTime);
-
-        console.log(currentTime.toObject());
-        console.log(endTime.toObject());
       }
     },
     methods: {
       submitAnswer(puzzleId, puzzleName, answer) {
-        socket.emit("submitAnswer", {
+        this.socket.emit("submitAnswer", {
           puzzleId,
           puzzleName,
           answer
@@ -136,7 +130,7 @@
           title: "Please confirm",
           confirmText: "Okay, continue",
           onConfirm: () => {
-            socket.emit("requestHint", {
+            this.socket.emit("requestHint", {
               puzzleId,
               puzzleName,
               hintId
@@ -151,26 +145,26 @@
       }
     },
     mounted() {
-      socket.connect();
-      socket.on("connect", () => {
-        socket.emit("requestPuzzles");
+      this.socket.connect();
+      this.socket.on("connect", () => {
+        this.socket.emit("requestPuzzles");
       });
-      socket.on("updateTeamPuzzles", puzzleData => {
+      this.socket.on("updateTeamPuzzles", puzzleData => {
         this.puzzles = puzzleData;
       });
-      socket.on("incorrectAnswer", puzzleName => {
+      this.socket.on("incorrectAnswer", puzzleName => {
         this.$toast.open({
           message: `Sorry. Incorrect answer for puzzle: ${puzzleName}`,
           type: "is-danger",
           duration: 1500
         });
       });
-      socket.on("updateGameStatus", gameData => {
+      this.socket.on("updateGameStatus", gameData => {
         this.rawTeamScores = gameData.teamScores;
         this.gameEndTime = gameData.endTime;
         this.gameIsActive = gameData.isActive;
       });
-      socket.on("gameStateChange", () => {
+      this.socket.on("gameStateChange", () => {
         this.$router.go({
           path: "/dashboard",
           force: true
@@ -178,7 +172,7 @@
       });
     },
     beforeDestroy() {
-      socket.disconnect();
+      this.socket.disconnect();
     },
     components: {
       puzzle
