@@ -4,6 +4,11 @@ module.exports = {
   mode: "universal",
 
   /*
+   * Change default source directory for different folder structuring
+   * */
+  srcDir: "client/",
+
+  /*
    ** Headers of the page
    */
   head: {
@@ -64,7 +69,7 @@ module.exports = {
      *
      * Adds easy socket handling
      * */
-    "~/io",
+    "~~/server/io",
     /*
      * Moment
      *

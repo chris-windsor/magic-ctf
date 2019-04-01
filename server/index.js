@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const ios = require("socket.io-express-session");
 const MongoStore = require("connect-mongo")(session);
-const logger = require("../utils/logger");
+const logger = require("./utils/logger");
 const process = require("process");
 
 const app = express();
@@ -99,7 +99,7 @@ app.use(
   })
 );
 
-const routes = require("../routes/router");
+const routes = require("./routes/router");
 app.use("/", routes);
 
 /*
@@ -127,9 +127,9 @@ async function start() {
    * */
   app.use(nuxt.render);
 
-  require("../utils/coreInitializer")
+  require("./utils/coreInitializer")
     .init(db);
-  require("../utils/socketHandler")
+  require("./utils/socketHandler")
     .init(io);
 
   /*

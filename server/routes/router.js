@@ -66,7 +66,7 @@ router.post("/api/register", (req, res) => {
         res.json({
           name: acc.name,
           accountType: acc.accountType
-        })
+        });
       });
     }
   });
