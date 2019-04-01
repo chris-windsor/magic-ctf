@@ -30,12 +30,20 @@
         this.teamList[id] = val;
       },
       deleteTeam(idx, _id) {
-        this.$axios.post("/api/admin/settings/deactivateteam", {
-              teamId: _id
-            })
-            .then(() => {
-              this.teamList.splice(idx, 1);
-            });
+        this.$dialog.confirm({
+          message: `Are you sure you want to delete the team: '${this.teamList[idx].name}' ?`,
+          type: "is-danger",
+          title: "Please confirm",
+          confirmText: "Yes, continue",
+          onConfirm: () => {
+            this.$axios.post("/api/admin/settings/deactivateteam", {
+                  teamId: _id
+                })
+                .then(() => {
+                  this.teamList.splice(idx, 1);
+                });
+          }
+        });
       },
       saveTeamList() {
         this.$axios

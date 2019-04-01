@@ -36,10 +36,10 @@
       <div class="box content">
         <b-tabs class="is-medium" position="is-centered" type="is-boxed" v-model="selectedTab">
           <b-tab-item :visible="false"></b-tab-item>
-          <b-tab-item icon="file-alt" label="Puzzles"></b-tab-item>
+          <b-tab-item :visible="!gameIsActive" icon="file-alt" label="Puzzles"></b-tab-item>
           <b-tab-item icon="sliders-h" label="Mechanics"></b-tab-item>
-          <b-tab-item icon="map-marked-alt" label="Locations"></b-tab-item>
-          <b-tab-item icon="user-friends" label="Teams"></b-tab-item>
+          <b-tab-item :visible="!gameIsActive" icon="map-marked-alt" label="Locations"></b-tab-item>
+          <b-tab-item :visible="!gameIsActive" icon="user-friends" label="Teams"></b-tab-item>
           <b-tab-item icon="chart-bar" label="Data"></b-tab-item>
         </b-tabs>
         <div class="notification is-info" v-if="selectedTab === 0">Select a tab above to edit game settings.</div>
@@ -54,12 +54,12 @@
 </template>
 
 <script>
+  import "moment-timezone";
   import dataViewer from "~/components/editors/dataViewer";
   import locationsEditor from "~/components/editors/locationsEditor";
   import mechanicsEditor from "~/components/editors/mechanicsEditor";
   import puzzlesEditor from "~/components/editors/puzzlesEditor";
   import teamsEditor from "~/components/editors/teamsEditor";
-  import "moment-timezone";
 
   export default {
     layout: "profile",
@@ -85,7 +85,7 @@
         },
         gameStateBtnLoading: true,
         gameIsActive: false,
-        gameEndtime: null,
+        gameEndtime: null
       };
     },
     computed: {
