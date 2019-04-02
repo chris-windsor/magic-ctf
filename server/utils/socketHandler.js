@@ -194,14 +194,6 @@ const init = io => {
                          .emit("updateTeamPuzzles", teamPuzzleData);
 
                        /*
-                        * Update game status with newly calculated score list
-                        * */
-                       io.in("ctf")
-                         .emit("updateGameStatus", {
-                           teamScores: ctf.teamScores
-                         });
-
-                       /*
                         * Log team action for data collection
                         * */
                        dc.addHintUse(puzzleId, hintId);

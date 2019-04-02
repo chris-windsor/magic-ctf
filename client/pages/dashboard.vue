@@ -160,9 +160,9 @@
         });
       });
       this.socket.on("updateGameStatus", gameData => {
-        this.rawTeamScores = gameData.teamScores;
-        this.gameEndTime = gameData.endTime;
-        this.gameIsActive = gameData.isActive;
+        if (gameData.teamScores !== undefined) this.rawTeamScores = gameData.teamScores;
+        if (gameData.endTime !== undefined) this.gameEndTime = gameData.endTime;
+        if (gameData.isActive !== undefined) this.gameIsActive = gameData.isActive;
       });
       this.socket.on("gameStateChange", () => {
         this.$router.go({

@@ -45,7 +45,7 @@ const updateTeamScores = () => {
 /*
  * Load in puzzle data from its respective file
  * */
-const puzzles = require("./puzzles.json");
+const puzzles = require("../data/puzzles.json");
 
 /*
  * Retrieve a hint from the master puzzle set to be returned to the team
@@ -168,7 +168,7 @@ const updatePuzzles = puzzleData => {
 /*
  * Load in location data from its respective json file
  * */
-const locations = require("./locations.json");
+const locations = require("../data/locations.json");
 
 /*
  * Retrieve location data

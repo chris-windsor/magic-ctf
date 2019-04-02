@@ -5,18 +5,20 @@ const logger = require("./logger");
 const dataCollectionFileName = "dataCollection.json";
 const logCollectionFileName = "log.txt";
 
+const dataFolder = `${__dirname}/../data/`;
+
 const loadPuzzleDataCollection = () => {
-  if (fs.existsSync(dataCollectionFileName)) {
-    return require("../" + dataCollectionFileName);
+  if (fs.existsSync(dataFolder + dataCollectionFileName)) {
+    return require(dataFolder + dataCollectionFileName);
   } else {
     return ctf.getPuzzlesForDataCollection();
   }
 };
 
 const loadGameLog = () => {
-  if (fs.existsSync(logCollectionFileName)) {
+  if (fs.existsSync(dataFolder + logCollectionFileName)) {
     return fs
-      .readFileSync(logCollectionFileName, err => {
+      .readFileSync(dataFolder + logCollectionFileName, err => {
         if (err) {
           logger.error(err);
         }
@@ -34,7 +36,7 @@ let gameLog = loadGameLog();
 
 const updateDataCollectionFile = () => {
   fs.writeFileSync(
-    dataCollectionFileName,
+    dataFolder + dataCollectionFileName,
     JSON.stringify(gameStatistics),
     err => {
       if (err) {
@@ -62,7 +64,7 @@ const addHintUse = (puzzleId, hintId) => {
 const addLog = entry => {
   const computedEntry = `[${new Date().toLocaleTimeString()}]: ${entry}`;
   gameLog.push(computedEntry);
-  fs.appendFile(logCollectionFileName, computedEntry, err => {
+  fs.appendFile(dataFolder + logCollectionFileName, computedEntry, err => {
     if (err) {
       logger.error(err);
     }

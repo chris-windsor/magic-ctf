@@ -126,7 +126,7 @@
     mounted() {
       this.socket.connect();
       this.socket.on("updateGameStatus", gameData => {
-        this.gameEndTime = gameData.endTime;
+        if (gameData.endTime !== undefined) this.gameEndTime = gameData.endTime;
         if (gameData.isActive !== undefined) {
           if (gameData.isActive === false) {
             this.gameStateBtnLoading = false;
