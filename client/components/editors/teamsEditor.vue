@@ -24,19 +24,23 @@
     },
     methods: {
       retrieveTeams() {
-        this.$axios
-            .get("/api/admin/settings/teams")
-            .then(res => {
-              this.teamList = res.data.sort((a, b) => {
-                const t1 = a.name.toUpperCase();
-                const t2 = b.name.toUpperCase();
+        return new Promise((resolve, reject) => {
+          this.$axios
+              .get("/api/admin/settings/teams")
+              .then(res => {
+                this.teamList = res.data.sort((a, b) => {
+                  const t1 = a.name.toUpperCase();
+                  const t2 = b.name.toUpperCase();
 
-                return (t1 < t2) ? -1 : (t1 > t2) ? 1 : 0;
+                  return (t1 < t2) ? -1 : (t1 > t2) ? 1 : 0;
+                });
+                resolve();
+              })
+              .catch(err => {
+                console.error(err);
+                reject();
               });
-            })
-            .catch(err => {
-              console.error(err);
-            });
+        });
       },
       addNewTeam() {
         this.teamList.push({});
@@ -72,10 +76,10 @@
                 duration: 1500
               });
               this.isLoading = true;
-              setTimeout(() => {
-                this.retrieveTeams();
-                this.isLoading = false;
-              }, 2000);
+              this.retrieveTeams()
+                  .then(() => {
+                    this.isLoading = false;
+                  });
             })
             .catch(err => {
               this.$toast.open({

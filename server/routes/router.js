@@ -176,44 +176,54 @@ router
       .isAuth(req.session.userId, "admin")
       .then(() => {
         const {teamList} = req.body;
-        teamList.forEach((team) => {
-          const {_id, name, locationId, password} = team;
 
-          const userData = {
-            name,
-            locationId,
-            password
-          };
+        const addTeams = new Promise((resolve, reject) => {
+          teamList.forEach((team, idx, arr) => {
+            const {_id, name, locationId, password} = team;
 
-          Account.findOne({$or: [{_id}, {name}]}, (err, acc) => {
-            if (err) return logger.error(err);
-            if (acc !== null && _id) {
-              /*
-               * Team already exists, therefor we just need to update its properties
-               * */
-              if (name !== null && name !== "") ctf.teamList[_id].changeName(name);
+            const userData = {
+              name,
+              locationId,
+              password
+            };
 
-              if (locationId !== null && locationId > -1) ctf.teamList[_id].changeLocationId(locationId);
+            Account.findOne({$or: [{_id}, {name}]}, (err, acc) => {
+              if (err) return logger.error(err);
+              if (acc !== null && _id) {
+                /*
+                 * Team already exists, therefor we just need to update its properties
+                 * */
+                if (name !== null && name !== "") ctf.teamList[_id].changeName(name);
 
-              if (password !== null && password !== "") {
-                acc.password = password;
-                acc.save();
-              }
-            } else {
-              Account.create(userData, (error, user) => {
-                if (error) {
-                  return logger.error(error);
-                } else {
-                  new Team(user._id, user.name, user.locationId);
+                if (locationId !== null && locationId > -1) ctf.teamList[_id].changeLocationId(locationId);
+
+                if (password !== null && password !== "") {
+                  acc.password = password;
+                  acc.save();
                 }
-              });
-            }
+              } else {
+                Account.create(userData, (error, user) => {
+                  if (error) {
+                    return logger.error(error);
+                  } else {
+                    new Team(user._id, user.name, user.locationId);
+                    if (idx === arr.length - 1) {
+                      resolve();
+                    }
+                  }
+                });
+              }
+            });
           });
         });
+
+        addTeams.then(() => {
+          res.status(200)
+             .send();
+        });
+
       })
       .catch(err => handlers.routeError(res, err));
-    res.status(200)
-       .send();
   });
 
 // POST `/api/admin/settings/deactivateteam` to deactivate team
