@@ -185,7 +185,7 @@ router
             password
           };
 
-          Account.findOne({_id}, (err, acc) => {
+          Account.findOne({$or: [{_id}, {name}]}, (err, acc) => {
             if (err) return logger.error(err);
             if (acc !== null && _id) {
               /*
