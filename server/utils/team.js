@@ -8,7 +8,7 @@ const updateTeam = (_id, prop, val) => {
    * Update team properties in the database
    * */
 
-  Account.update(
+  Account.updateOne(
     {
       _id
     },
@@ -151,7 +151,7 @@ class Team {
 
     this.lastUpdated = Date.now();
 
-    ctf.updateTeamScores();
+    ctf.updateTeamScores(this._id);
 
     updateTeam(this._id, "score", this.score);
     updateTeam(this._id, "lastUpdated", this.lastUpdated);

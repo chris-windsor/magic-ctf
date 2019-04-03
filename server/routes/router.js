@@ -237,6 +237,7 @@ router.post("/api/admin/settings/deactivateteam", (req, res) => {
         if (err) return logger.error(err);
         if (acc !== null) {
           delete ctf.teamList[teamId];
+          delete ctf.teamScores[teamId];
           acc.isActive = false;
           acc.save();
         }

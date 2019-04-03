@@ -28,18 +28,14 @@ const getEndTime = () => gameEndTime;
 /*
  * Re-process team score list when any team's score updates
  * */
-const updateTeamScores = () => {
-  for (const _id in teamList) {
-    if (teamList.hasOwnProperty(_id)) {
-      const {name, locationId, score, lastUpdated} = teamList[_id];
-      teamScores[_id] = {
-        name,
-        locationId,
-        score,
-        lastUpdated
-      };
-    }
-  }
+const updateTeamScores = (_id) => {
+  const {name, locationId, score, lastUpdated} = teamList[_id];
+  teamScores[_id] = {
+    name,
+    locationId,
+    score,
+    lastUpdated
+  };
 };
 
 /*
