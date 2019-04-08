@@ -1,5 +1,7 @@
 const fs = require("fs");
 
+const dataFolder = `${__dirname}/../data/`;
+
 let gameIsRunning = false;
 let gameEndTime = new Date();
 let teamList = {};
@@ -41,7 +43,7 @@ const updateTeamScores = (_id) => {
 /*
  * Load in puzzle data from its respective file
  * */
-const puzzles = require("../data/puzzles.json");
+const puzzles = require(dataFolder + "puzzles.json");
 
 /*
  * Retrieve a hint from the master puzzle set to be returned to the team
@@ -153,7 +155,7 @@ const updatePuzzles = puzzleData => {
     };
   });
   fs.writeFile(
-    __dirname + "/puzzles.json",
+    dataFolder + "puzzles.json",
     JSON.stringify(puzzles, null, 2),
     err => {
       if (err) throw err;
@@ -164,7 +166,7 @@ const updatePuzzles = puzzleData => {
 /*
  * Load in location data from its respective json file
  * */
-const locations = require("../data/locations.json");
+const locations = require(dataFolder + "locations.json");
 
 /*
  * Retrieve location data
@@ -179,7 +181,7 @@ const updateLocations = locationData => {
     locations: locationData
   };
   fs.writeFile(
-    __dirname + "/locations.json",
+    dataFolder + "locations.json",
     JSON.stringify(locs, null, 2),
     err => {
       if (err) throw err;
