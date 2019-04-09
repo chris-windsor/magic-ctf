@@ -39,7 +39,7 @@
   export default {
     fetch({store, redirect}) {
       if (store.getters["auth/authUser"]) {
-        if (store.state["auth/authUser"].accountType === "admin") {
+        if (store.getters["auth/authUser"].accountType === "admin") {
           return redirect("/admin");
         }
         return redirect("/dashboard");
