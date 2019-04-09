@@ -2,6 +2,9 @@ const Account = require("../models/account");
 const ctf = require("./ctf");
 const dc = require("./datacollection");
 const logger = require("./logger");
+const Queue = require("./queue");
+
+const q = new Queue();
 
 const init = io => {
   /*
@@ -90,47 +93,59 @@ const init = io => {
                      if (answer.correct === true) {
                        const team = ctf.teamList[user._id];
 
-                       team.addCorrectPuzzle(puzzleId);
+                       const f = () => {
+                         return new Promise(resolve => {
+                           if (team.hasPuzzleSolved(puzzleId)) {
+                             resolve();
+                           } else {
+                             team.addCorrectPuzzle(puzzleId)
+                                 .then(() => {
+                                   /*
+                                    * Calculate final puzzle cost based on usage of hints
+                                    *
+                                    * Update team's score with new puzzle reward
+                                    * */
+                                   let totalUsedHintsCost = 0;
+                                   team.getPuzzles()[puzzleId].hints.forEach(hint => {
+                                     if (hint.content !== "") totalUsedHintsCost += hint.cost;
+                                   });
 
-                       /*
-                        * Calculate final puzzle cost based on usage of hints
-                        *
-                        * Update team's score with new puzzle reward
-                        * */
-                       let totalUsedHintsCost = 0;
-                       team.getPuzzles()[puzzleId].hints.forEach(hint => {
-                         if (hint.content !== "") totalUsedHintsCost += hint.cost;
-                       });
+                                   team.addScore(
+                                     answer.reward - totalUsedHintsCost
+                                   );
 
-                       team.addScore(
-                         answer.reward - totalUsedHintsCost
-                       );
+                                   teamPuzzleData = team.getPuzzles();
 
-                       teamPuzzleData = team.getPuzzles();
+                                   const teamRoom = `team-${team._id}`;
 
-                       const teamRoom = `team-${team._id}`;
+                                   /*
+                                    * Send the team their updated puzzle set
+                                    * */
+                                   io.in(teamRoom)
+                                     .emit("updateTeamPuzzles", teamPuzzleData);
 
-                       /*
-                        * Send the team their updated puzzle set
-                        * */
-                       io.in(teamRoom)
-                         .emit("updateTeamPuzzles", teamPuzzleData);
+                                   /*
+                                    * Update game status with newly calculated score list
+                                    * */
+                                   io.in("ctf")
+                                     .emit("updateGameStatus", {
+                                       teamScores: ctf.teamScores
+                                     });
 
-                       /*
-                        * Update game status with newly calculated score list
-                        * */
-                       io.in("ctf")
-                         .emit("updateGameStatus", {
-                           teamScores: ctf.teamScores
+                                   /*
+                                    * Log team action for data collection
+                                    * */
+                                   dc.addPuzzleSuccess(puzzleId);
+                                   dc.addLog(
+                                     `Team: '${team.name}' solved puzzle: '${puzzleName}'.`
+                                   );
+                                   resolve();
+                                 });
+                           }
                          });
+                       };
 
-                       /*
-                        * Log team action for data collection
-                        * */
-                       dc.addPuzzleSuccess(puzzleId);
-                       dc.addLog(
-                         `Team: '${team.name}' solved puzzle: '${puzzleName}'.`
-                       );
+                       q.add(f);
                      } else {
                        /*
                         * Alert team of their incorrect answer submission

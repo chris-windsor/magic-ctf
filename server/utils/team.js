@@ -8,21 +8,25 @@ const updateTeam = (_id, prop, val) => {
    * Update team properties in the database
    * */
 
-  Account.updateOne(
-    {
-      _id
-    },
-    {
-      $set: {
-        [prop]: val
+  return new Promise(resolve => {
+    Account.updateOne(
+      {
+        _id
+      },
+      {
+        $set: {
+          [prop]: val
+        }
+      },
+      err => {
+        if (err) {
+          logger.error("Encountered an error while updating team...", err);
+        } else {
+          resolve();
+        }
       }
-    },
-    err => {
-      if (err) {
-        logger.error("Encountered an error while updating team...", err);
-      }
-    }
-  );
+    );
+  });
 };
 
 class Team {
@@ -134,12 +138,24 @@ class Team {
   }
 
   /*
+   * Check if team has puzzle solved
+   * */
+  hasPuzzleSolved(puzzleId) {
+    return this.puzzles[puzzleId].isSolved;
+  }
+
+  /*
    * Set puzzle status to complete for team
    * */
   addCorrectPuzzle(puzzleId) {
     this.puzzles[puzzleId].isSolved = true;
 
-    updateTeam(this._id, "puzzles", this.puzzles);
+    return new Promise(resolve => {
+      updateTeam(this._id, "puzzles", this.puzzles)
+        .then(() => {
+          resolve();
+        });
+    });
   }
 
 
