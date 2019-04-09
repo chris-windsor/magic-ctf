@@ -64,10 +64,10 @@
   export default {
     layout: "profile",
     fetch({store, redirect}) {
-      if (!store.state.authUser) {
+      if (!store.getters["auth/authUser"]) {
         return redirect("/");
       } else {
-        if (store.state.authUser.accountType === "player") {
+        if (store.getters["auth/authUser"].accountType === "player") {
           return redirect("/dashboard");
         }
       }

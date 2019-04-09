@@ -1,12 +1,12 @@
 <template>
   <div class="box has-text-centered" id="login-form">
-    <img src="~/assets/ctficon.png" id="form-icon" draggable="false">
+    <img draggable="false" id="form-icon" src="~/assets/ctficon.png">
     <h1 class="title is-3">MAGIC CTF</h1>
     <div class="notification is-danger" v-if="registerError !== ''">{{registerError}}</div>
-    <form action="/register" @submit="submitForm($event)">
+    <form @submit="submitForm($event)" action="/register">
       <div class="field">
         <p class="control has-icons-left">
-          <input class="input" type="text" placeholder="Team name" required="" autofocus="autofocus" v-model="userData.name" />
+          <input autofocus="autofocus" class="input" placeholder="Team name" required="" type="text" v-model="userData.name"/>
           <span class="icon is-small is-left">
             <i class="fa fa-user"></i>
           </span>
@@ -17,7 +17,7 @@
           <div class="select is-fullwidth">
             <select required="" v-model="userData.locationId">
               <option disabled="disabled" selected="selected" value="-1">Location</option>
-              <option v-for="(loc, index) in locations" :key="index" :value="index">{{loc}}</option>
+              <option :key="index" :value="index" v-for="(loc, index) in locations">{{loc}}</option>
             </select>
           </div>
           <span class="icon is-left">
@@ -27,7 +27,7 @@
       </div>
       <div class="field">
         <p class="control has-icons-left">
-          <input class="input" type="password" placeholder="Password" required="" v-model="userData.password"/>
+          <input class="input" placeholder="Password" required="" type="password" v-model="userData.password"/>
           <span class="icon is-small is-left">
             <i class="fa fa-lock"></i>
           </span>
@@ -35,7 +35,7 @@
       </div>
       <div class="field">
         <p class="control has-icons-left">
-          <input class="input" type="password" placeholder="Confirm Password" required="" v-model="userData.passwordConf"/>
+          <input class="input" placeholder="Confirm Password" required="" type="password" v-model="userData.passwordConf"/>
           <span class="icon is-small is-left">
             <i class="fa fa-lock"></i>
           </span>
@@ -43,7 +43,7 @@
       </div>
       <div class="field is-grouped is-grouped-centered">
         <p class="control">
-          <button class="button is-success is-rounded" @click="register()">Register</button>
+          <button @click="register()" class="button is-success is-rounded">Register</button>
         </p>
       </div>
     </form>
@@ -67,8 +67,8 @@
     },
     computed: {
       registerError() {
-        if (this.$store.state.registerError !== "") {
-          return this.$store.state.registerError;
+        if (this.$store.getters["auth/registerError"] !== "") {
+          return this.$store.getters["auth/registerError"];
         } else {
           return "";
         }
@@ -79,7 +79,7 @@
         e.preventDefault();
       },
       register() {
-        this.$store.dispatch("register", this.userData);
+        this.$store.dispatch("auth/register", this.userData);
       }
     },
     mounted() {

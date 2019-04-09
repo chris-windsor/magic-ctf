@@ -16,7 +16,7 @@
         this.initParticlesJS();
       });
 
-      this.$store.commit("SET_USER_TIMEZONE", this.$moment.tz.guess());
+      this.$store.commit("auth/SET_USER_TIMEZONE", this.$moment.tz.guess());
     },
     methods: {
       initParticlesJS() {

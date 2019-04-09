@@ -30,15 +30,16 @@
       </div>
     </form>
     <p class="has-text-blue"></p>Need an account?
-    <nuxt-link class="has-text-grey" style="border-bottom: 1px solid currentColor;" tag="a" to="/register">Register</nuxt-link>
+    <nuxt-link class="has-text-grey" style="border-bottom: 1px solid currentColor;" tag="a" to="/register">Register
+    </nuxt-link>
   </div>
 </template>
 
 <script>
   export default {
     fetch({store, redirect}) {
-      if (store.state.authUser) {
-        if (store.state.authUser.accountType === "admin") {
+      if (store.getters["auth/authUser"]) {
+        if (store.state["auth/authUser"].accountType === "admin") {
           return redirect("/admin");
         }
         return redirect("/dashboard");
@@ -53,8 +54,8 @@
     },
     computed: {
       loginError() {
-        if (this.$store.state.loginError !== "") {
-          return this.$store.state.loginError;
+        if (this.$store.getters["auth/loginError"] !== "") {
+          return this.$store.getters["auth/loginError"];
         } else {
           return "";
         }
@@ -65,7 +66,7 @@
         e.preventDefault();
       },
       login() {
-        this.$store.dispatch("login", {
+        this.$store.dispatch("auth/login", {
           accountName: this.teamName,
           password: this.password
         });

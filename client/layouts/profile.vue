@@ -52,11 +52,11 @@
     },
     methods: {
       logout() {
-        this.$store.dispatch("logout");
+        this.$store.dispatch("auth/logout");
       }
     },
     mounted() {
-      this.$store.commit("SET_USER_TIMEZONE", this.$moment.tz.guess());
+      this.$store.commit("auth/SET_USER_TIMEZONE", this.$moment.tz.guess());
     }
   };
 </script>

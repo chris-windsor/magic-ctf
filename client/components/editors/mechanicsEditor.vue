@@ -34,7 +34,7 @@
         this.$axios
             .post("/api/admin/settings/gamelength", {
               gameEndTime: this.$moment(this.gameEndTime)
-                               .tz(this.$store.state.timezone)
+                               .tz(this.$store.getters["auth/timezone"])
                                .utc()
                                .toISOString()
             })

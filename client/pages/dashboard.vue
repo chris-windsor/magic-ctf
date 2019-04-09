@@ -64,10 +64,10 @@
   export default {
     layout: "profile",
     fetch({store, redirect}) {
-      if (!store.state.authUser) {
+      if (!store.getters["auth/authUser"]) {
         return redirect("/");
       } else {
-        if (store.state.authUser.accountType === "admin") {
+        if (store.getters["auth/authUser"].accountType === "admin") {
           return redirect("/admin");
         }
       }
@@ -84,8 +84,8 @@
     },
     computed: {
       userData() {
-        if (this.$store.state.authUser !== null) {
-          return this.$store.state.authUser;
+        if (this.$store.getters["auth/authUser"] !== null) {
+          return this.$store.getters["auth/authUser"];
         } else {
           return "";
         }
