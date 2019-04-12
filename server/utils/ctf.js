@@ -43,7 +43,7 @@ const updateTeamScores = (_id) => {
 /*
  * Load in puzzle data from its respective file
  * */
-const puzzles = require(dataFolder + "puzzles.json");
+let puzzles = require(dataFolder + "puzzles.json");
 
 /*
  * Retrieve a hint from the master puzzle set to be returned to the team
@@ -146,9 +146,9 @@ const getPuzzlesForDataCollection = () => {
  * Modify puzzle data set with newly created puzzle set from admin panel
  * */
 const updatePuzzles = puzzleData => {
-  let puzzles = {};
+  let newPuzzles = {};
   puzzleData.forEach(entry => {
-    puzzles[entry.title] = {
+    newPuzzles[entry.title] = {
       answer: entry.answer,
       value: entry.value,
       hints: entry.hints
@@ -156,9 +156,13 @@ const updatePuzzles = puzzleData => {
   });
   fs.writeFile(
     dataFolder + "puzzles.json",
-    JSON.stringify(puzzles, null, 2),
+    JSON.stringify(newPuzzles, null, 2),
     err => {
-      if (err) throw err;
+      if (err) {
+        throw err;
+      } else {
+        puzzles = newPuzzles;
+      }
     }
   );
 };
@@ -166,7 +170,7 @@ const updatePuzzles = puzzleData => {
 /*
  * Load in location data from its respective json file
  * */
-const locations = require(dataFolder + "locations.json");
+let locations = require(dataFolder + "locations.json");
 
 /*
  * Retrieve location data
@@ -184,7 +188,11 @@ const updateLocations = locationData => {
     dataFolder + "locations.json",
     JSON.stringify(locs, null, 2),
     err => {
-      if (err) throw err;
+      if (err) {
+        throw err;
+      } else {
+        locations = locs;
+      }
     }
   );
 };

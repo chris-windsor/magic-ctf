@@ -1,3 +1,5 @@
 {
-  "ignore": ["dataCollection.json", "log.txt"]
+  "ignore": [
+    "server/data/**"
+  ]
 }
