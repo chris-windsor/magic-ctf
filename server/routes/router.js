@@ -290,20 +290,20 @@ router.get("/api/admin/gamedata", (req, res) => {
     .catch(err => handlers.routeError(res, err));
 });
 
-// GET `/api/top5` to retrieve top 5 teams
-router.get("/api/top5", (req, res) => {
+// GET `/api/scores` to retrieve team scores
+router.get("/api/scores", (req, res) => {
   const {format} = req.query;
   if (format === "json") {
-    res.json(ctf.getTop5());
+    res.json(ctf.getTeamScores());
   } else if (format === "csv") {
     let content = "position,name,score";
-    ctf.getTop5()
+    ctf.getTeamScores()
        .forEach((e, i) => {
          content += `\n${i + 1},${e.name},${e.score}`;
        });
     res.send(content);
   } else {
-    res.send("Please specify a format query option of either: json, csv");
+    res.send("Please specify a request query option for 'format' of either: json, csv");
   }
 });
 

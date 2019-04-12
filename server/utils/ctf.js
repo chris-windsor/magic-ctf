@@ -198,9 +198,10 @@ const updateLocations = locationData => {
 };
 
 /*
- * Retrieve the current top five scoring teams
+ * Retrieve team scores
+ * Used for media broadcasting to handle the sorting for them
  * */
-const getTop5 = () => {
+const getTeamScores = () => {
   let sorted = [];
   for (let _id in teamScores) {
     const {name, score, lastUpdated} = teamScores[_id];
@@ -215,7 +216,7 @@ const getTop5 = () => {
   sorted = sorted.map(({name, score}) => {
     return {name, score};
   });
-  return sorted.splice(0, 5);
+  return sorted;
 };
 
 module.exports = {
@@ -227,7 +228,7 @@ module.exports = {
   getPuzzlesForAdmin,
   getPuzzlesForDataCollection,
   getPuzzlesForPlayer,
-  getTop5,
+  getTeamScores,
   isGameRunning,
   teamList,
   teamScores,
