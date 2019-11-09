@@ -51,7 +51,7 @@
           logged in. The game will begin shortly.
         </div>
         <div v-else>
-          <puzzle :id="index" :key="index" :puzzleData="puzzles[index]" @requestHint="requestHint" @submitAnswer="submitAnswer" v-for="(puzzle, index) in puzzles"></puzzle>
+          <puzzle :id="index" :key="puzzle" :puzzleData="puzzles[index]" @requestHint="requestHint" @submitAnswer="submitAnswer" v-for="(puzzle, index) in puzzles"></puzzle>
         </div>
       </div>
     </div>

@@ -23,10 +23,11 @@
         </form>
       </div>
       <div class="column is-6">
-        <h1 class="title is-5" v-if="puzzleData.hints.length > 1">Hints:</h1>
-        <h1 class="title is-5" v-else>Hint:</h1>
+        <h1 class="title is-5" v-if="puzzleData.hints.length === 0">No hints available.</h1>
+        <h1 class="title is-5" v-else-if="puzzleData.hints.length === 1">Hint:</h1>
+        <h1 class="title is-5" v-else>Hints:</h1>
         <div class="buttons">
-          <hint class="hint" v-for="(hint, index) in puzzleData.hints" :key="index" :hintData="puzzleData.hints[index]" :id="index" @request="requestHint"></hint>
+          <hint class="hint" v-for="(hint, index) in puzzleData.hints" :key="index" :hintData="hint" :id="index" @request="requestHint"></hint>
         </div>
       </div>
     </div>
