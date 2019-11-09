@@ -68,24 +68,24 @@ class Team {
   static loadTeam(_id) {
     if (!loadedTeams[_id]) {
       Account.find({_id})
-             .then((res, err) => {
-               if (res[0].accountType === "player") {
-                 if (err) {
-                   logger.error("Error loading team data from db... ", err);
-                 } else {
-                   const {
-                           _id,
-                           name,
-                           locationId,
-                           score,
-                           puzzles,
-                           lastUpdated
-                         } = res[0];
+        .then((res, err) => {
+          if (res[0].accountType === "player") {
+            if (err) {
+              logger.error("Error loading team data from db... ", err);
+            } else {
+              const {
+                _id,
+                name,
+                locationId,
+                score,
+                puzzles,
+                lastUpdated
+              } = res[0];
 
-                   new this(_id, name, locationId, score, puzzles, lastUpdated);
-                 }
-               }
-             });
+              new this(_id, name, locationId, score, puzzles, lastUpdated);
+            }
+          }
+        });
     }
     loadedTeams[_id] = true;
   }

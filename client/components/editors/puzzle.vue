@@ -5,7 +5,7 @@
         <div class="box">
           <div class="field">
             <div class="control has-icons-left is-expanded">
-              <input type="text" class="input is-info" placeholder="Puzzle title" v-model="puzzleData.title">
+              <input class="input is-info" placeholder="Puzzle title" type="text" v-model="puzzleData.title">
               <span class="icon is-left">
                 <i class="fa fa-pencil-alt"></i>
               </span>
@@ -13,7 +13,7 @@
           </div>
           <div class="field">
             <div class="control has-icons-left is-expanded">
-              <input type="text" class="input is-info" placeholder="Puzzle flag" v-model="puzzleData.answer">
+              <input class="input is-info" placeholder="Puzzle flag" type="text" v-model="puzzleData.answer">
               <span class="icon is-left">
                 <i class="fa fa-flag"></i>
               </span>
@@ -21,23 +21,24 @@
           </div>
           <div class="field">
             <div class="control has-icons-left is-expanded">
-              <input type="number" class="input is-info" placeholder="Puzzle reward" v-model.number="puzzleData.value">
+              <input class="input is-info" placeholder="Puzzle reward" type="number" v-model.number="puzzleData.value">
               <span class="icon is-left">
                 <i class="fa fa-money-bill-alt"></i>
               </span>
             </div>
           </div>
-          <button class="button is-danger is-rounded is-small" @click="$emit('delete', id)">Delete puzzle</button>
+          <button @click="$emit('delete', id)" class="button is-danger is-rounded is-small">Delete puzzle</button>
         </div>
-        <button class="button is-success is-rounded" @click="$emit('addNew', id)">Add new puzzle below</button>
+        <button @click="$emit('addNew', id)" class="button is-success is-rounded">Add new puzzle below</button>
       </div>
       <div class="column is-8">
         <h1 class="title is-5" v-if="puzzleData.hints.length > 1">Hints:</h1>
         <h1 class="title is-5" v-else>Hint:</h1>
         <div>
-          <hint v-for="(hint, index) in puzzleData.hints" :key="index" :hintData="puzzleData.hints[index]" :id="index" @delete="deleteHint"></hint>
+          <hint :hintData="puzzleData.hints[index]" :id="index" :key="index" @delete="deleteHint"
+                v-for="(hint, index) in puzzleData.hints"></hint>
           <div class="has-text-centered" id="add-new-hint-container">
-            <button class="button is-success is-rounded" @click="addNewHint()">Add new hint</button>
+            <button @click="addNewHint()" class="button is-success is-rounded">Add new hint</button>
           </div>
         </div>
       </div>

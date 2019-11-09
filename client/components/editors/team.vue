@@ -2,7 +2,8 @@
   <div class="box">
     <div class="field is-grouped is-horizontal">
       <div class="control has-icons-left is-expanded">
-        <input @input="$emit('updateTeamData', index, teamData)" class="input is-info" placeholder="Team name" type="text" v-model="teamData.name">
+        <input @input="$emit('updateTeamData', index, teamData)" class="input is-info" placeholder="Team name"
+               type="text" v-model="teamData.name">
         <span class="icon is-left">
           <i class="fa fa-id-card"></i>
         </span>
@@ -19,7 +20,8 @@
         </span>
       </div>
       <div class="control has-icons-left is-expanded">
-        <input @input="$emit('updateTeamData', index, teamData)" class="input is-info" placeholder="Team password" type="text" v-model="teamData.password">
+        <input @input="$emit('updateTeamData', index, teamData)" class="input is-info" placeholder="Team password"
+               type="text" v-model="teamData.password">
         <span class="icon is-left">
           <i class="fa fa-lock"></i>
         </span>

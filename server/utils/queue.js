@@ -1,4 +1,5 @@
-const noop = () => {};
+const noop = () => {
+};
 
 class Queue {
   constructor() {

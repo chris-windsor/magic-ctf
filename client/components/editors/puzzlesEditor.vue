@@ -1,9 +1,11 @@
 <template>
   <div>
     <b-loading :active.sync="isLoading"></b-loading>
-    <puzzle v-for="(puzzle, index) in puzzles" :key="index" :puzzleData="puzzles[index]" :id="index" :isLast="index !== puzzles.length-1" @addNew="addNewPuzzle" @delete="deletePuzzle" @addNewHint="addNewHint" @deleteHint="deleteHint"></puzzle>
+    <puzzle :id="index" :isLast="index !== puzzles.length-1" :key="index" :puzzleData="puzzles[index]"
+            @addNew="addNewPuzzle" @addNewHint="addNewHint" @delete="deletePuzzle" @deleteHint="deleteHint"
+            v-for="(puzzle, index) in puzzles"></puzzle>
     <div class="buttons is-centered">
-      <button class="button is-info is-rounded is-medium" @click="savePuzzleData()">Save puzzles</button>
+      <button @click="savePuzzleData()" class="button is-info is-rounded is-medium">Save puzzles</button>
     </div>
   </div>
 </template>

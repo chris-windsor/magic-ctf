@@ -7,25 +7,25 @@
         <div class="notification is-info" v-if="log.length == 0">There is currently no logs to view.</div>
         <div class="log-viewer" v-else>
           <ol>
-            <li v-for="(entry, index) in log" :key="index">{{entry}}</li>
+            <li :key="index" v-for="(entry, index) in log">{{entry}}</li>
           </ol>
         </div>
       </div>
       <hr>
       <div class="box content">
         <h1 class="title is-5">Statistics:</h1>
-        <div class="box content" v-for="(puzzle, pIndex) in stats" :key="pIndex">
+        <div :key="pIndex" class="box content" v-for="(puzzle, pIndex) in stats">
           <h1 class="title is-3">{{puzzle.name}}</h1>
           <p>Attempts: {{puzzle.attempts}}. Successes: {{puzzle.successes}}.</p>
           <h1 class="title is-5">Hints:</h1>
           <ol>
-            <li v-for="(hint, hIndex) in puzzle.hints" :key="hIndex">
+            <li :key="hIndex" v-for="(hint, hIndex) in puzzle.hints">
               Uses: {{hint.uses}}
             </li>
           </ol>
         </div>
       </div>
-      <a class="button is-success" @click="downloadData()">Download Data</a>
+      <a @click="downloadData()" class="button is-success">Download Data</a>
     </div>
   </div>
 </template>
@@ -40,7 +40,8 @@
       };
     },
     methods: {
-      downloadData() {}
+      downloadData() {
+      }
     },
     mounted() {
       this.$axios

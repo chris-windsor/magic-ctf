@@ -15,21 +15,24 @@
           </div>
         </div>
       </nav>
-        <div :key="index" class="box" v-for="(score, index) in 3" style="padding:0.75rem; margin-bottom: 0.75rem;">
-          <h1 class="title is-4" style="display:inline;">{{topThreeScores[index] ? `#${(index + 1)}: ${topThreeScores[index].teamName}` : "N/A"}}</h1>
-          <h1 class="subtitle is-4" style="display:inline;"> - {{topThreeScores[index] ? topThreeScores[index].score : "N/A"}} points
-            <small>{{topThreeScores[index] ? `(${locations[topThreeScores[index].locationId]})` : ""}}</small>
-          </h1>
-        </div>
+      <div :key="index" class="box" style="padding:0.75rem; margin-bottom: 0.75rem;" v-for="(score, index) in 3">
+        <h1 class="title is-4" style="display:inline;">{{topThreeScores[index] ? `#${(index + 1)}:
+          ${topThreeScores[index].teamName}` : "N/A"}}</h1>
+        <h1 class="subtitle is-4" style="display:inline;"> - {{topThreeScores[index] ? topThreeScores[index].score :
+          "N/A"}} points
+          <small>{{topThreeScores[index] ? `(${locations[topThreeScores[index].locationId]})` : ""}}</small>
+        </h1>
+      </div>
     </div>
-  <div id="score-listing-container" ref="remainingScoresList" class="box" style="padding:0.75rem;">
-    <div :key="index" class="box" v-for="(score, index) in remainingScores" style="padding:0.75rem; margin-bottom: 0.75rem;">
-      <h1 class="title is-4" style="display:inline;">#{{index + 4}}: {{score.teamName}}</h1>
-      <h1 class="subtitle is-4" style="display:inline;"> - {{score.score}} points
-        <small>({{locations[score.locationId]}})</small>
-      </h1>
+    <div class="box" id="score-listing-container" ref="remainingScoresList" style="padding:0.75rem;">
+      <div :key="index" class="box" style="padding:0.75rem; margin-bottom: 0.75rem;"
+           v-for="(score, index) in remainingScores">
+        <h1 class="title is-4" style="display:inline;">#{{index + 4}}: {{score.teamName}}</h1>
+        <h1 class="subtitle is-4" style="display:inline;"> - {{score.score}} points
+          <small>({{locations[score.locationId]}})</small>
+        </h1>
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -68,7 +71,7 @@
     },
     methods: {
       scrollInit() {
-        var ScrollInterval = setInterval(this.scrollScoreboard, 25);      
+        var ScrollInterval = setInterval(this.scrollScoreboard, 25);
       },
       scrollScoreboard() {
         const el = this.$refs.remainingScoresList;
@@ -86,13 +89,13 @@
         if (gameData.isActive !== undefined) this.gameIsActive = gameData.isActive;
       });
       this.$axios
-          .get("/api/locations")
-          .then(res => {
-            this.locations = res.data.sort();
-          })
-          .catch(err => {
-            console.error(err);
-          });
+        .get("/api/locations")
+        .then(res => {
+          this.locations = res.data.sort();
+        })
+        .catch(err => {
+          console.error(err);
+        });
       this.scrollInit();
     },
     beforeDestroy() {
@@ -122,9 +125,9 @@
     height: calc(100vh - 22rem);
     min-height: 12rem;
   }
-  
+
   #particles-js canvas {
-    position: fixed;  
+    position: fixed;
   }
 
   .hero-body {

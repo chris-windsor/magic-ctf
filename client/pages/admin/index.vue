@@ -14,7 +14,9 @@
         <br/>
         <ul class="menu-list">
           <li class="has-text-centered">
-            <button :class="{'is-loading': gameStateBtnLoading, 'is-success': !gameStateBtnLoading && !gameIsActive,  'is-danger': !gameStateBtnLoading && gameIsActive}" @click="toggleGameState()" class="button is-medium is-rounded">
+            <button
+              :class="{'is-loading': gameStateBtnLoading, 'is-success': !gameStateBtnLoading && !gameIsActive,  'is-danger': !gameStateBtnLoading && gameIsActive}"
+              @click="toggleGameState()" class="button is-medium is-rounded">
               {{gameStateBtnLabel}}
             </button>
           </li>

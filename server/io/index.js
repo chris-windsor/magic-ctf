@@ -1,4 +1,4 @@
-module.exports = function() {
+module.exports = function () {
   const server = require("http").createServer(this.nuxt.renderer.app);
 
   this.nuxt.listen = (port, host) =>

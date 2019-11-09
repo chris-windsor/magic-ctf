@@ -51,7 +51,8 @@
           logged in. The game will begin shortly.
         </div>
         <div v-else>
-          <puzzle :id="index" :key="puzzle" :puzzleData="puzzles[index]" @requestHint="requestHint" @submitAnswer="submitAnswer" v-for="(puzzle, index) in puzzles"></puzzle>
+          <puzzle :id="index" :key="puzzle" :puzzleData="puzzles[index]" @requestHint="requestHint"
+                  @submitAnswer="submitAnswer" v-for="(puzzle, index) in puzzles"></puzzle>
         </div>
       </div>
     </div>
@@ -125,7 +126,7 @@
         this.$dialog.confirm({
           message: `If this hint is requested, the total value of this problem will be deducted by ${
             this.selectedHintCost
-            } points.`,
+          } points.`,
           type: "is-success",
           title: "Please confirm",
           confirmText: "Okay, continue",

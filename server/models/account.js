@@ -37,21 +37,21 @@ const AccountSchema = new mongoose.Schema({
  * */
 AccountSchema.statics.authenticate = (name, password, callback) => {
   Account.findOne({
-           name: name
-         })
-         .exec((err, acc) => {
-           if (err) {
-             return callback(err);
-           } else if (!acc) {
-             const err = new Error("Account not found.");
-             err.status = 401;
-             return callback(err);
-           }
-           bcrypt.compare(password, acc.password, (err, result) => {
-             if (result === true) return callback(null, acc);
-             else return callback();
-           });
-         });
+    name: name
+  })
+    .exec((err, acc) => {
+      if (err) {
+        return callback(err);
+      } else if (!acc) {
+        const err = new Error("Account not found.");
+        err.status = 401;
+        return callback(err);
+      }
+      bcrypt.compare(password, acc.password, (err, result) => {
+        if (result === true) return callback(null, acc);
+        else return callback();
+      });
+    });
 };
 
 /*

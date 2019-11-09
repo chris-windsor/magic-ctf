@@ -27,24 +27,24 @@ router.post("/api/register", (req, res) => {
 
   if (password !== passwordConf) {
     return res.status(401)
-              .json({
-                error: "Passwords do not match"
-              });
+      .json({
+        error: "Passwords do not match"
+      });
   }
 
   if (!(name && locationId !== -1 && password && passwordConf)) {
     return res.status(400)
-              .json({
-                error: "All fields required"
-              });
+      .json({
+        error: "All fields required"
+      });
   }
 
   Account.findOne({name}, (err, resp) => {
     if (resp !== null) {
       return res.status(409)
-                .json({
-                  error: "Username taken"
-                });
+        .json({
+          error: "Username taken"
+        });
     } else {
       Account.create({
         name,
@@ -78,9 +78,9 @@ router.post("/api/login", (req, res) => {
     Account.authenticate(req.body.accountName, req.body.password, (err, acc) => {
       if (err || !acc) {
         res.status(401)
-           .json({
-             error: "Incorrect username or password"
-           });
+          .json({
+            error: "Incorrect username or password"
+          });
       } else {
         req.session.userId = acc._id;
         req.session.authUser = {
@@ -104,9 +104,9 @@ router.post("/api/login", (req, res) => {
     });
   } else {
     res.status(400)
-       .json({
-         error: "Both fields required"
-       });
+      .json({
+        error: "Both fields required"
+      });
   }
 });
 
@@ -114,7 +114,7 @@ router.post("/api/login", (req, res) => {
 router.post("/api/logout", (req, res) => {
   delete req.session.authUser;
   res.status(200)
-     .send();
+    .send();
 });
 
 // GET `/api/admin/settings/puzzles` to retrieve puzzle data
@@ -137,7 +137,7 @@ router
       .then(() => {
         ctf.updatePuzzles(req.body.puzzleData);
         res.status(200)
-           .send();
+          .send();
       })
       .catch(err => handlers.routeError(res, err));
   });
@@ -149,7 +149,7 @@ router.post("/api/admin/settings/locations", (req, res) => {
     .then(() => {
       ctf.updateLocations(req.body.locationData);
       res.status(200)
-         .send();
+        .send();
     })
     .catch(err => handlers.routeError(res, err));
 });
@@ -219,7 +219,7 @@ router
 
         addTeams.then(() => {
           res.status(200)
-             .send();
+            .send();
         });
 
       })
@@ -244,7 +244,7 @@ router.post("/api/admin/settings/deactivateteam", (req, res) => {
       });
 
       res.status(200)
-         .send();
+        .send();
     })
     .catch(err => handlers.routeError(res, err));
 });
@@ -272,7 +272,7 @@ router
         ctf.updateEndTime(gameEndTime);
 
         res.status(200)
-           .send();
+          .send();
       })
       .catch(err => handlers.routeError(res, err));
   });
@@ -298,9 +298,9 @@ router.get("/api/scores", (req, res) => {
   } else if (format === "csv") {
     let content = "position,name,score";
     ctf.getTeamScores()
-       .forEach((e, i) => {
-         content += `\n${i + 1},${e.name},${e.score}`;
-       });
+      .forEach((e, i) => {
+        content += `\n${i + 1},${e.name},${e.score}`;
+      });
     res.send(content);
   } else {
     res.send("Please specify a request query option for 'format' of either: json, csv");

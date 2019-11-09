@@ -10,14 +10,14 @@ const countdown = Vue.mixin({
   mounted() {
     this.timer = setInterval(() => {
       const currentTime = this.$moment(this.gameEndTime)
-                              .valueOf();
+        .valueOf();
       const endTime = this.$moment.tz(this.$store.getters["auth/timezone"])
-                          .utc()
-                          .valueOf();
+        .utc()
+        .valueOf();
       const diffTime = this.$moment(currentTime - endTime);
       if (this.gameIsActive) {
         this.countdown = diffTime.toISOString()
-                                 .split("T")[1].split(".")[0];
+          .split("T")[1].split(".")[0];
       } else {
         this.countdown = "--:--:--";
       }

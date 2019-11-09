@@ -3,7 +3,9 @@
     <div class="box" v-if="hintData.content !== ''">
       {{hintData.content}}
     </div>
-    <button class="button is-rounded is-danger" @click="request()" :disabled="!hintData.unlocked" :title="hintData.unlocked ? '' : 'Unlock previous hints first...'" v-else>-{{hintData.cost}} points</button>
+    <button :disabled="!hintData.unlocked" :title="hintData.unlocked ? '' : 'Unlock previous hints first...'" @click="request()"
+            class="button is-rounded is-danger" v-else>-{{hintData.cost}} points
+    </button>
   </div>
 </template>
 

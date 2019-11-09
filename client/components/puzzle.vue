@@ -8,16 +8,16 @@
       <div class="column is-6">
         <h1 class="title is-3">{{puzzleData.title}}</h1>
         <h1 class="subtitle is-5">{{puzzleData.value}}</h1>
-        <form action="/" @submit="submitAnswer($event)">
+        <form @submit="submitAnswer($event)" action="/">
           <div class="field is-grouped">
             <div class="control has-icons-left has-icons-right is-expanded">
-              <input type="text" class="input is-info is-active" placeholder="Flag" v-model="answer">
+              <input class="input is-info is-active" placeholder="Flag" type="text" v-model="answer">
               <span class="icon is-left">
                 <i class="fa fa-flag"></i>
               </span>
             </div>
             <p class="control">
-              <a class="button is-success" @click="submitAnswer()">Submit</a>
+              <a @click="submitAnswer()" class="button is-success">Submit</a>
             </p>
           </div>
         </form>
@@ -27,7 +27,8 @@
         <h1 class="title is-5" v-else-if="puzzleData.hints.length === 1">Hint:</h1>
         <h1 class="title is-5" v-else>Hints:</h1>
         <div class="buttons">
-          <hint class="hint" v-for="(hint, index) in puzzleData.hints" :key="index" :hintData="hint" :id="index" @request="requestHint"></hint>
+          <hint :hintData="hint" :id="index" :key="index" @request="requestHint" class="hint"
+                v-for="(hint, index) in puzzleData.hints"></hint>
         </div>
       </div>
     </div>

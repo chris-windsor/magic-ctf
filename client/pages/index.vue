@@ -74,13 +74,13 @@
     },
     mounted() {
       this.$axios
-          .get("/api/teams")
-          .then(res => {
-            this.teamList = res.data.sort();
-          })
-          .catch(err => {
-            console.error(err);
-          });
+        .get("/api/teams")
+        .then(res => {
+          this.teamList = res.data.sort();
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
   };
 </script>

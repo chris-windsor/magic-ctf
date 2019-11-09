@@ -6,7 +6,8 @@
     <form @submit="submitForm($event)" action="/register">
       <div class="field">
         <p class="control has-icons-left">
-          <input autofocus="autofocus" class="input" placeholder="Team name" required="" type="text" v-model="userData.name"/>
+          <input autofocus="autofocus" class="input" placeholder="Team name" required="" type="text"
+                 v-model="userData.name"/>
           <span class="icon is-small is-left">
             <i class="fa fa-user"></i>
           </span>
@@ -35,7 +36,8 @@
       </div>
       <div class="field">
         <p class="control has-icons-left">
-          <input class="input" placeholder="Confirm Password" required="" type="password" v-model="userData.passwordConf"/>
+          <input class="input" placeholder="Confirm Password" required="" type="password"
+                 v-model="userData.passwordConf"/>
           <span class="icon is-small is-left">
             <i class="fa fa-lock"></i>
           </span>
@@ -84,13 +86,13 @@
     },
     mounted() {
       this.$axios
-          .get("/api/locations")
-          .then(res => {
-            this.locations = res.data.sort();
-          })
-          .catch(err => {
-            console.error(err);
-          });
+        .get("/api/locations")
+        .then(res => {
+          this.locations = res.data.sort();
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
   };
 </script>

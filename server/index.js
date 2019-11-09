@@ -41,9 +41,9 @@ require("dotenv")
   .config();
 
 const dbConnectParams =
-        process.env.NODE_ENV === "production"
-          ? `${process.env.DB_USER}:${process.env.DB_PASS}@`
-          : "";
+  process.env.NODE_ENV === "production"
+    ? `${process.env.DB_USER}:${process.env.DB_PASS}@`
+    : "";
 
 mongoose.connect(
   `mongodb://${dbConnectParams}localhost:27017/magic-ctf`,
