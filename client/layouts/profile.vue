@@ -34,7 +34,7 @@
     <footer class="footer">
       <div class="container">
         <div class="content has-text-centered">
-          <p>Copyright © 2018-2019 Chris Windsor</p>
+          <p>© 2019 <a href="https://magicinc.org/">MAGIC Inc | Mid-Atlantic Gigabit Innovation Collaboratory</a></p>
         </div>
       </div>
     </footer>

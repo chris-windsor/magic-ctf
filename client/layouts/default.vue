@@ -11,7 +11,7 @@
 
   export default {
     mounted() {
-      require("particles.js");
+      require("../../node_modules/particles.js/particles");
       this.$nextTick(() => {
         this.initParticlesJS();
       });
@@ -23,17 +23,17 @@
         particlesJS("particles-js", {
           particles: {
             number: {
-              value: 80,
+              value: 150,
               density: {
                 enable: true,
-                value_area: 2604.1872173865
+                value_area: 800
               }
             },
             color: {
-              value: "#6f4793"
+              value: "#ffffff"
             },
             shape: {
-              type: "polygon",
+              type: "circle",
               stroke: {
                 width: 0,
                 color: "#000"
@@ -51,17 +51,17 @@
               value: 0.5,
               random: true,
               anim: {
-                enable: true,
+                enable: false,
                 speed: 1,
                 opacity_min: 0.1,
                 sync: false
               }
             },
             size: {
-              value: 43,
-              random: false,
+              value: 3,
+              random: true,
               anim: {
-                enable: true,
+                enable: false,
                 speed: 10,
                 size_min: 40,
                 sync: false
@@ -70,13 +70,13 @@
             line_linked: {
               enable: true,
               distance: 189.39543399174545,
-              color: "#582c76",
-              opacity: 0.7,
-              width: 2.5
+              color: "#ffffff",
+              opacity: 0.4,
+              width: 1
             },
             move: {
               enable: true,
-              speed: 5,
+              speed: 1,
               direction: "none",
               random: false,
               straight: false,
@@ -90,15 +90,15 @@
             }
           },
           interactivity: {
-            detect_on: "canvas",
+            detect_on: "window",
             events: {
               onhover: {
                 enable: false,
                 mode: "repulse"
               },
               onclick: {
-                enable: false,
-                mode: "push"
+                enable: true,
+                mode: "repulse"
               },
               resize: true
             },
@@ -117,7 +117,7 @@
                 speed: 3
               },
               repulse: {
-                distance: 200,
+                distance: 150,
                 duration: 0.4
               },
               push: {
@@ -140,10 +140,11 @@
     position: absolute;
     height: 100vh;
     z-index: -1;
+    background-color: #582C77;
   }
 
   #login-form {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: #ffffff;
     width: 300px;
     position: absolute;
     top: 50%;

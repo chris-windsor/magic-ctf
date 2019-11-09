@@ -22,7 +22,7 @@
           </h1>
         </div>
     </div>
-  <div id="score-listing-container" ref="remainingScoresList" class="box" style="padding:0.75rem;">
+  <div id="scoreboard-container" ref="remainingScoresList" class="box" style="padding:0.75rem;">
     <div :key="index" class="box" v-for="(score, index) in remainingScores" style="padding:0.75rem; margin-bottom: 0.75rem;">
       <h1 class="title is-4" style="display:inline;">#{{index + 4}}: {{score.teamName}}</h1>
       <h1 class="subtitle is-4" style="display:inline;"> - {{score.score}} points
@@ -122,7 +122,7 @@
     height: calc(100vh - 22rem);
     min-height: 12rem;
   }
-  
+
   #particles-js canvas {
     position: fixed;  
   }
