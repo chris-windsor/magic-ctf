@@ -100,4 +100,13 @@
     background: rgb(88, 44, 119);
     background: radial-gradient(circle, rgba(88, 44, 119, 1) 0%, rgba(153, 87, 199, 1) 100%);
   }
+
+  #login-form {
+    background-color: #fff;
+    width: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 </style>

@@ -15,21 +15,20 @@
           </div>
         </div>
       </nav>
-      <div :key="index" class="box" style="padding:0.75rem; margin-bottom: 0.75rem;" v-for="(score, index) in 3">
-        <h1 class="title is-4" style="display:inline;">{{topThreeScores[index] ? `#${(index + 1)}:
-          ${topThreeScores[index].teamName}` : "N/A"}}</h1>
-        <h1 class="subtitle is-4" style="display:inline;"> - {{topThreeScores[index] ? topThreeScores[index].score :
-          "N/A"}} points
-          <small>{{topThreeScores[index] ? `(${locations[topThreeScores[index].locationId]})` : ""}}</small>
+      <div :key="index" class="box" style="padding:0.75rem; margin-bottom: 0.75rem;" v-for="(entry, index) in topThreeScores">
+        <h1 class="title is-4" style="display:inline;">{{entry ? `#${(index + 1)}:
+          ${entry.teamName}` : ""}}</h1>
+        <h1 class="subtitle is-4" style="display:inline;">{{entry ? ` - ${entry.score} points` : ""}}
+          <small>{{entry ? `(${locations[entry.locationId]})` : ""}}</small>
         </h1>
       </div>
     </div>
     <div class="box" id="score-listing-container" ref="remainingScoresList" style="padding:0.75rem;">
       <div :key="index" class="box" style="padding:0.75rem; margin-bottom: 0.75rem;"
-           v-for="(score, index) in remainingScores">
-        <h1 class="title is-4" style="display:inline;">#{{index + 4}}: {{score.teamName}}</h1>
-        <h1 class="subtitle is-4" style="display:inline;"> - {{score.score}} points
-          <small>({{locations[score.locationId]}})</small>
+           v-for="(entry, index) in remainingScores">
+        <h1 class="title is-4" style="display:inline;">#{{index + 4}}: {{entry.teamName}}</h1>
+        <h1 class="subtitle is-4" style="display:inline;"> - {{entry.score}} points
+          <small>({{locations[entry.locationId]}})</small>
         </h1>
       </div>
     </div>
@@ -71,7 +70,7 @@
     },
     methods: {
       scrollInit() {
-        var ScrollInterval = setInterval(this.scrollScoreboard, 25);
+        this.scrollClock = setInterval(this.scrollScoreboard, 25);
       },
       scrollScoreboard() {
         const el = this.$refs.remainingScoresList;
@@ -80,6 +79,9 @@
           el.scrollTop = 0;
         }
       },
+      scrollDismiss() {
+        clearInterval(this.scrollClock);
+      }
     },
     mounted() {
       this.socket.connect();
@@ -100,6 +102,7 @@
     },
     beforeDestroy() {
       this.socket.disconnect();
+      this.scrollDismiss();
     }
   };
 </script>
@@ -121,7 +124,6 @@
   #score-listing-container {
     padding: 0.05rem;
     overflow: hidden;
-    overflow-x: hidden;
     height: calc(100vh - 22rem);
     min-height: 12rem;
   }

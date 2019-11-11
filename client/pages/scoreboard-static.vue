@@ -15,21 +15,11 @@
           </div>
         </div>
       </nav>
-      <div :key="index" class="box" style="padding:0.75rem; margin-bottom: 0.75rem;" v-for="(score, index) in 3">
-        <h1 class="title is-4" style="display:inline;">{{topThreeScores[index] ? `#${(index + 1)}:
-          ${topThreeScores[index].teamName}` : "N/A"}}</h1>
-        <h1 class="subtitle is-4" style="display:inline;"> - {{topThreeScores[index] ? topThreeScores[index].score :
-          "N/A"}} points
-          <small>{{topThreeScores[index] ? `(${locations[topThreeScores[index].locationId]})` : ""}}</small>
-        </h1>
-      </div>
-    </div>
-    <div class="box" id="scoreboard-container" ref="remainingScoresList" style="padding:0.75rem;">
       <div :key="index" class="box" style="padding:0.75rem; margin-bottom: 0.75rem;"
-           v-for="(score, index) in remainingScores">
-        <h1 class="title is-4" style="display:inline;">#{{index + 4}}: {{score.teamName}}</h1>
-        <h1 class="subtitle is-4" style="display:inline;"> - {{score.score}} points
-          <small>({{locations[score.locationId]}})</small>
+           v-for="(entry, index) in processedTeamScores">
+        <h1 class="title is-4" style="display:inline;">#{{index + 1}}: {{entry.teamName}}</h1>
+        <h1 class="subtitle is-4" style="display:inline;"> - {{entry.score}} points
+          <small>({{locations[entry.locationId]}})</small>
         </h1>
       </div>
     </div>
@@ -48,12 +38,6 @@
       };
     },
     computed: {
-      topThreeScores() {
-        return this.processedTeamScores.splice(0, 3);
-      },
-      remainingScores() {
-        return this.processedTeamScores;
-      },
       processedTeamScores() {
         let sorted = [];
         for (let team in this.rawTeamScores) {
@@ -68,18 +52,6 @@
         });
         return sorted;
       }
-    },
-    methods: {
-      scrollInit() {
-        var ScrollInterval = setInterval(this.scrollScoreboard, 25);
-      },
-      scrollScoreboard() {
-        const el = this.$refs.remainingScoresList;
-        el.scrollTop = el.scrollTop + 1;
-        if (el.scrollTop >= (el.scrollHeight - (el.offsetHeight + 1))) {
-          el.scrollTop = 0;
-        }
-      },
     },
     mounted() {
       this.socket.connect();
@@ -96,7 +68,6 @@
         .catch(err => {
           console.error(err);
         });
-      this.scrollInit();
     },
     beforeDestroy() {
       this.socket.disconnect();
@@ -114,27 +85,11 @@
     margin-bottom: 0.75;
   }
 
-  #top-three-listing-container {
-    margin: 1rem 0.075rem 0;
-  }
-
-  #score-listing-container {
-    padding: 0.05rem;
-    overflow: hidden;
-    overflow-x: hidden;
-    height: calc(100vh - 22rem);
-    min-height: 12rem;
-  }
-
   #particles-js canvas {
     position: fixed;
   }
 
   .hero-body {
     padding: 1.5rem;
-  }
-
-  ::-webkit-scrollbar {
-    display: none;
   }
 </style>
