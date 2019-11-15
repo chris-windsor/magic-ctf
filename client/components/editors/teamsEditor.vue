@@ -1,26 +1,33 @@
 <template>
   <div>
     <b-loading :active.sync="isLoading"></b-loading>
-    <p class="has-text-success has-text-weight-bold">NOTE: team names will automatically be sorted alphabetically for
-      the register page</p>
-    <team :index="idx" :key="idx" :locations="locations" :teamData="team" @delete="deleteTeam"
-          @updateAccountName="updateTeam" v-for="(team, idx) in teamList"></team>
-    <div class="buttons is-centered">
-      <button @click="addNewTeam" class="button is-success is-rounded is-medium">Add new team</button>
-      <button @click="saveTeamList" class="button is-info is-rounded is-medium">Save teams</button>
-    </div>
+    <b-modal :active.sync="isEditing" has-modal-card trap-focus>
+      <team-edit-modal :teamData="teamList[teamInEdit]" :index="teamInEdit" @delete="deleteTeam" @update="saveTeamList"
+                       :locations="locations"></team-edit-modal>
+    </b-modal>
+    <b-field horizontal>
+      <b-input placeholder="Team name/location" type="search" icon="search" rounded v-model="searchValue"></b-input>
+      <button @click="addNewTeam" class="button is-success is-rounded">Add new team</button>
+    </b-field>
+    <hr>
+    <team :index="idx" :key="idx" :locations="locations" :teamData="team" @edit="editTeam"
+          v-for="(team, idx) in teamList.filter(e => new RegExp(this.searchValue, 'gi').test(locations[e.locationId] + e.name))"></team>
   </div>
 </template>
 
 <script>
-  import team from "~/components/editors/team";
+  import team from "./team";
+  import teamEditModal from "./teamEditModal";
 
   export default {
     data() {
       return {
         isLoading: true,
+        isEditing: false,
         teamList: [],
-        locations: []
+        locations: [],
+        searchValue: '',
+        teamInEdit: undefined
       };
     },
     methods: {
@@ -32,10 +39,9 @@
               this.teamList = res.data.sort((a, b) => {
                 const t1 = a.name.toUpperCase();
                 const t2 = b.name.toUpperCase();
-
                 return (t1 < t2) ? -1 : (t1 > t2) ? 1 : 0;
               });
-              resolve();
+              resolve('test');
             })
             .catch(err => {
               console.error(err);
@@ -44,12 +50,18 @@
         });
       },
       addNewTeam() {
-        this.teamList.push({});
+        this.teamList.push({
+          name: `newTeam${Math.floor(Math.random() * 50)}`
+        });
+        this.teamInEdit = this.teamList.length - 1;
+        this.isEditing = true;
       },
-      updateTeam(id, val) {
-        this.teamList[id] = val;
+      editTeam(idx) {
+        this.isEditing = true;
+        this.teamInEdit = idx;
       },
       deleteTeam(idx, _id) {
+        this.isEditing = false;
         this.$dialog.confirm({
           message: `Are you sure you want to delete the team: '${this.teamList[idx].name}' ?`,
           type: "is-danger",
@@ -76,6 +88,7 @@
               type: "is-success",
               duration: 1500
             });
+            this.isEditing = false;
             this.isLoading = true;
             this.retrieveTeams()
               .then(() => {
@@ -83,6 +96,7 @@
               });
           })
           .catch(err => {
+            this.isEditing = false;
             this.$toast.open({
               message: "There was an error while saving the teams...",
               type: "is-danger",
@@ -107,7 +121,8 @@
         });
     },
     components: {
-      team
+      team,
+      teamEditModal
     }
   };
 </script>

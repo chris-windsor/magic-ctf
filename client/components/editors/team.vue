@@ -1,38 +1,17 @@
 <template>
-  <div class="box">
-    <div class="field is-grouped is-horizontal">
-      <div class="control has-icons-left is-expanded">
-        <input @input="$emit('updateTeamData', index, teamData)" class="input is-info" placeholder="Team name"
-               type="text" v-model="teamData.name">
-        <span class="icon is-left">
-          <i class="fa fa-id-card"></i>
-        </span>
-      </div>
-      <div class="control has-icons-left is-expanded">
-        <div class="select is-info is-fullwidth">
-          <select @change="$emit('updateTeamData', index, teamData)" v-model="teamData.locationId">
-            <option disabled="disabled" selected="selected" value="-1">Location</option>
-            <option :key="idx" :value="idx" v-for="(loc, idx) in locations">{{loc}}</option>
-          </select>
-        </div>
-        <span class="icon is-left">
-          <i class="fa fa-broadcast-tower"></i>
-        </span>
-      </div>
-      <div class="control has-icons-left is-expanded">
-        <input @input="$emit('updateTeamData', index, teamData)" class="input is-info" placeholder="Team password"
-               type="text" v-model="teamData.password">
-        <span class="icon is-left">
-          <i class="fa fa-lock"></i>
-        </span>
-      </div>
-      <div class="control">
-        <a @click="$emit('delete', index, teamData._id)" class="button is-danger">
-          <span class="icon is-small">
-            <i class="fas fa-times"></i>
-          </span>
-        </a>
-      </div>
+  <div class="columns content">
+    <div class="column">
+      <h1 class="title is-4">{{teamData.name}}</h1>
+      <h1 class="subtitle is-6">{{locations[teamData.locationId]}}</h1>
+    </div>
+    <div class="column">
+      <b-field grouped position="is-right">
+        <p class="control">
+          <button class="button is-outlined is-small is-rounded" @click="$emit('edit', index)">
+            <b-icon icon="edit"></b-icon>
+          </button>
+        </p>
+      </b-field>
     </div>
   </div>
 </template>

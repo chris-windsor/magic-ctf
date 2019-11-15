@@ -200,6 +200,9 @@ router
                 if (password !== null && password !== "") {
                   acc.password = password;
                   acc.save();
+                  if (idx === arr.length - 1) {
+                    resolve();
+                  }
                 }
               } else {
                 Account.create(userData, (error, user) => {

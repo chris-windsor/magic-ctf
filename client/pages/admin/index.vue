@@ -36,12 +36,12 @@
     </div>
     <div class="column is-10">
       <div class="box content">
-        <b-tabs class="is-medium" position="is-centered" type="is-boxed" v-model="selectedTab">
+        <b-tabs class="is-medium admin-nav" position="is-centered" type="is-boxed" v-model="selectedTab">
           <b-tab-item :visible="false"></b-tab-item>
           <b-tab-item :visible="!gameIsActive" icon="file-alt" label="Puzzles"></b-tab-item>
           <b-tab-item icon="sliders-h" label="Mechanics"></b-tab-item>
           <b-tab-item :visible="!gameIsActive" icon="map-marked-alt" label="Locations"></b-tab-item>
-          <b-tab-item :visible="!gameIsActive" icon="user-friends" label="Teams"></b-tab-item>
+          <b-tab-item icon="user-friends" label="Teams"></b-tab-item>
           <b-tab-item icon="chart-bar" label="Data"></b-tab-item>
         </b-tabs>
         <div class="notification is-info" v-if="selectedTab === 0">Select a tab above to edit game settings.</div>
@@ -154,6 +154,10 @@
 </script>
 
 <style>
+  .admin-nav ul {
+    margin-left: 0;
+  }
+
   .b-tabs .tab-content {
     padding: 0;
   }
