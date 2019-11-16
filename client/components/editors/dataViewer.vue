@@ -1,32 +1,47 @@
 <template>
-  <div class="columns">
+  <div>
     <b-loading :active.sync="isLoading"></b-loading>
-    <div class="column">
-      <div class="box content">
-        <h1 class="title is-5">Log:</h1>
-        <div class="notification is-info" v-if="log.length == 0">There is currently no logs to view.</div>
-        <div class="log-viewer" v-else>
-          <ol>
-            <li :key="index" v-for="(entry, index) in log">{{entry}}</li>
-          </ol>
-        </div>
-      </div>
-      <hr>
-      <div class="box content">
-        <h1 class="title is-5">Statistics:</h1>
-        <div :key="pIndex" class="box content" v-for="(puzzle, pIndex) in stats">
-          <h1 class="title is-3">{{puzzle.name}}</h1>
-          <p>Attempts: {{puzzle.attempts}}. Successes: {{puzzle.successes}}.</p>
-          <h1 class="title is-5">Hints:</h1>
-          <ol>
-            <li :key="hIndex" v-for="(hint, hIndex) in puzzle.hints">
-              Uses: {{hint.uses}}
-            </li>
-          </ol>
-        </div>
-      </div>
-      <a @click="downloadData()" class="button is-success">Download Data</a>
+    <div class="content-header">
+      <h1 class="title is-5">Log:</h1>
+      <b-field>
+        <b-select placeholder="Location" v-model="teamNameLogFilter" rounded>
+          <option value="" selected>No team filter</option>
+          <option v-for="(team, idx) in teamList" :value="team.name" :key="idx">{{team.name}}</option>
+        </b-select>
+        <b-select placeholder="Location" v-model="puzzleNameLogFilter" rounded>
+          <option value="" selected>No puzzle filter</option>
+          <option v-for="(puzzle, idx) in puzzleList" :value="puzzle" :key="idx">{{puzzle}}</option>
+        </b-select>
+      </b-field>
     </div>
+    <div class="notification is-info" v-if="log.length === 0">There is currently no logs to view.</div>
+    <div class="log-viewer" v-else>
+      <ol style="white-space: nowrap; list-style: none; margin: .5em;">
+        <li :key="index"
+            v-for="(entry, index) in log.filter(e => new RegExp(`^.*'${this.teamNameLogFilter.length ? this.teamNameLogFilter : '.*'}'.*'${this.puzzleNameLogFilter.length ? this.puzzleNameLogFilter : '.*'}'.*$`, 'gm').test(e))">
+          {{entry}}
+        </li>
+      </ol>
+    </div>
+    <hr>
+    <div class="content-header">
+      <h1 class="title is-5">Statistics:</h1>
+      <b-field>
+        <b-input placeholder="Puzzle name" type="search" icon="search" rounded v-model="puzzleSearch"></b-input>
+      </b-field>
+    </div>
+    <div :key="pIndex" class="box content"
+         v-for="(puzzle, pIndex) in stats.filter(e => new RegExp(this.puzzleSearch, 'gi').test(e.name))">
+      <h1 class="title is-3">{{puzzle.name}}</h1>
+      <p>Attempts: {{puzzle.attempts}}. Successes: {{puzzle.successes}}.</p>
+      <h1 class="title is-5">Hints:</h1>
+      <ol>
+        <li :key="hIndex" v-for="(hint, hIndex) in puzzle.hints">
+          Uses: {{hint.uses}}
+        </li>
+      </ol>
+    </div>
+    <a @click="downloadData()" class="button is-success">Download Data</a>
   </div>
 </template>
 
@@ -36,7 +51,12 @@
       return {
         isLoading: true,
         stats: [],
-        log: []
+        log: [],
+        puzzleSearch: '',
+        teamList: [],
+        puzzleList: [],
+        teamNameLogFilter: '',
+        puzzleNameLogFilter: ''
       };
     },
     methods: {
@@ -44,21 +64,56 @@
       }
     },
     mounted() {
-      this.$axios
+      const getGameData = this.$axios
         .get("/api/admin/gamedata")
         .then(res => {
           this.stats = res.data.gameStatistics;
           this.log = res.data.gameLog;
-          this.isLoading = false;
         })
         .catch(err => {
           console.error(err);
+        });
+      const getTeams = this.$axios
+        .get("/api/admin/settings/teams")
+        .then(res => {
+          this.teamList = res.data.sort((a, b) => {
+            const t1 = a.name.toUpperCase();
+            const t2 = b.name.toUpperCase();
+            return (t1 < t2) ? -1 : (t1 > t2) ? 1 : 0;
+          });
+        })
+        .catch(err => {
+          console.error(err);
+        });
+      const getPuzzles = this.$axios
+        .get("/api/admin/settings/puzzles")
+        .then(res => {
+          this.puzzleList = res.data.puzzles.map(e => e.title);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+      Promise.all([getGameData, getTeams, getPuzzles])
+        .then(() => {
+          this.isLoading = false;
         });
     }
   };
 </script>
 
 <style scoped>
+  .content-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .content-header h1.title {
+    margin: 0;
+  }
+
   .log-viewer {
     height: 250px;
     overflow: scroll;

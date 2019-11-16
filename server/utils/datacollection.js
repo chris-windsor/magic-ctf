@@ -17,15 +17,16 @@ const loadPuzzleDataCollection = () => {
 
 const loadGameLog = () => {
   if (fs.existsSync(dataFolder + logCollectionFileName)) {
-    return fs
+    const rawLog = fs
       .readFileSync(dataFolder + logCollectionFileName, err => {
         if (err) {
           logger.error(err);
         }
       })
       .toString()
-      .split("\n")
-      .splice(-1);
+      .split("\n");
+    rawLog.splice(-1);
+    return rawLog;
   } else {
     return [];
   }

@@ -41,7 +41,7 @@
                 const t2 = b.name.toUpperCase();
                 return (t1 < t2) ? -1 : (t1 > t2) ? 1 : 0;
               });
-              resolve('test');
+              resolve();
             })
             .catch(err => {
               console.error(err);
