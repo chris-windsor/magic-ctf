@@ -125,7 +125,13 @@
         }
       }
     },
+    watch: {
+      selectedTab(newTab) {
+        this.$router.push({query: {tab: newTab}});
+      }
+    },
     mounted() {
+      this.selectedTab = Number(this.$route.query.tab);
       this.socket.connect();
       this.socket.on("updateGameStatus", gameData => {
         if (gameData.endTime !== undefined) this.gameEndTime = gameData.endTime;
