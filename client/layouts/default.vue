@@ -1,8 +1,6 @@
 <template>
-  <section class="hero is-fullheight is-unselectable" id="particles-js">
-    <div class="hero-body">
-      <nuxt/>
-    </div>
+  <section id="particles-js">
+    <nuxt/>
   </section>
 </template>
 
@@ -83,8 +81,7 @@
                 rotateY: 1200
               }
             }
-          },
-          retina_detect: true
+          }
         });
       }
     }

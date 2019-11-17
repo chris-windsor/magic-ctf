@@ -23,13 +23,13 @@
         </ul>
         <p class="menu-label"></p>
         <ul class="menu-list">
-          <li>
-            <a class="button is-rounded is-info is-outlined" href="/scoreboard" target="_blank">
+          <li class="has-text-centered">
+            <button class="button is-rounded is-info is-outlined" @click="openScoreboardTab">
               <span class="icon">
                 <i class="fa fa-list-ol"></i>
               </span>
               <span>Scoreboard</span>
-            </a>
+            </button>
           </li>
         </ul>
       </aside>
@@ -123,6 +123,9 @@
             name: "start"
           });
         }
+      },
+      openScoreboardTab() {
+        window.open("/scoreboard", "_blank")
       }
     },
     watch: {
