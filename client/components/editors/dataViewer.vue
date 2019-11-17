@@ -3,22 +3,25 @@
     <b-loading :active.sync="isLoading"></b-loading>
     <div class="content-header">
       <h1 class="title is-5">Log:</h1>
-      <b-field>
-        <b-select placeholder="Location" v-model="teamNameLogFilter" rounded>
-          <option value="" selected>No team filter</option>
-          <option v-for="(team, idx) in teamList" :value="team.name" :key="idx">{{team.name}}</option>
-        </b-select>
-        <b-select placeholder="Location" v-model="puzzleNameLogFilter" rounded>
-          <option value="" selected>No puzzle filter</option>
-          <option v-for="(puzzle, idx) in puzzleList" :value="puzzle" :key="idx">{{puzzle}}</option>
-        </b-select>
-      </b-field>
+      <div style="display: flex; flex-direction: row; align-items: center;">
+        <b-field class="is-marginless">
+          <b-select placeholder="Location" v-model="teamNameLogFilter" rounded>
+            <option value="" selected>No team filter</option>
+            <option v-for="(team, idx) in teamList" :value="team.name" :key="idx">{{team.name}}</option>
+          </b-select>
+          <b-select placeholder="Location" v-model="puzzleNameLogFilter" rounded>
+            <option value="" selected>No puzzle filter</option>
+            <option v-for="(puzzle, idx) in puzzleList" :value="puzzle" :key="idx">{{puzzle}}</option>
+          </b-select>
+        </b-field>
+        <b-checkbox v-model="attemptsOnlyFilter" style="margin-left: .5rem;">Only show attempts</b-checkbox>
+      </div>
     </div>
     <div class="notification is-info" v-if="log.length === 0">There is currently no logs to view.</div>
     <div class="log-viewer" v-else>
       <ol style="white-space: nowrap; list-style: none; margin: .5em;">
         <li :key="index"
-            v-for="(entry, index) in log.filter(e => new RegExp(`^.*'${this.teamNameLogFilter.length ? this.teamNameLogFilter : '.*'}'.*'${this.puzzleNameLogFilter.length ? this.puzzleNameLogFilter : '.*'}'.*$`, 'gm').test(e))">
+            v-for="(entry, index) in log.filter(e => new RegExp(`^.*'${this.teamNameLogFilter.length ? this.teamNameLogFilter : '.*'}' ${this.attemptsOnlyFilter ? 'attempted' : ''}.*'${this.puzzleNameLogFilter.length ? this.puzzleNameLogFilter : '.*'}'.*$`, 'gm').test(e))">
           {{entry}}
         </li>
       </ol>
@@ -46,6 +49,8 @@
 </template>
 
 <script>
+  import {saveAs} from 'file-saver';
+
   export default {
     data() {
       return {
@@ -56,11 +61,16 @@
         teamList: [],
         puzzleList: [],
         teamNameLogFilter: '',
-        puzzleNameLogFilter: ''
+        puzzleNameLogFilter: '',
+        attemptsOnlyFilter: true
       };
     },
     methods: {
       downloadData() {
+        const logFileData = new Blob([this.log.join("\n")], {type: 'text/plain'});
+        const statisticsFileData = new Blob([JSON.stringify(this.stats)], {type: 'application/json'});
+        saveAs(logFileData, "log.txt");
+        saveAs(statisticsFileData, "dataCollection.json");
       }
     },
     mounted() {
