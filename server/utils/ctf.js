@@ -1,4 +1,5 @@
 const fs = require("fs");
+const scheduler = require("node-schedule");
 
 const dataFolder = `${__dirname}/../data/`;
 
@@ -7,10 +8,33 @@ let gameEndTime = new Date();
 let teamList = {};
 let teamScores = {};
 
+let gameEndScheduler;
+
 /*
  * Change current game state
  * */
-const changeGameState = newState => gameIsRunning = newState;
+const changeGameState = newState => {
+  gameIsRunning = newState;
+
+  if (newState === true) {
+    gameEndScheduler = scheduler.scheduleJob(gameEndTime, () => {
+      changeGameState(false);
+    });
+  } else {
+    gameEndScheduler.cancel();
+  }
+
+  const socketHandler = require("./socketHandler");
+  const io = socketHandler.getIO();
+  io.in("ctf")
+    .emit("gameStateChange");
+
+  io.in("ctf-admin")
+    .emit("updateGameStatus", {
+      isActive: isGameRunning(),
+      endTime: getEndTime()
+    });
+};
 
 /*
  * Return current game state

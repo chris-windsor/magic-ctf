@@ -6,12 +6,14 @@ const Queue = require("./queue");
 
 const q = new Queue();
 
-const init = io => {
+let io;
+
+const initMain = () => {
   /*
-   * Handles initial socket connection to server
-   *
-   * Checks client authorization and dispatches appropriate information relative to the client
-   * */
+ * Handles initial socket connection to server
+ *
+ * Checks client authorization and dispatches appropriate information relative to the client
+ * */
   io.on("connection", socket => {
     const {userId} = socket.handshake.session;
 
@@ -254,15 +256,6 @@ const init = io => {
                    * Change game state to inactive and update all users of state change
                    * */
                   ctf.changeGameState(false);
-
-                  io.in("ctf")
-                    .emit("gameStateChange");
-
-                  io.in("ctf-admin")
-                    .emit("updateGameStatus", {
-                      isActive: ctf.isGameRunning(),
-                      endTime: ctf.getEndTime()
-                    });
                   break;
                 default:
                   /*
@@ -279,6 +272,14 @@ const init = io => {
   });
 };
 
+const init = sioi => {
+  io = sioi;
+  initMain();
+};
+
+const getIO = () => io;
+
 module.exports = {
-  init
+  init,
+  getIO
 };
