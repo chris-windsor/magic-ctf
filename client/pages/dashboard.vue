@@ -123,7 +123,7 @@
       },
       requestHint(puzzleId, puzzleName, hintId, hintCost) {
         this.selectedHintCost = hintCost;
-        this.$dialog.confirm({
+        this.$buefy.dialog.confirm({
           message: `If this hint is requested, the total value of this problem will be deducted by ${
             this.selectedHintCost
           } points.`,
@@ -136,7 +136,7 @@
               puzzleName,
               hintId
             });
-            this.$toast.open({
+            this.$buefy.toast.open({
               message: "Requesting hint...",
               type: "is-info",
               duration: 1500
@@ -154,7 +154,7 @@
         this.puzzles = puzzleData;
       });
       this.socket.on("incorrectAnswer", puzzleName => {
-        this.$toast.open({
+        this.$buefy.toast.open({
           message: `Sorry. Incorrect answer for puzzle: ${puzzleName}`,
           type: "is-danger",
           duration: 1500

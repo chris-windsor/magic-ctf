@@ -38,14 +38,14 @@
             locationData: this.locations
           })
           .then(res => {
-            this.$toast.open({
+            this.$buefy.toast.open({
               message: "Successfully saved the updated locations...",
               type: "is-success",
               duration: 1500
             });
           })
           .catch(err => {
-            this.$toast.open({
+            this.$buefy.toast.open({
               message: "There was an error while saving the locations...",
               type: "is-danger",
               duration: 1500

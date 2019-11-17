@@ -62,7 +62,7 @@
       },
       deleteTeam(idx, _id) {
         this.isEditing = false;
-        this.$dialog.confirm({
+        this.$buefy.dialog.confirm({
           message: `Are you sure you want to delete the team: '${this.teamList[idx].name}' ?`,
           type: "is-danger",
           title: "Please confirm",
@@ -83,7 +83,7 @@
             teamList: this.teamList
           })
           .then(res => {
-            this.$toast.open({
+            this.$buefy.toast.open({
               message: "Successfully saved the updated teams...",
               type: "is-success",
               duration: 1500
@@ -97,7 +97,7 @@
           })
           .catch(err => {
             this.isEditing = false;
-            this.$toast.open({
+            this.$buefy.toast.open({
               message: "There was an error while saving the teams...",
               type: "is-danger",
               duration: 1500

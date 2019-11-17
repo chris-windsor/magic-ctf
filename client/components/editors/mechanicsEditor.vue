@@ -39,14 +39,14 @@
               .toISOString()
           })
           .then(res => {
-            this.$toast.open({
+            this.$buefy.toast.open({
               message: "Successfully updated the game length...",
               type: "is-success",
               duration: 1500
             });
           })
           .catch(err => {
-            this.$toast.open({
+            this.$buefy.toast.open({
               message: "There was an error while updating the game length...",
               type: "is-danger",
               duration: 1500

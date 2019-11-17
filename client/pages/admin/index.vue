@@ -100,7 +100,7 @@
     methods: {
       toggleGameState() {
         if (this.gameIsActive) {
-          this.$dialog.confirm({
+          this.$buefy.dialog.confirm({
             message: "Are you sure you want to stop the game?",
             type: "is-danger",
             title: "Please confirm",
@@ -110,7 +110,7 @@
               this.socket.emit("adminCommand", {
                 name: "stop"
               });
-              this.$toast.open({
+              this.$buefy.toast.open({
                 message: "Stopping game...",
                 type: "is-info",
                 duration: 1500
@@ -127,7 +127,7 @@
     },
     watch: {
       selectedTab(newTab) {
-        this.$router.push({query: {tab: newTab}});
+        if (!isNaN(newTab)) this.$router.push({query: {tab: newTab}});
       }
     },
     mounted() {
