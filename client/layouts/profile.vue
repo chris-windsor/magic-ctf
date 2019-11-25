@@ -57,6 +57,14 @@
     },
     mounted() {
       this.$store.commit("auth/SET_USER_TIMEZONE", this.$moment.tz.guess());
+      this.$axios.interceptors.response.use(res => {
+        return res;
+      }, (err) => {
+        if (err.response.status === 401) {
+          this.logout();
+        }
+        Promise.reject({...err});
+      })
     }
   };
 </script>
