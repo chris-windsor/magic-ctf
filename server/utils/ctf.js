@@ -67,13 +67,13 @@ const updateTeamScores = (_id) => {
 /*
  * Load in puzzle data from its respective file
  * */
-let puzzles = require(dataFolder + "puzzles.json");
+let rawPuzzleData = require(dataFolder + "puzzles.json");
 
 /*
  * Retrieve a hint from the master puzzle set to be returned to the team
  * */
 const getHint = request => {
-  const hint = puzzles[request.puzzleName].hints[request.hintId];
+  const hint = rawPuzzleData[request.puzzleName].hints[request.hintId];
   return {
     hintContent: hint.content,
     hintCost: hint.cost
@@ -85,10 +85,10 @@ const getHint = request => {
  * */
 const checkAnswer = request => {
   try {
-    if (puzzles[request.puzzleName].answer === request.answer) {
+    if (rawPuzzleData[request.puzzleName].answer === request.answer) {
       return {
         correct: true,
-        reward: puzzles[request.puzzleName].value
+        reward: rawPuzzleData[request.puzzleName].value
       };
     }
     return {
@@ -130,40 +130,14 @@ const getPuzzlesForPlayer = () => {
  * Retrieve puzzle data set in efficient format for the admin panel
  * */
 const getPuzzlesForAdmin = () => {
-  const puzzleNames = Object.keys(puzzles);
-  let puzzleData = [];
-  puzzleNames.forEach(entry => {
-    puzzleData.push({
-      title: entry,
-      answer: puzzles[entry].answer,
-      value: puzzles[entry].value,
-      hints: puzzles[entry].hints
-    });
-  });
-  return puzzleData;
+  return rawPuzzleData;
 };
 
 /*
  * Retrieve puzzle data set in efficient format for the data colletion system
  * */
 const getPuzzlesForDataCollection = () => {
-  const puzzleNames = Object.keys(puzzles);
-  let puzzleData = [];
-  puzzleNames.forEach(entry => {
-    let hints = [];
-    puzzles[entry].hints.forEach(hint => {
-      hints.push({
-        uses: 0
-      });
-    });
-    puzzleData.push({
-      name: entry,
-      attempts: 0,
-      successes: 0,
-      hints
-    });
-  });
-  return puzzleData;
+  return [];
 };
 
 /*
@@ -185,7 +159,7 @@ const updatePuzzles = puzzleData => {
       if (err) {
         throw err;
       } else {
-        puzzles = newPuzzles;
+        rawPuzzleData = newPuzzles;
       }
     }
   );

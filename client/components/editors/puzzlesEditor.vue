@@ -1,23 +1,33 @@
 <template>
   <div>
     <b-loading :active.sync="isLoading"></b-loading>
-    <puzzle :id="index" :isLast="index !== puzzles.length-1" :key="index" :puzzleData="puzzles[index]"
-            @addNew="addNewPuzzle" @addNewHint="addNewHint" @delete="deletePuzzle" @deleteHint="deleteHint"
-            v-for="(puzzle, index) in puzzles"></puzzle>
-    <div class="buttons is-centered">
-      <button @click="savePuzzleData()" class="button is-info is-rounded is-medium">Save puzzles</button>
-    </div>
+    <b-modal :active.sync="isEditing" has-modal-card trap-focus>
+      <puzzle-edit-modal :puzzleData="puzzles[puzzleInEdit]" @delete="deletePuzzle"
+                         @update="updatePuzzle"></puzzle-edit-modal>
+    </b-modal>
+    <b-field horizontal>
+      <b-input placeholder="Puzzle name" type="search" icon="search" rounded v-model="searchValue"></b-input>
+      <button @click="addNewPuzzle" class="button is-success is-rounded">Add new team</button>
+    </b-field>
+    <hr>
+    <puzzle :key="idx" :puzzleData="puzzle" :index="idx"
+            v-for="(puzzle, idx) in puzzles.filter(e => new RegExp(this.searchValue, 'gi').test(e.name))"
+            @edit="editPuzzle"/>
   </div>
 </template>
 
 <script>
-  import puzzle from "~/components/editors/puzzle";
+  import puzzle from "./puzzle";
+  import puzzleEditModal from "./puzzleEditModal"
 
   export default {
     data() {
       return {
         isLoading: true,
-        puzzles: []
+        isEditing: false,
+        puzzles: [],
+        searchValue: "",
+        puzzleInEdit: undefined
       };
     },
     methods: {
@@ -31,6 +41,10 @@
           .catch(err => {
             console.error(err);
           });
+      },
+      editPuzzle(idx) {
+        this.isEditing = true;
+        this.puzzleInEdit = idx;
       },
       addNewPuzzle(id) {
         this.puzzles.splice(id + 1, 0, {
@@ -48,30 +62,21 @@
       deletePuzzle(id) {
         this.puzzles.splice(id, 1);
       },
-      addNewHint(puzId) {
-        this.puzzles[puzId].hints.push({
-          content: "",
-          cost: 0
-        });
-      },
-      deleteHint(puzId, hintId) {
-        this.puzzles[puzId].hints.splice(hintId, 1);
-      },
-      savePuzzleData() {
+      updatePuzzle(puzzleData) {
         this.$axios
           .post("/api/admin/settings/puzzles", {
-            puzzleData: this.puzzles
+            puzzleData
           })
           .then(res => {
             this.$buefy.toast.open({
-              message: "Successfully saved the updated puzzles...",
+              message: "Successfully saved the updated puzzle...",
               type: "is-success",
               duration: 1500
             });
           })
           .catch(err => {
             this.$buefy.toast.open({
-              message: "There was an error while saving the puzzles...",
+              message: "There was an error while saving the puzzle...",
               type: "is-danger",
               duration: 1500
             });
@@ -82,7 +87,8 @@
       this.loadData();
     },
     components: {
-      puzzle
+      puzzle,
+      puzzleEditModal
     }
   };
 </script>

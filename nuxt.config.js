@@ -28,7 +28,8 @@ module.exports = {
   modules: [
     "@nuxtjs/axios",
     ["nuxt-buefy", {
-      defaultIconPack: "fas"
+      defaultIconPack: "fas",
+      defaultFieldLabelPosition: "on-border"
     }],
     "~~/server/io",
     "@nuxtjs/moment"
