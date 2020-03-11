@@ -60,6 +60,8 @@ export const actions = {
           throw new Error("Passwords do not match");
         } else if (res.status === 400) {
           throw new Error("All fields required");
+        } else if (res.status === 406) {
+          throw new Error("No non-printable characters allowed");
         } else if (res.status === 409) {
           throw new Error("Team name taken");
         } else {

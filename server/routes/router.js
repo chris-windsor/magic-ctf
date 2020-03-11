@@ -38,6 +38,14 @@ router.post("/api/register", (req, res) => {
         error: "All fields required"
       });
   }
+  
+  var regexp = new RegExp(/^[\u0020-\u007e\u00a0-\u00ff]*$/);
+  if (!(regexp.test(name))) {
+	return res.status(406)
+      .json({
+        error: "No non-printable characters allowed"
+      });
+  }
 
   Account.findOne({name}, (err, resp) => {
     if (resp !== null) {
