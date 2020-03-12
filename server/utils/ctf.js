@@ -85,7 +85,10 @@ const getHint = request => {
  * */
 const checkAnswer = request => {
   try {
-    if (rawPuzzleData[request.puzzleName].answer === request.answer) {
+    var cleanRequest = request.answer.replace(/flag{/gi, "").replace("}", ""); // Dirty, but it gets the job done. Note that the last replace will have side effects if the answer contains an additional '}'. However, since both the request and answer is getting replaced, it will fix itself.
+    var cleanAnswer = rawPuzzleData[request.puzzleName].answer.replace(/flag{/gi, "").replace("}", "");
+	
+    if (rawPuzzleData[request.puzzleName].answer === request.answer || cleanRequest === cleanAnswer) {
       return {
         correct: true,
         reward: rawPuzzleData[request.puzzleName].value
