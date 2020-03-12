@@ -34,7 +34,7 @@
     <footer class="footer">
       <div class="container">
         <div class="content has-text-centered">
-          <p>© 2019 <a href="https://magicinc.org/">MAGIC INC | Mid-Atlantic Gigabit Innovation Collaboratory</a></p>
+          <p>© 2018-2020 <a href="https://magicinc.org/">MAGIC INC | Mid-Atlantic Gigabit Innovation Collaboratory</a></p>
         </div>
       </div>
     </footer>

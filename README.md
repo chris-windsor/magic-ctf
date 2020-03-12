@@ -22,4 +22,4 @@
 
 [MIT](http://opensource.org/licenses/MIT)
 
-[Copyright © 2019, MAGIC INC | Mid-Atlantic Gigabit Innovation Collaboratory](https://magicinc.org/)
+[Copyright © 2018-2020, MAGIC INC | Mid-Atlantic Gigabit Innovation Collaboratory](https://magicinc.org/)
