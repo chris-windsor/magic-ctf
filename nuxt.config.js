@@ -23,7 +23,8 @@ module.exports = {
   ],
   plugins: [
     "~/plugins/socketio",
-    "~/plugins/countdown"
+    "~/plugins/countdown",
+    { src: '~/plugins/localStorage.js', ssr: false }
   ],
   modules: [
     "@nuxtjs/axios",

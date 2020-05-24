@@ -16,8 +16,6 @@
   - `npm run generate`
   - `npm run start`
 
-## 📝 License
+## 🖇 Attributions
 
-[MIT](http://opensource.org/licenses/MIT)
-
-[Copyright © 2018-2020, Chris Windsor](https://chriswindsor.dev/)
+Made by [Chris Windsor](https://chriswindsor.dev/) in collaboration with [MAGIC INC | Mid-Atlantic Gigabit Innovation Collaboratory](https://magicinc.org/)

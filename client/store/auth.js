@@ -1,7 +1,7 @@
 import "whatwg-fetch";
 
 export const state = () => ({
-  authUser: null,
+  authUser: undefined,
   loginError: "",
   registerError: "",
   timezone: null
@@ -69,6 +69,8 @@ export const actions = {
         }
       })
       .then(authUser => {
+        localStorage.setItem("token", authUser.authToken);
+        this.app.$axios.setHeader("x-access-token", authUser.authToken);
         commit("SET_REGISTER_ERROR", "");
         commit("SET_USER", authUser);
         if (authUser.accountType === "player") {
@@ -105,6 +107,8 @@ export const actions = {
         }
       })
       .then(authUser => {
+        localStorage.setItem("token", authUser.authToken);
+        this.app.$axios.setHeader("x-access-token", authUser.authToken);
         commit("SET_LOGIN_ERROR", "");
         commit("SET_USER", authUser);
         if (authUser.accountType === "player") {

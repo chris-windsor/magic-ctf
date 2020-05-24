@@ -1,0 +1,24 @@
+[
+  {
+    "guid": "16527ef0-c507-4e5e-8df0-fd3a84f0dc09",
+    "name": "puzzle 1",
+    "reward": 100,
+    "hints": [
+      {
+        "guid": "690804ef-116b-4dcd-96aa-df4e089087d4",
+        "content": "this is a hint",
+        "cost": 20
+      },
+      {
+        "guid": "9aec2ee3-4d9d-4875-bd4b-317c7265baa2",
+        "content": "this is another hint",
+        "cost": 30
+      }
+    ],
+    "answers": [
+      "abc",
+      "def"
+    ],
+    "caseSensitive": true
+  }
+]

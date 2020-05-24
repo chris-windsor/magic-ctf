@@ -14,14 +14,16 @@
     "@fortawesome/fontawesome-free": "^5.8.1",
     "@nuxtjs/axios": "^5.4.1",
     "@nuxtjs/moment": "^1.2.0",
-    "bcrypt": "^3.0.6",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "chalk": "^2.4.2",
     "connect-mongo": "^3.1.2",
+    "cross-env": "^7.0.2",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "file-saver": "^2.0.2",
+    "jsonwebtoken": "^8.5.1",
     "moment-timezone": "^0.5.23",
     "mongoose": "^5.4.20",
     "node-schedule": "^1.3.2",
@@ -31,12 +33,8 @@
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0",
     "socket.io-express-session": "^0.1.3",
+    "uuidv4": "^6.0.9",
+    "vuex-persistedstate": "^3.0.1",
     "whatwg-fetch": "^2.0.4"
-  },
-  "devDependencies": {
-    "cross-env": "^5.0.1",
-    "node-sass": "^4.11.0",
-    "nodemon": "^1.18.10",
-    "sass-loader": "^7.1.0"
   }
 }

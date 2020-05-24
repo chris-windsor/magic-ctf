@@ -2,6 +2,7 @@ const Account = require("../models/account");
 const Team = require("./team");
 const logger = require("./logger");
 const loadedTeams = {};
+const {uuid} = require("uuidv4");
 
 const createAdminAccount = db => {
   /*
@@ -31,7 +32,8 @@ const createAdminAccount = db => {
       name: "admin",
       accountType: "admin",
       password: adminPswd,
-      passwordConf: adminPswd
+      passwordConf: adminPswd,
+      uuid: process.env.NODE_ENV === "development" ? "admin-uuid" : uuid()
     },
     (err, user) => {
       if (err) {

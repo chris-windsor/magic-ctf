@@ -29,7 +29,6 @@
           </b-field>
           <b-button icon-left="plus" type="is-info" size="is-small">Add</b-button>
           <b-field grouped style="margin-top: .5rem;">
-            <b-checkbox v-model="puzzleData.flagStrip">strip 'flag{}'</b-checkbox>
             <b-checkbox v-model="puzzleData.caseSensitive">case sensitive</b-checkbox>
           </b-field>
         </div>

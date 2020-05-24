@@ -34,7 +34,7 @@
     <footer class="footer">
       <div class="container">
         <div class="content has-text-centered">
-          <p>© 2018-2020 <a href="https://magicinc.org/">MAGIC INC | Mid-Atlantic Gigabit Innovation Collaboratory</a></p>
+          <p>Made in collaboration with <a href="https://magicinc.org/">MAGIC INC | Mid-Atlantic Gigabit Innovation Collaboratory</a></p>
         </div>
       </div>
     </footer>
@@ -56,6 +56,7 @@
       }
     },
     mounted() {
+      this.$axios.setHeader("x-access-token", localStorage.getItem("token"));
       this.$store.commit("auth/SET_USER_TIMEZONE", this.$moment.tz.guess());
       this.$axios.interceptors.response.use(res => {
         return res;

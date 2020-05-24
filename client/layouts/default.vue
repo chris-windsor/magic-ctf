@@ -9,6 +9,7 @@
 
   export default {
     mounted() {
+      this.$axios.setHeader("x-access-token", localStorage.getItem("token"));
       require("../../node_modules/particles.js/particles");
       this.$nextTick(() => {
         this.initParticlesJS();

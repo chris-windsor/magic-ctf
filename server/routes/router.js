@@ -6,6 +6,9 @@ const Team = require("../utils/team");
 const dc = require("../utils/datacollection");
 const logger = require("../utils/logger");
 const handlers = require("./handlers");
+const jwt = require("jsonwebtoken");
+const process = require("process");
+const {uuid} = require("uuidv4");
 
 // GET `/api/locations` to return available locations to register at
 router.get("/api/locations", (req, res) =>
@@ -38,7 +41,7 @@ router.post("/api/register", (req, res) => {
         error: "All fields required"
       });
   }
-  
+
   var regexp = new RegExp(/^[\u0020-\u007e\u00a0-\u00ff]*$/);
   if (!(regexp.test(name))) {
 	return res.status(406)
@@ -57,7 +60,8 @@ router.post("/api/register", (req, res) => {
       Account.create({
         name,
         locationId,
-        password
+        password,
+        uuid: uuid()
       }, (error, acc) => {
         if (error) {
           return logger.error(error);
@@ -104,9 +108,15 @@ router.post("/api/login", (req, res) => {
             location: locationId
           };
         }
+
+        const authToken = jwt.sign({uuid: acc.uuid}, process.env.TOKEN_SECRET, {
+          expiresIn: "1d"
+        });
+
         return res.json({
           name: acc.name,
-          accountType: acc.accountType
+          accountType: acc.accountType,
+          authToken
         });
       }
     });
@@ -131,7 +141,7 @@ router
   .route("/api/admin/settings/puzzles")
   .get((req, res) => {
     handlers
-      .isAuth(req.session.userId, "admin")
+      .isAuth(req, "admin")
       .then(() => {
         res.json({
           puzzles: ctf.getPuzzlesForAdmin()
@@ -141,7 +151,7 @@ router
   })
   .post((req, res) => {
     handlers
-      .isAuth(req.session.userId, "admin")
+      .isAuth(req, "admin")
       .then(() => {
         ctf.updatePuzzles(req.body.puzzleData);
         res.status(200)
@@ -153,7 +163,7 @@ router
 // POST `/api/admin/settings/locations` to save new locationId data
 router.post("/api/admin/settings/locations", (req, res) => {
   handlers
-    .isAuth(req.session.userId, "admin")
+    .isAuth(req, "admin")
     .then(() => {
       ctf.updateLocations(req.body.locationData);
       res.status(200)
@@ -168,7 +178,7 @@ router
   .route("/api/admin/settings/teams")
   .get((req, res) => {
     handlers
-      .isAuth(req.session.userId, "admin")
+      .isAuth(req, "admin")
       .then(() => {
         let teamList = [];
         for (let team in ctf.teamList) {
@@ -181,7 +191,7 @@ router
   })
   .post((req, res) => {
     handlers
-      .isAuth(req.session.userId, "admin")
+      .isAuth(req, "admin")
       .then(() => {
         const {teamList} = req.body;
 
@@ -240,7 +250,7 @@ router
 // POST `/api/admin/settings/deactivateteam` to deactivate team
 router.post("/api/admin/settings/deactivateteam", (req, res) => {
   handlers
-    .isAuth(req.session.userId, "admin")
+    .isAuth(req, "admin")
     .then(() => {
       const {teamId} = req.body;
 
@@ -266,7 +276,7 @@ router
   .route("/api/admin/settings/gamelength")
   .get((req, res) => {
     handlers
-      .isAuth(req.session.userId, "admin")
+      .isAuth(req, "admin")
       .then(() => {
         return res.json({
           endTime: ctf.getEndTime()
@@ -276,7 +286,7 @@ router
   })
   .post((req, res) => {
     handlers
-      .isAuth(req.session.userId, "admin")
+      .isAuth(req, "admin")
       .then(() => {
         const {gameEndTime} = req.body;
 
@@ -291,7 +301,7 @@ router
 // GET `/api/admin/gamedata` to retrieve game data
 router.get("/api/admin/gamedata", (req, res) => {
   handlers
-    .isAuth(req.session.userId, "admin")
+    .isAuth(req, "admin")
     .then(() => {
       return res.json({
         gameStatistics: dc.gameStatistics,

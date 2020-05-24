@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 const AccountSchema = new mongoose.Schema({
   name: {
@@ -29,6 +29,9 @@ const AccountSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  uuid: {
+    type: String
   }
 });
 
